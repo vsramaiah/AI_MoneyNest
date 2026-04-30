@@ -1,0 +1,3021 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<link rel="manifest" href="manifest.json">
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="theme-color" content="#f4f2ec"/>
+<meta name="description" content="MoneyNest helps you track grocery spending, expenses, and budgets with shared Firebase sync."/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="MoneyNest"/>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>MoneyNest</title>
+<style>
+:root{
+  --bg:#f7f1e7;
+  --panel:#fffaf2;
+  --panel-soft:#f4ede1;
+  --line:#e8dcc9;
+  --text:#263126;
+  --muted:#7f8775;
+  --accent:#476a2e;
+  --accent-soft:#e5efd7;
+  --warn:#bf5a36;
+  --warn-soft:#f9e5dc;
+  --gold:#d79a2b;
+  --shadow:0 16px 34px rgba(79,59,30,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{
+  font-family:"Segoe UI",system-ui,sans-serif;
+  background:
+    radial-gradient(circle at top right, rgba(215,154,43,.14), transparent 28%),
+    radial-gradient(circle at top left, rgba(71,106,46,.10), transparent 24%),
+    var(--bg);
+  color:var(--text);
+  min-height:100vh;
+}
+#wrap{
+  max-width:480px;
+  margin:0 auto;
+  min-height:100vh;
+  padding:20px 16px 110px;
+}
+#setup{
+  position:fixed;
+  inset:0;
+  z-index:999;
+  background:linear-gradient(180deg,#fffdf8 0%,#f4f2ec 100%);
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:28px 20px 60px;
+}
+#setup h2{font-size:26px;font-weight:800;margin-bottom:6px;color:var(--text)}
+#setup>p{font-size:13px;color:#66747d;text-align:center;line-height:1.7;margin-bottom:18px}
+.sbox,.card,.hero,.quick-card,.stat-card,.recent-card,.budget-ring-card,.tool-card,.settings-card,.more-banner{
+  background:rgba(255,250,242,.95);
+  border:1px solid #f2e8d8;
+  box-shadow:var(--shadow);
+}
+.sbox{
+  width:100%;
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:12px;
+}
+.sbox label{font-size:10px;font-weight:700;color:#88959f;text-transform:uppercase;letter-spacing:.7px;display:block;margin-bottom:7px}
+.sbox input{
+  width:100%;
+  border:1px solid #dfe6df;
+  border-radius:12px;
+  padding:12px 13px;
+  font-size:15px;
+  font-family:inherit;
+  background:#fff;
+  color:var(--text);
+  outline:none;
+}
+.sbox input:focus{border-color:var(--accent)}
+.snote{font-size:11px;color:#99a4ac;margin-top:6px;line-height:1.6}
+.scriptbox{
+  width:100%;
+  background:#182127;
+  border-radius:20px;
+  padding:16px;
+  margin-bottom:14px;
+  box-shadow:0 20px 40px rgba(14,18,24,.2);
+}
+.scriptbox pre{
+  font-family:Consolas,monospace;
+  font-size:10.5px;
+  color:#b6f6b2;
+  white-space:pre-wrap;
+  line-height:1.7;
+  margin-bottom:10px;
+  max-height:240px;
+  overflow-y:auto;
+}
+.steps{
+  width:100%;
+  background:#fffdf8;
+  border:1px solid #ece8de;
+  border-radius:20px;
+  padding:16px;
+  margin-bottom:16px;
+  font-size:12px;
+  color:#5f6972;
+  line-height:2;
+  box-shadow:var(--shadow);
+}
+.snum{
+  display:inline-flex;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:var(--accent);
+  color:#fff;
+  font-size:10px;
+  font-weight:700;
+  align-items:center;
+  justify-content:center;
+  margin-right:6px;
+  flex-shrink:0;
+  vertical-align:middle;
+}
+.topbar{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-bottom:18px}
+.actions{display:flex;gap:10px}
+.icon-btn{
+  width:44px;height:44px;border-radius:50%;
+  border:1px solid #efe4d1;
+  background:rgba(255,250,242,.96);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:var(--shadow);cursor:pointer;font-size:18px
+}
+.icon-btn.gold{background:#fff0d7}
+.dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#7cc987;
+  flex-shrink:0;
+}
+.dot.syncing{background:#f1be43;animation:blink .8s infinite}
+.dot.off{background:#e97e7e}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.hero{
+  border-radius:28px;
+  padding:20px;
+  margin-bottom:16px;
+  position:relative;
+  overflow:hidden;
+}
+.promo-banner{
+  background:linear-gradient(135deg,#557a32 0%,#7b8f33 48%,#d28c2f 100%);
+  color:#fff;
+  border-radius:30px;
+  padding:20px 18px 24px;
+  margin-bottom:16px;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 18px 34px rgba(37,150,93,.22);
+}
+.promo-banner::before{
+  content:"";
+  position:absolute;
+  inset:auto -24px -36px auto;
+  width:150px;
+  height:150px;
+  border-radius:50%;
+  background:rgba(255,248,232,.10);
+}
+.promo-banner::after{
+  content:"";
+  position:absolute;
+  top:-32px;
+  right:-20px;
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  background:rgba(255,248,232,.08);
+}
+.promo-top{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:18px;
+  position:relative;
+  z-index:1;
+}
+.promo-badge{
+  width:44px;
+  height:44px;
+  border-radius:16px;
+  background:rgba(255,255,255,.14);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  flex-shrink:0;
+  box-shadow:inset 0 0 0 1px rgba(255,248,232,.12);
+}
+.promo-kicker{
+  font-size:16px;
+  font-weight:800;
+  letter-spacing:.6px;
+  text-transform:uppercase;
+  opacity:.96;
+}
+.promo-title{
+  font-size:22px;
+  line-height:1.05;
+  font-weight:900;
+  letter-spacing:-1px;
+  max-width:280px;
+  position:relative;
+  z-index:1;
+}
+.promo-copy{
+  margin-top:12px;
+  max-width:260px;
+  font-size:13px;
+  line-height:1.55;
+  color:rgba(255,255,255,.84);
+  position:relative;
+  z-index:1;
+}
+.hero::before{
+  content:"";
+  position:absolute;
+  right:-30px;top:-30px;
+  width:160px;height:160px;border-radius:50%;
+  background:radial-gradient(circle, rgba(210,140,47,.18), transparent 70%);
+}
+.hero-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;position:relative;z-index:1}
+.eyebrow{font-size:11px;font-weight:800;letter-spacing:1.4px;color:#9ba5ad;text-transform:uppercase}
+.range-pick{
+  border:1px solid #e9dfcf;background:#fffaf2;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;color:#546146
+}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;position:relative;z-index:1}
+.hero-metric .label{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px}
+.hero-metric .label.sp{color:#c74840}
+.hero-metric .label.in{color:var(--accent)}
+.hero-metric .value{font-size:20px;font-weight:900}
+.balance-box{
+  margin-top:16px;
+  padding:14px 16px;
+  border-radius:18px;
+  background:rgba(255,255,255,.84);
+  border:1px solid #eef0eb;
+  display:flex;justify-content:space-between;align-items:center;
+  position:relative;z-index:1;
+}
+.balance-box span{font-size:13px;color:#6e7b84}
+.balance-box strong{font-size:16px}
+.seg{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+  background:rgba(255,255,255,.75);
+  border-radius:16px;
+  padding:5px;
+  margin-bottom:16px;
+  box-shadow:var(--shadow);
+}
+.seg button{
+  border:none;background:transparent;border-radius:12px;padding:10px 6px;
+  font-size:12px;font-weight:700;color:#9ba5ad;cursor:pointer;font-family:inherit
+}
+.seg button.on{background:#fff;color:var(--text);box-shadow:0 8px 16px rgba(35,45,58,.08)}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin:18px 0 12px}
+.section-title h2{font-size:15px;font-weight:800}
+.section-title button,.txt-link{
+  border:none;background:#fffaf2;border-radius:999px;padding:9px 14px;
+  font-size:12px;font-weight:700;color:#556145;cursor:pointer;box-shadow:var(--shadow)
+}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat-card,.recent-card,.budget-ring-card,.tool-card,.settings-card,.more-banner,.card,.quick-card{
+  border-radius:24px;
+  padding:16px;
+  margin-bottom:12px;
+}
+.stat-card small{display:block;font-size:11px;color:#8b97a0;text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;font-weight:800}
+.stat-card .big{font-size:28px;font-weight:900;margin-bottom:4px}
+.stat-card .note{font-size:12px;color:#7b8790}
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.quick-card{display:flex;align-items:center;gap:12px;padding:18px}
+.qicon{
+  width:46px;height:46px;border-radius:18px;background:var(--accent-soft);
+  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0
+}
+.quick-card h3{font-size:15px;font-weight:800;margin-bottom:3px}
+.quick-card p{font-size:12px;color:#79858e;line-height:1.4}
+.budget-ring-card svg{display:block;margin:4px auto 10px}
+.budget-caption{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  padding:0 6px 12px;border-bottom:1px solid #efebe2;margin-bottom:12px
+}
+.budget-caption span{display:block;font-size:12px;color:#8a969f}
+.budget-caption strong{display:block;font-size:19px;font-weight:900;margin-top:4px}
+.budget-warning{
+  font-size:13px;border-radius:16px;padding:12px 14px;background:#fbf0df;color:#8a6431
+}
+.budget-warning.over{background:var(--warn-soft);color:#b23d3d}
+.recent-card{padding:0;overflow:hidden}
+.recent-head{display:flex;justify-content:space-between;align-items:center;padding:16px 16px 10px}
+.recent-list{padding:0 10px 10px}
+.tx{
+  display:flex;align-items:center;gap:12px;padding:12px 8px;border-radius:18px
+}
+.tx+.tx{border-top:1px solid #f2eee7}
+.tx-icon{
+  width:52px;height:52px;border-radius:20px;background:#eff7f0;
+  display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0
+}
+.tx-icon.food{background:#fff1df}
+.tx-main{flex:1}
+.tx-main strong{display:block;font-size:15px;margin-bottom:3px}
+.tx-sub{font-size:12px;color:#909ca5}
+.tx-amt{text-align:right}
+.tx-amt strong{display:block;font-size:18px}
+.tx-amt span{font-size:12px;color:#9aa6af}
+.chip-row{display:flex;gap:8px;overflow:auto;padding-bottom:2px}
+.chip-filter{
+  min-width:max-content;border:none;background:#fffaf2;border-radius:999px;padding:9px 14px;
+  font-size:12px;font-weight:700;color:#7d866f;box-shadow:var(--shadow);cursor:pointer
+}
+.chip-filter.on{background:var(--accent);color:#fff}
+.pie-shell{padding:8px 0}
+.pie-wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.pie-legend{flex:1;min-width:140px}
+.pie-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.pie-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.cat-list{display:grid;gap:10px}
+.cat-row{
+  display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;
+  padding:10px 0;border-bottom:1px solid #f3efe7
+}
+.cat-row:last-child{border-bottom:none}
+.cat-icon{
+  width:38px;height:38px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;letter-spacing:.5px;background:#f6f4ef
+}
+.cat-meta strong{display:block;font-size:14px}
+.cat-meta span{font-size:12px;color:#97a2aa}
+.cat-val{text-align:right}
+.cat-val strong{display:block;font-size:15px}
+.cat-val span{font-size:11px;color:var(--accent)}
+.view{display:none}
+.view.on{display:block}
+.card{border-radius:24px}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mc{
+  background:linear-gradient(180deg,#fff8ee 0%,#f2e8d8 100%);
+  border-radius:18px;padding:13px
+}
+.mc .l{font-size:10px;color:#8f9aa3;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;font-weight:700}
+.mc .v{font-size:18px;font-weight:900}
+.mc .s{font-size:11px;color:#98a3aa;margin-top:3px}
+.f{margin-bottom:12px}
+.f label,.flbl{font-size:10px;color:#8c98a1;font-weight:700;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px}
+.f input,.f select,.f textarea,input.fi,select.fi{
+  width:100%;border:1px solid #dfe6df;border-radius:14px;padding:11px 12px;font-size:14px;
+  font-family:inherit;background:#fff;color:var(--text);outline:none
+}
+.f input:focus,.f select:focus,input.fi:focus,select.fi:focus,.f textarea:focus{border-color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.chip{
+  border:1px solid #e7dcc9;border-radius:999px;padding:8px 14px;font-size:12px;font-weight:700;background:#fffaf2;cursor:pointer;color:#66735f
+}
+.chip.st.on,.chip.md.on,.chip.py.on,.chip.sub.on{background:var(--text);color:#fff;border-color:var(--text)}
+.gbtn,.obtn,.rbtn,.sbtn,.ebtn{
+  border:none;border-radius:14px;padding:12px 18px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit
+}
+.gbtn{background:linear-gradient(135deg,#476a2e 0%,#5d7b30 100%);color:#fff}
+.obtn{background:#fffaf2;color:var(--text);border:1px solid #e7dcc9}
+.rbtn{background:#fff1eb;color:#b75034;border:1px solid #efc1b4}
+.sbtn{background:#f4ecdf;color:#556145;border:1px solid #e7dcc9}
+.ebtn{background:#eaf2ff;color:#2f66a5;border:1px solid #c7d8f3}
+.tag{display:inline-block;border-radius:999px;padding:3px 8px;font-size:10px;font-weight:700}
+.pb{height:7px;background:#eadfcf;border-radius:999px;overflow:hidden;margin-top:6px}
+.pf{height:100%;border-radius:999px;transition:width .4s}
+.alert{background:#fff4d8;border:1px solid #f5d38f;border-radius:16px;padding:10px 12px;font-size:12px;color:#886321;margin-bottom:8px}
+.alert-red{background:#fff0f0;border-color:#efb0b0;color:#bf4343}
+.li{
+  display:flex;align-items:center;gap:10px;padding:12px 14px;background:#fffaf2;border:1px solid #eee2d1;border-radius:18px;margin-bottom:8px;box-shadow:var(--shadow)
+}
+.li input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;cursor:pointer}
+.li .n{flex:1;font-size:13px}
+.li .n.done{text-decoration:line-through;color:#b4bcc2}
+.hi{
+  padding:14px;background:#fffaf2;border:1px solid #eee2d1;border-radius:20px;margin-bottom:10px;box-shadow:var(--shadow)
+}
+.hd{margin-top:10px;border-top:1px solid #f1ede6;padding-top:10px;display:none}
+.hd.on{display:block}
+.sdate{font-size:10px;font-weight:800;color:#97a3ac;text-transform:uppercase;letter-spacing:.6px;margin:14px 0 8px;display:flex;align-items:center;gap:8px}
+.sdate::after{content:"";flex:1;height:1px;background:#e8e2d8}
+.acw{position:relative}
+.acl{
+  position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #dde5dd;border-radius:16px;z-index:300;max-height:160px;overflow-y:auto;margin-top:4px;box-shadow:var(--shadow)
+}
+.aci{padding:10px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid #f4f1eb}
+.aci .sub{font-size:10px;color:#98a4ac;margin-top:2px}
+.aci:active{background:#f6f3ee}
+.tbar{
+  background:#f5f2eb;border-radius:20px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin-top:14px
+}
+.tbar .amt{font-size:24px;font-weight:900;color:var(--text)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(18,25,32,.55);z-index:998;align-items:flex-end;justify-content:center}
+.overlay.on{display:flex}
+.sheet{
+  background:#fff;border-radius:28px 28px 0 0;padding:22px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto
+}
+.sheet h3{font-size:18px;font-weight:800;margin-bottom:14px}
+.mlbl{font-size:10px;color:#8e99a2;font-weight:800;text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px}
+.mval{font-size:13px;padding:11px 13px;background:#f5f2eb;border-radius:14px;margin-bottom:12px;word-break:break-all;color:#4b5961}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.stitle{font-size:13px;font-weight:800;color:var(--text);margin-bottom:10px}
+.empty{text-align:center;padding:2rem 1rem;color:#9ca8b0;font-size:13px}
+.uphint{font-size:10px;color:var(--accent);font-weight:700;margin-top:3px;min-height:14px}
+.autofill-hint{font-size:10px;color:#b67116;margin-top:3px}
+.exp-chip-btn{
+  display:flex;align-items:center;gap:10px;padding:14px 12px;
+  background:#fffaf2;border:1px solid #eee2d1;border-radius:18px;
+  cursor:pointer;text-align:left;box-shadow:var(--shadow);
+  transition:border-color .15s,background .15s;
+}
+.exp-chip-btn:active{background:#f3ede4;border-color:#d4c8b5}
+#toast{
+  position:fixed;top:72px;left:50%;transform:translateX(-50%);background:#1c262d;color:#fff;padding:10px 17px;border-radius:999px;font-size:12px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:90%;text-align:center
+}
+#toast.on{opacity:1}
+.subtabs{
+  display:flex;gap:6px;margin-bottom:13px;background:#f1eee7;padding:5px;border-radius:16px
+}
+.stab{
+  flex:1;padding:10px 12px;font-size:12px;font-weight:800;color:#8e99a2;cursor:pointer;border-radius:12px;text-align:center
+}
+.stab.on{color:var(--text);background:#fff;box-shadow:0 8px 16px rgba(35,45,58,.08)}
+.cbudget-row{margin-bottom:12px}
+.cbudget-row .row{font-size:12px;margin-bottom:3px}
+.nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:480px;padding:14px 18px 18px;z-index:120
+}
+.nav-shell{
+  background:rgba(255,250,242,.96);
+  border:1px solid #efe3cf;
+  border-radius:34px;
+  box-shadow:0 -6px 30px rgba(28,38,45,.08);
+  display:flex;justify-content:space-between;align-items:flex-end;
+  padding:14px 10px 12px;
+}
+.nav button{
+  flex:1;padding:4px 2px 0;font-size:10px;font-weight:700;color:#9aa5ad;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;text-transform:none
+}
+.nav button svg{width:21px;height:21px;stroke:#98a08d}
+.nav button.on{color:var(--text)}
+.nav button.on svg{stroke:var(--text)}
+.nav .add-btn{
+  flex:1;
+  padding:4px 2px 0;
+  font-size:10px;
+  font-weight:700;
+  color:#9aa5ad;
+  background:none;
+  border:none;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  text-transform:none;
+}
+.add-icon{
+  width:21px;
+  height:21px;
+  position:relative;
+}
+.add-icon::before,.add-icon::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  background:#98a08d;
+  border-radius:999px;
+  transform:translate(-50%,-50%);
+}
+.add-icon::before{
+  width:15px;
+  height:2.4px;
+}
+.add-icon::after{
+  width:2.4px;
+  height:15px;
+}
+.nav .add-btn.on{color:var(--text)}
+.nav .add-btn.on .add-icon::before,.nav .add-btn.on .add-icon::after{background:var(--text)}
+.tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tool-card{display:flex;align-items:center;gap:12px;padding:18px}
+.tool-icon{
+  width:42px;height:42px;border-radius:16px;background:#f5f2eb;display:flex;align-items:center;justify-content:center;font-size:22px
+}
+.tool-card h3{font-size:15px;font-weight:800}
+.tool-card p{font-size:12px;color:#8c98a1;margin-top:3px}
+.settings-card{display:flex;align-items:center;justify-content:space-between}
+.settings-card strong{display:block;font-size:17px}
+.settings-card span{font-size:12px;color:#8b97a0}
+.more-banner{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  background:linear-gradient(135deg,#fff6e8 0%,#fffdf8 100%);
+  border:1px solid #eedbb5;
+}
+.more-banner .left{display:flex;gap:14px;align-items:center}
+.banner-icon{
+  width:52px;height:52px;border-radius:18px;background:#fff0c9;display:flex;align-items:center;justify-content:center;font-size:28px
+}
+.small-note{font-size:11px;color:#97a3ac}
+.calendar-shell{
+  background:rgba(255,250,242,.95);
+  border:1px solid #f2e8d8;
+  border-radius:28px;
+  box-shadow:var(--shadow);
+  padding:18px 14px 16px;
+}
+.calendar-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:12px 14px;
+  background:#fffaf2;
+  border-radius:22px;
+  box-shadow:var(--shadow);
+  margin-bottom:16px;
+}
+.calendar-head button{
+  border:none;
+  background:none;
+  font-size:30px;
+  line-height:1;
+  color:#3f4d55;
+  cursor:pointer;
+  padding:0 2px;
+}
+.calendar-head strong{
+  display:block;
+  font-size:18px;
+  font-weight:900;
+  text-align:center;
+}
+.calendar-head span{
+  display:block;
+  font-size:11px;
+  color:#98a4ac;
+  text-align:center;
+  margin-top:4px;
+  text-transform:uppercase;
+  letter-spacing:.7px;
+}
+.calendar-weekdays,.calendar-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+}
+.calendar-weekdays div{
+  text-align:center;
+  font-size:11px;
+  color:#697780;
+  padding:8px 0 10px;
+  font-weight:700;
+}
+.calendar-cell{
+  min-height:86px;
+  border:1px solid #efe4d3;
+  background:#fffaf2;
+  padding:8px 6px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  cursor:pointer;
+  transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+.calendar-cell.empty{background:transparent}
+.calendar-day{
+  font-size:14px;
+  font-weight:800;
+  color:#26343d;
+}
+.calendar-amt{
+  align-self:flex-start;
+  border-radius:12px;
+  padding:5px 8px;
+  font-size:11px;
+  font-weight:800;
+  color:#38454d;
+  background:#f7ece4;
+}
+.calendar-amt.mid{background:#f3dece}
+.calendar-amt.high{background:#e7b392}
+.calendar-amt.top{background:#87aa61;color:#fff}
+.month-nav{
+  background:#fff;
+  border-radius:24px;
+  box-shadow:var(--shadow);
+  padding:14px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.month-nav button{
+  border:none;
+  background:none;
+  font-size:30px;
+  line-height:1;
+  color:#44525a;
+  cursor:pointer;
+  padding:0 2px;
+}
+.month-nav-main{
+  text-align:center;
+  flex:1;
+}
+.month-nav-main strong{
+  display:block;
+  font-size:18px;
+  font-weight:900;
+}
+.month-nav-main span{
+  display:block;
+  margin-top:4px;
+  font-size:11px;
+  color:#97a3ac;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+}
+.calendar-panel{display:none;margin-top:12px}
+.calendar-panel.on{display:block}
+.calendar-cell:not(.empty):active{transform:scale(.98)}
+.calendar-cell.sel{
+  border-color:#7b9e57;
+  box-shadow:inset 0 0 0 2px rgba(123,158,87,.22);
+  background:#fff7ed;
+}
+.calendar-day-meta{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:14px;
+  margin-bottom:10px;
+  padding:14px 16px;
+  background:#fff;
+  border-radius:20px;
+  box-shadow:var(--shadow);
+}
+.calendar-day-meta strong{display:block;font-size:16px;font-weight:900}
+.calendar-day-meta span{display:block;font-size:11px;color:#97a3ac;margin-top:4px}
+.calendar-day-list{display:grid;gap:10px}
+.calendar-empty{
+  text-align:center;
+  padding:22px 14px;
+  font-size:12px;
+  color:#97a3ac;
+}
+.home-summary{
+  background:rgba(255,255,255,.92);
+  border:1px solid rgba(255,255,255,.7);
+  box-shadow:var(--shadow);
+  border-radius:30px;
+  padding:16px;
+  margin-bottom:16px;
+}
+.summary-block+.summary-block{
+  border-top:1px solid #f1ede6;
+  margin-top:16px;
+  padding-top:16px;
+}
+.summary-mini{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.summary-mini .stat-card{
+  margin-bottom:0;
+  box-shadow:none;
+  border:1px solid #f1ede6;
+  background:linear-gradient(180deg,#fbfaf6 0%,#f5f2eb 100%);
+}
+@media (max-width:360px){
+  .hero-grid,.grid-2,.quick-grid,.tool-grid,.mgrid{grid-template-columns:1fr}
+  .balance-box{flex-direction:column;align-items:flex-start;gap:6px}
+}
+</style>
+</head>
+<body>
+
+<div id="setup">
+  <div style="font-size:52px;margin-bottom:12px">🛒</div>
+  <h2>MoneyNest</h2>
+  <p>Syncs through <strong>Firebase cloud storage</strong> so your family can use the same grocery app on every device.<br/>Set the shared code once and keep going.</p>
+
+  <div class="steps">
+    <div style="font-size:12px;font-weight:800;color:var(--accent);margin-bottom:8px">Setup Steps</div>
+    <div><span class="snum">1</span>Choose a <strong>sync code</strong> for your home, for example <strong>family-home</strong></div>
+    <div><span class="snum">2</span>Use the <strong>same sync code</strong> on every phone or laptop that should share data</div>
+    <div><span class="snum">3</span>Tap <strong>Start Tracking</strong> and MoneyNest will connect to Firebase automatically</div>
+    <div><span class="snum">4</span>Your data stays in your cloud database, so you can access it any time</div>
+  </div>
+
+  <div class="sbox">
+    <label>Sync Code</label>
+    <input type="text" id="sCode" placeholder="e.g. family-home" autocapitalize="none" spellcheck="false"/>
+    <div class="snote">Leave blank for personal use. Use the same code everywhere to share the same grocery data.</div>
+  </div>
+  <button class="gbtn" style="width:100%;margin-bottom:12px;padding:14px" onclick="startApp()">Start Tracking</button>
+  <p style="font-size:11px;color:#93a0a8;text-align:center;line-height:1.8">Your data syncs through <strong>Firebase</strong> for easy family sharing.<br/>Keep the same sync code on every device.</p>
+</div>
+
+<div id="wrap" style="display:none">
+  <div class="topbar">
+    <div class="greet">
+      <div class="small-note" style="margin-top:4px;display:flex;align-items:center;gap:6px"><span class="dot" id="dot"></span><span id="hsub">Loading…</span></div>
+    </div>
+    <div class="actions">
+      <button id="installBtn" class="obtn" style="display:none;padding:10px 12px;font-size:12px">Install App</button>
+      <button class="icon-btn gold" onclick="openCatBudget()">💎</button>
+      <button class="icon-btn" onclick="openSett()">⚙</button>
+    </div>
+  </div>
+
+  <div class="view on" id="v-dash">
+    <div class="promo-banner">
+      <div class="promo-top">
+        <div class="promo-badge">🪺</div>
+        <div class="promo-kicker">MoneyNest</div>
+      </div>
+      <div class="promo-title">Track every rupee on your daily run.</div>
+      <div class="promo-copy">Save Today, Secure Tomorrow.</div>
+    </div>
+
+    <div class="home-summary">
+      <div class="summary-block" style="padding-top:0;margin-top:0;border-top:none">
+        <div class="section-title" style="margin-top:0">
+          <h2>Budget</h2>
+          <button onclick="saveBudget()">Save</button>
+        </div>
+        <div class="month-nav" style="margin-bottom:12px">
+          <button onclick="shiftBudgetMonth(-1)">‹</button>
+          <div class="month-nav-main">
+            <strong id="budgetMonthTitle">April 2026</strong>
+            <span id="budgetMonthCount">0 transactions</span>
+          </div>
+          <button onclick="shiftBudgetMonth(1)">›</button>
+        </div>
+        <div class="budget-ring-card" style="box-shadow:none;border:1px solid #f1ede6;margin-bottom:0">
+          <div style="display:flex;gap:8px;margin-bottom:12px">
+            <input type="number" id="binput" placeholder="Monthly budget ₹" style="border:1px solid #dfe6df;border-radius:14px;padding:10px 12px;font-size:14px;font-family:inherit;flex:1;outline:none"/>
+            <button class="obtn" onclick="saveBudget()">Set</button>
+          </div>
+          <svg width="100%" height="210" viewBox="0 0 320 210">
+            <path d="M 45 165 A 115 115 0 0 1 275 165" fill="none" stroke="#efe9df" stroke-width="22" stroke-linecap="round"/>
+            <path id="arcBar" d="M 45 165 A 115 115 0 0 1 275 165" fill="none" stroke="#d63f3f" stroke-width="22" stroke-linecap="round" pathLength="100" stroke-dasharray="0 100"/>
+            <text id="ringStatus" x="160" y="104" text-anchor="middle" font-size="12" font-weight="800" fill="#c54848">WITHIN LIMIT</text>
+            <text id="ringValue" x="160" y="138" text-anchor="middle" font-size="22" font-weight="900" fill="#21313a">₹0</text>
+            <text x="55" y="186" font-size="12" fill="#8c98a1">Spent</text>
+            <text id="ringSpent" x="55" y="206" font-size="17" font-weight="900" fill="#21313a">₹0</text>
+            <text x="245" y="186" text-anchor="end" font-size="12" fill="#8c98a1">Limit</text>
+            <text id="ringLimit" x="245" y="206" text-anchor="end" font-size="17" font-weight="900" fill="#21313a">₹0</text>
+          </svg>
+          <div class="budget-warning" id="budgetWarn">Set a monthly budget to get overspending alerts and a cleaner spending target.</div>
+        </div>
+      </div>
+
+      <div id="catAlerts"></div>
+
+      <div class="summary-block">
+        <div class="summary-mini">
+          <div class="stat-card">
+            <small>Average Spend</small>
+            <div class="big" id="da">—</div>
+            <div class="note" id="dc"></div>
+          </div>
+          <div class="stat-card">
+            <small>Top Store</small>
+            <div class="big" id="ds">—</div>
+            <div class="note" id="dsc"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="stitle">Top Items</div>
+      <div id="tItems"></div>
+    </div>
+
+    <div class="card">
+      <div class="stitle">Recent Activity</div>
+      <div id="recentActivity"></div>
+    </div>
+
+    <div class="card">
+      <div class="stitle">Spending Trend</div>
+      <svg id="schart" width="100%" height="110" viewBox="0 0 320 110"></svg>
+      <div class="mgrid" style="margin-top:10px">
+        <div class="mc"><div class="l">Selected Range</div><div class="v" id="dm">₹0</div><div class="s" id="dv"></div></div>
+        <div class="mc"><div class="l">All Time</div><div class="v" id="dat">₹0</div><div class="s">total recorded</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="view" id="v-add">
+    <div class="card">
+      <div id="editBanner" style="display:none;background:#ebf4ff;border:1px solid #cddff6;border-radius:16px;padding:11px 13px;margin-bottom:12px;font-size:13px;color:#2f66a5;align-items:center;justify-content:space-between">
+        <span>Editing purchase</span>
+        <button class="sbtn" onclick="cancelEdit()" style="font-size:11px;padding:6px 10px">Cancel</button>
+      </div>
+
+      <div class="section-title" style="margin-top:0">
+        <h2>Add Entry</h2>
+        <button onclick="resetExpPath()" id="expResetBtn" style="display:none">Reset</button>
+      </div>
+      <div class="small-note" style="margin-bottom:12px">Select a category first, then a sub-category, and log the amount in one simple flow.</div>
+
+      <div id="expBreadcrumb" style="display:none;font-size:12px;color:#8a969f;margin-bottom:12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap"></div>
+      <div id="expDrillDown"></div>
+
+      <div id="expForm" style="display:none">
+        <div id="expFormFields"></div>
+        <div class="tbar" style="margin-top:8px">
+          <div><div style="font-size:10px;color:#8d98a1;text-transform:uppercase;letter-spacing:.5px">Amount</div><div class="amt" id="expTotal">₹0</div></div>
+          <button class="gbtn" id="expSaveBtn" onclick="saveUnifiedEntry()">Save Entry</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="view" id="v-list">
+    <div class="subtabs">
+      <div class="stab on" id="st-sess" onclick="showSubTab('sess')">Past Sessions</div>
+      <div class="stab" id="st-cal" onclick="showSubTab('cal')">Calendar View</div>
+    </div>
+    <div id="sub-sess" style="display:none">
+      <div class="card" style="margin-bottom:10px">
+        <div class="section-title" style="margin-top:0">
+          <h2>Transactions</h2>
+          <div class="small-note" id="sessCount">0 sessions</div>
+        </div>
+        <div class="month-nav">
+          <button onclick="shiftSessionMonth(-1)">‹</button>
+          <div class="month-nav-main">
+            <strong id="sessionMonthTitle">April 2026</strong>
+            <span id="sessionMonthCount">0 transactions</span>
+          </div>
+          <button onclick="shiftSessionMonth(1)">›</button>
+        </div>
+      </div>
+      <div style="font-size:12px;color:#87949d;margin-bottom:10px">Grouped by date so recent sessions are easier to scan.</div>
+      <div id="sessContainer"></div>
+    </div>
+    <div id="sub-cal" style="display:none">
+      <div class="card" style="margin-bottom:10px">
+        <div class="section-title" style="margin-top:0">
+          <h2>Calendar View</h2>
+          <button onclick="clearCalendarSelection()">Clear</button>
+        </div>
+      </div>
+      <div class="calendar-shell" id="calendarSection">
+        <div class="calendar-head">
+          <button onclick="shiftCalendarMonth(-1)">‹</button>
+          <div>
+            <strong id="calTitle">April 2026</strong>
+            <span id="calCount">0 transactions</span>
+          </div>
+          <button onclick="shiftCalendarMonth(1)">›</button>
+        </div>
+        <div class="calendar-weekdays">
+          <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+        <div id="calendarDayPanel">
+          <div class="calendar-empty" id="calendarDayEmpty">Tap a date to see that day's transactions.</div>
+          <div id="calendarDayContent" style="display:none">
+            <div class="calendar-day-meta">
+              <div>
+                <strong id="calendarDayTitle">Selected Day</strong>
+                <span id="calendarDayCount">0 transactions</span>
+              </div>
+              <button class="sbtn" style="padding:8px 12px;font-size:12px" onclick="clearCalendarSelection()">Clear</button>
+            </div>
+            <div class="calendar-day-list" id="calendarDayTransactions"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="view" id="v-hist">
+    <div class="card" style="margin-bottom:12px">
+      <div class="section-title" style="margin-top:0">
+        <h2>Analysis</h2>
+        <button onclick="expCSV()">Export CSV</button>
+      </div>
+      <div class="f" style="margin-bottom:10px"><input type="search" id="hSrch" class="fi" placeholder="Search items, store, notes…" oninput="renderHist()"/></div>
+      <div class="chip-row" id="hSF"></div>
+      <div class="small-note" id="hCnt" style="margin-top:10px"></div>
+    </div>
+
+    <div class="card">
+      <div class="stitle">Category Spending</div>
+      <div id="histPie"></div>
+    </div>
+
+    <div class="card">
+      <div class="stitle">Store Price Comparison</div>
+      <div id="compT"></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card"><div class="stitle">By Store</div><div id="stSp"></div></div>
+      <div class="card"><div class="stitle">Payments</div><div id="paySp"></div></div>
+    </div>
+
+    <div class="card">
+      <div class="stitle">Item Price Tracker</div>
+      <div class="acw">
+        <input type="text" id="iSrch" class="fi" placeholder="Search item to see price history…" oninput="iAC()" onfocus="iAC()" autocomplete="off"/>
+        <div class="acl" id="iACl" style="display:none"></div>
+      </div>
+      <div id="iRes" style="margin-top:12px"></div>
+    </div>
+
+  </div>
+
+  <div class="view" id="v-ins">
+    <div class="tool-grid">
+      <div class="tool-card" onclick="openListSessions()">
+        <div class="tool-icon">📋</div>
+        <div><h3>Transactions</h3><p>Open past sessions grouped by date.</p></div>
+      </div>
+      <div class="tool-card" onclick="openCatBudget()">
+        <div class="tool-icon">💰</div>
+        <div><h3>Budgets</h3><p>Monthly and category targets.</p></div>
+      </div>
+      <div class="tool-card" onclick="openCategoriesManager()">
+        <div class="tool-icon">🧩</div>
+        <div><h3>Categories</h3><p>Rename available categories and sub-categories.</p></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="stitle">Settings</div>
+      <div class="settings-card" style="padding:0;box-shadow:none;border:none">
+        <div>
+          <strong>Sync Source</strong>
+          <span id="sSC">default</span>
+        </div>
+        <button class="obtn" onclick="openSett()">Open</button>
+      </div>
+      <div class="mval" id="sURL" style="margin-top:12px;margin-bottom:0"></div>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-shell">
+      <button class="on" id="navDash" onclick="goTab('dash',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+        Home
+      </button>
+      <button id="navHist" onclick="goTab('hist',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Analysis
+      </button>
+      <button class="add-btn" id="navAdd" onclick="goTab('add',this)">
+        <span class="add-icon" aria-hidden="true"></span>
+        Add
+      </button>
+      <button id="navList" onclick="goTab('list',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg>
+        <span id="lNavLbl">List</span>
+      </button>
+      <button id="navIns" onclick="goTab('ins',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82L4.21 7.1a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c0 .67.39 1.28 1 1.51.16.06.33.09.51.09H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        More
+      </button>
+    </div>
+  </nav>
+</div>
+
+<div id="toast"></div>
+
+<div class="overlay" id="settMod" onclick="if(event.target===this)closeSett()">
+  <div class="sheet">
+    <h3>Settings</h3>
+    <div class="mlbl">Sync Code</div><div class="mval" id="settSyncCode"></div>
+    <div class="mlbl">Cloud Project</div><div class="mval" id="settURL"></div>
+    <button class="obtn" style="width:100%;margin-bottom:9px" onclick="window.open('https://console.firebase.google.com/project/moneynest-d1027/firestore','_blank')">Open Firebase</button>
+    <button class="rbtn" style="width:100%;padding:11px;font-size:13px;margin-bottom:7px" onclick="resetApp()">Change Sync Code</button>
+    <button class="sbtn" style="width:100%;padding:11px;font-size:13px" onclick="closeSett()">Close</button>
+  </div>
+</div>
+
+<div class="overlay" id="catBudMod" onclick="if(event.target===this)closeCatBudget()">
+  <div class="sheet">
+    <h3>Category Budget Limits</h3>
+    <p style="font-size:12px;color:#86939c;margin-bottom:14px">Set monthly caps per category so the dashboard can warn you before you overspend.</p>
+    <div style="display:flex;gap:8px;align-items:flex-end;margin-bottom:12px">
+      <div style="flex:1">
+        <div class="mlbl">Apply To All</div>
+        <input type="number" min="0" id="catBudAll" placeholder="Same limit for all categories"
+          style="width:100%;border:1px solid #dfe6df;border-radius:12px;padding:10px 11px;font-size:13px;font-family:inherit;outline:none"/>
+      </div>
+      <button class="obtn" style="padding:10px 14px" onclick="applyAllCatBudgets()">Apply</button>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;background:#fffaf2;border:1px solid #eee2d1;border-radius:16px;padding:12px 14px;margin-bottom:12px">
+      <div>
+        <div class="mlbl" style="margin-bottom:3px">Total Category Limits</div>
+        <div style="font-size:11px;color:#97a3ac">Combined limit across all categories</div>
+      </div>
+      <div style="font-size:18px;font-weight:900;color:var(--text)" id="catBudTotal">₹0</div>
+    </div>
+    <div id="catBudFields"></div>
+    <button class="gbtn" style="width:100%;margin-bottom:8px" onclick="saveCatBudgets()">Save Limits</button>
+    <button class="sbtn" style="width:100%;padding:11px" onclick="closeCatBudget()">Cancel</button>
+  </div>
+</div>
+
+<div class="overlay" id="catMgrMod" onclick="if(event.target===this)closeCategoriesManager()">
+  <div class="sheet">
+    <h3>Categories</h3>
+    <p style="font-size:12px;color:#86939c;margin-bottom:14px">Rename categories and sub-categories without losing your saved data.</p>
+    <div id="catMgrFields" style="display:grid;gap:12px"></div>
+    <button class="gbtn" style="width:100%;margin-top:10px;margin-bottom:8px" onclick="saveCategoryLabels()">Save Names</button>
+    <button class="sbtn" style="width:100%;padding:11px" onclick="closeCategoriesManager()">Close</button>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script>
+const STORES=['Dmart','RelianceMart','Local Shop','Other'];
+const CATS=['Vegetables','Fruits','Pulses','Dairy','Meat & Fish','Snacks','Beverages','Frozen','Bakery','Spices','Oils','Rice & Flour','Ready Mixes','Dry Fruits','Household','Cleaning Supplies','Personal','Baby','Other'];
+const PAYS=['Cash','UPI','Debit Card','Credit Card','Rupay Credit UPI'];
+const UNITS=['pcs','g','kg','ml','L','packet','dozen'];
+
+const EXPENSE_TREE={
+  "Essentials":{icon:"🏠",sub:{
+    "Rent":{icon:"🏠",fields:["amount","date","notes"]},
+    "Bills":{icon:"💡",sub:{
+      "Mobile Recharge":{icon:"📱",fields:["amount","date","notes"]},
+      "Electricity":{icon:"💡",fields:["amount","date","notes"]},
+      "Water":{icon:"🚿",fields:["amount","date","notes"]},
+      "WiFi":{icon:"🌐",fields:["amount","date","notes"]},
+      "DTH":{icon:"📺",fields:["amount","date","notes"]},
+      "Gas":{icon:"🔥",fields:["amount","date","notes"]}
+    }},
+    "Groceries":{icon:"🛒",_grocery:true,sub:{
+      "Vegetables":{icon:"🥦",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+      "Fruits":{icon:"🍎",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+      "Dairy":{icon:"🥛",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+      "Pulses":{icon:"🫘",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+      "Meat & Fish":{icon:"🍗",_grocery:true},
+      "Snacks":{icon:"🍪",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+      "Beverages":{icon:"🥤",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+      "Frozen":{icon:"🧊",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+      "Bakery":{icon:"🥖",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+      "Spices":{icon:"🌶️",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+      "Oils":{icon:"🫗",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+      "Rice & Flour":{icon:"🌾",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+      "Ready Mixes":{icon:"🥣",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+      "Dry Fruits":{icon:"🥜",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+      "Household":{icon:"🧹",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+      "Cleaning Supplies":{icon:"🧽",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+      "Personal":{icon:"🧴",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+      "Baby":{icon:"🍼",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+      "Other":{icon:"📦",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]}
+    }}
+  }},
+  "Transport":{icon:"🚂",sub:{
+    "Travel":{icon:"🧳",fields:["amount","date","notes"]}
+  }},
+  "Food & Dining":{icon:"🍔",sub:{
+    "Restaurant":{icon:"🍽️",fields:["amount","date","notes"]},
+  }},
+  "Lifestyle":{icon:"🛍️",sub:{
+    "Shopping":{icon:"🛍️",fields:["amount","date","notes"]},
+    "Electronics":{icon:"📱",fields:["amount","warranty","date","notes"]},
+    "Personal Care":{icon:"🧴",fields:["amount","date","notes"]},
+    "Gifts":{icon:"🎁",fields:["amount","recipient","date","notes"]}
+  }},
+  "Leisure":{icon:"🎬",sub:{
+    "Entertainment":{icon:"🎥",fields:["amount","date","notes"]},
+    "Snacks":{icon:"🍟",fields:["amount","date","notes"]}
+  }},
+  "Health":{icon:"🏥",sub:{
+    "Medical":{icon:"🏥",fields:["amount","hospital","medicine","date","notes"]}
+  }},
+  "Vehicle":{icon:"🛵",sub:{
+    "Fuel":{icon:"⛽",fields:["amount","liters","odometer","date","notes"]},
+    "Service":{icon:"🔧",fields:["amount","odometer","date","notes"]},
+    "Repairs":{icon:"🛠️",fields:["amount","odometer","date","notes"]},
+    "Insurance":{icon:"🛡️",fields:["amount","date","notes"]},
+    "Parking":{icon:"🅿️",fields:["amount","date","notes"]},
+    "Toll":{icon:"🛣️",fields:["amount","date","notes"]},
+    "Washing":{icon:"🧼",fields:["amount","date","notes"]}
+  }},
+  "Home":{icon:"🏡",sub:{
+    "Furniture":{icon:"🛋️",fields:["amount","date","notes"]},
+    "Appliances":{icon:"📺",fields:["amount","warranty","date","notes"]},
+    "Repairs":{icon:"🪛",fields:["amount","date","notes"]},
+    "Maintenance":{icon:"🧰",fields:["amount","date","notes"]},
+    "Cleaning Help":{icon:"🧹",fields:["amount","date","notes"]},
+    "Decor":{icon:"🖼️",fields:["amount","date","notes"]}
+  }},
+  "Others":{icon:"📦",sub:{
+    "Misc":{icon:"📦",fields:["amount","date","notes"]},
+    "Custom":{icon:"➕",fields:["customName","amount","date","notes"]}
+  }}
+};
+const DASH_ORDER=['week','month','year','all'];
+const CATEGORY_ICONS={
+  'Vegetables':'🥦','Fruits':'🍎','Pulses':'🫘','Dairy':'🥛','Meat & Fish':'🍗','Snacks':'🍪','Beverages':'🥤',
+  'Frozen':'🧊','Bakery':'🥖','Spices':'🌶️','Oils':'🫗','Rice & Flour':'🌾','Ready Mixes':'🥣','Dry Fruits':'🥜',
+  'Household':'🧽','Cleaning Supplies':'🧴','Personal':'🧴','Baby':'🧸','Other':'🧾'
+};
+
+const CCOLOR={
+  'Vegetables':'#639922','Fruits':'#D85A30','Pulses':'#9A6B2F','Dairy':'#378ADD',
+  'Meat & Fish':'#A32D2D','Snacks':'#EF9F27','Beverages':'#1D9E75','Bakery':'#C6854A',
+  'Frozen':'#185FA5','Spices':'#C94B2C','Oils':'#D9A422','Rice & Flour':'#B9985B','Ready Mixes':'#B06F3B','Dry Fruits':'#8A5A2F',
+  'Household':'#888780','Cleaning Supplies':'#5E9AA8','Personal':'#D4537E',
+  'Baby':'#E07B7B','Other':'#aaa'
+};
+const CTAG_BG={
+  'Vegetables':'#EAF3DE','Fruits':'#FAECE7','Pulses':'#F5E8D7','Dairy':'#E6F1FB',
+  'Meat & Fish':'#FCEBEB','Snacks':'#FAEEDA','Beverages':'#E1F5EE','Bakery':'#F7E9DA',
+  'Frozen':'#E6F1FB','Spices':'#FCE8E1','Oils':'#FBF1D8','Rice & Flour':'#F5EDDE','Ready Mixes':'#F8E8DC','Dry Fruits':'#F4E6D7',
+  'Household':'#F1EFE8','Cleaning Supplies':'#E6F3F5','Personal':'#FBEAF0',
+  'Baby':'#FFF0F0','Other':'#F4F5F0'
+};
+
+const SUGG={
+  'Vegetables':['Tomatoes','Onions','Potatoes','Drumsticks','Dondakaya','Chikkudukaya','Carrots','Beetroot','Spinach','Capsicum','Cauliflower','Beans','Peas','Cabbage','Lady Finger','Brinjal','Garlic','Ginger','Coriander','Lemons','Cucumber','Radish','Mushroom'],
+  'Fruits':['Apples','Bananas','Mangos','Oranges','Grapes','Watermelon','Papaya','Guava','Pomegranate','Pineapple','Strawberry','Kiwi','Pear','Litchi','Chikoo','Coconut','Plum','Peach'],
+  'Pulses':['Toor Dal','Moong Dal','Urad Dal','Chana Dal','Rajma','Chickpeas','Black Gram','Green Gram','Masoor Dal','Peanuts'],
+  'Dairy':['Milk','Curd','Butter','Paneer','Cheese','Ghee','Cream','Buttermilk','Lassi','Amul Taza','Amul Gold'],
+  'Meat & Fish':['Chicken','Mutton','Fish','Prawns','Eggs','Crab','Tuna','Salmon','Sardine','Catfish'],
+  'Snacks':['Biscuits','Chips','Namkeen','Cookies','Chocolates','Crackers','Popcorn','Nuts','Murukku','Lays','Kurkure','Peanuts','Mixture','Sweets'],
+  'Beverages':['Tea','Coffee','Juice','Soft Drink','Water Bottle','Energy Drink','Coconut Water','Milkshake','Lassi','Green Tea'],
+  'Frozen':['Ice Cream'],
+  'Bakery':['Bread','Brown Bread','Buns','Cake','Muffins','Pav','Croissant','Cookies'],
+  'Spices':['Turmeric','Chilli Powder','Coriander Powder','Garam Masala','Cumin','Mustard Seeds','Pepper','Cardamom'],
+  'Oils':['Sunflower Oil','Groundnut Oil','Mustard Oil','Olive Oil','Ghee'],
+  'Rice & Flour':['Rice','Basmati Rice','Atta','Maida','Rava','Besan','Rice Flour','Jowar Flour'],
+  'Ready Mixes':['Idli Mix','Dosa Mix','Gulab Jamun Mix','Pancake Mix','Soup Mix','Noodle Mix'],
+  'Dry Fruits':['Almonds','Cashews','Raisins','Dates','Pistachios','Walnuts','Anjeer'],
+  'Household':['Detergent','Soap','Shampoo','Toothpaste','Dishwash','Tissues','Toilet Paper','Garbage Bags','Floor Cleaner','Surf Excel','Vim','Lizol','Phenyl','Mosquito Repellent'],
+  'Cleaning Supplies':['Floor Cleaner','Toilet Cleaner','Dishwash Liquid','Sponges','Brushes','Cleaning Cloth','Disinfectant Spray'],
+  'Personal':['Face Wash','Moisturizer','Deodorant','Razor','Sanitary Pads','Cotton','Lotion','Sunscreen','Lip Balm'],
+  'Baby':['Baby Soap','Baby Powder','Diapers','Baby Oil','Baby Shampoo','Baby Food','Baby Wipes','Rash Cream'],
+  'Other':[]
+};
+const ALL_ITEMS=Object.values(SUGG).flat();
+
+const FIREBASE_CONFIG={
+  apiKey:"AIzaSyCDDjTcTdp0ffdq7vfR4U8I8llGaOIYzQE",
+  authDomain:"moneynest-d1027.firebaseapp.com",
+  projectId:"moneynest-d1027",
+  storageBucket:"moneynest-d1027.firebasestorage.app",
+  messagingSenderId:"102636653000",
+  appId:"1:102636653000:web:46d595cb10e616b82ad8fd"
+};
+
+let DKEY='',SCODE='';
+let purchases=[],expenses=[],budget=0,catBudgets={},deletedIds=[],categoryLabels={};
+let addMode='grocery',expPath=[],expState={l1:null,l2:null,l3:null};
+// Reference arrays for defaults so changes to STORES/PAYS propagate automatically
+let selSt=STORES[0],selPy=PAYS[1],curMd='normal',groceryEntryMode='normal';
+let iRows=[],histSF='All';
+let autoT=null,editingId=null,editingEntry=null;
+let serverVersion=0;
+let firestoreDb=null;
+let firebaseReady=false;
+let dashRange='month';
+// Use a single Date snapshot to avoid midnight-boundary race on cursor init
+const _initNow=new Date();
+let calCursor=new Date(_initNow.getFullYear(),_initNow.getMonth(),1);
+let budgetCursor=new Date(_initNow.getFullYear(),_initNow.getMonth(),1);
+let sessionCursor=new Date(_initNow.getFullYear(),_initNow.getMonth(),1);
+let selectedCalendarDate=null;
+
+let _priceCache={};
+function _buildPriceCache(){
+  _priceCache={};
+  purchases.flatMap(p=>p.items.map(it=>({...it,datetime:p.datetime,store:p.store})))
+    .sort((a,b)=>new Date(b.datetime)-new Date(a.datetime))
+    .forEach(it=>{const k=it.name.toLowerCase();if(!_priceCache[k])_priceCache[k]=it;});
+}
+
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2);
+const fmt=n=>'₹'+Math.round(n||0).toLocaleString('en-IN');
+const STANDARD_ENTRY_FIELDS=['date','amount','payMode','notes'];
+const FIELD_DEFS={
+  itemName:{label:'Item Name',type:'text',placeholder:'e.g. Tomatoes'},
+  qty:{label:'Qty',type:'number',placeholder:'1',min:'0',step:'0.1'},
+  unit:{label:'Unit',type:'select',options:UNITS},
+  price:{label:'Price (₹)',type:'number',placeholder:'0',min:'0',step:'0.5'},
+  date:{label:'Date & Time',type:'datetime-local'},
+  amount:{label:'Amount (₹)',type:'number',placeholder:'0',min:'0',step:'0.5'},
+  payMode:{label:'Payment Mode',type:'select',options:PAYS},
+  notes:{label:'Notes',type:'textarea',rows:'3',placeholder:'Optional note'},
+  liters:{label:'Liters',type:'number',placeholder:'0',min:'0',step:'0.01'},
+  odometer:{label:'Odometer',type:'number',placeholder:'Current odometer reading',min:'0',step:'1'},
+  hospital:{label:'Hospital / Clinic',type:'text',placeholder:'e.g. Apollo Clinic'},
+  medicine:{label:'Medicine',type:'text',placeholder:'e.g. Antibiotics'},
+  warranty:{label:'Warranty',type:'text',placeholder:'e.g. 1 year'},
+  recipient:{label:'Recipient',type:'text',placeholder:'Who was this for?'},
+  customName:{label:'Custom Name',type:'text',placeholder:'Enter a custom label'}
+};
+// Fix #13: include year so exported dates are unambiguous
+const fmtS=d=>new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+const fmtL=d=>new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+const mKey=d=>{const dt=new Date(d);return`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}`;};
+const curM=()=>mKey(new Date());
+// Fix #1: escape ALL HTML-significant characters, not just single quotes
+const safeText=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+const uniq=list=>[...new Set((list||[]).filter(Boolean))];
+
+function toast(msg,dur=2200){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('on');
+  setTimeout(()=>t.classList.remove('on'),dur);
+}
+function setDot(s){
+  const d=document.getElementById('dot');
+  if(d)d.className='dot'+(s==='syncing'?' syncing':s==='off'?' off':'');
+  updateHdr(s);
+}
+function getConnectionLabel(state){
+  if(state==='syncing') return 'Syncing';
+  if(state==='off'||navigator.onLine===false) return 'Offline';
+  return 'Online';
+}
+function unitPrice(price,qty,unit){
+  const p=parseFloat(price)||0,q=parseFloat(qty)||1;
+  if(!p||!q) return '';
+  const pu=p/q;
+  if(unit==='g') return `₹${(pu*1000).toFixed(0)}/kg`;
+  if(unit==='ml') return `₹${(pu*1000).toFixed(0)}/L`;
+  if(unit==='dozen') return `₹${(pu/12).toFixed(1)}/pc`;
+  if(unit==='kg') return `₹${pu.toFixed(1)}/kg`;
+  if(unit==='L') return `₹${pu.toFixed(1)}/L`;
+  return `₹${pu.toFixed(1)}/${unit}`;
+}
+function lastPrice(itemName){
+  // O(1) lookup using pre-built cache instead of O(n×m) scan on every call
+  return _priceCache[itemName.toLowerCase()]||null;
+}
+
+function tag(cat,txt){
+  if(cat==='store') return `<span class="tag" style="background:#fff3de;color:#7a5b15">${safeText(txt||cat)}</span>`;
+  if(cat==='py'||cat==='pay') return `<span class="tag" style="background:#eaf2ff;color:#2f66a5">${safeText(txt||cat)}</span>`;
+  const bg=CTAG_BG[cat]||'#f4f5f0',cl=CCOLOR[cat]||'#888';
+  return `<span class="tag" style="background:${bg};color:${cl}">${safeText(txt||cat.slice(0,3))}</span>`;
+}
+function pathKey(parts){
+  return parts.filter(Boolean).join('>');
+}
+function getCategoryLabel(...parts){
+  const key=pathKey(parts);
+  const fallback=parts.filter(Boolean).slice(-1)[0]||'';
+  return categoryLabels[key]||fallback;
+}
+function getExpenseIcon(category,subcategory,leaf){
+  return EXPENSE_TREE[category]?.sub?.[subcategory]?.sub?.[leaf]?.icon
+    ||EXPENSE_TREE[category]?.sub?.[subcategory]?.icon
+    ||EXPENSE_TREE[category]?.icon
+    ||'💳';
+}
+function getExpenseDisplayPath(entry){
+  return {
+    category:getCategoryLabel(entry.category),
+    subcategory:getCategoryLabel(entry.category,entry.subcategory),
+    leaf:getCategoryLabel(entry.category,entry.subcategory,entry.leaf)
+  };
+}
+function getValidStoreName(value){
+  return STORES.includes(value)?value:'Other';
+}
+function normalizePurchaseStores(){
+  purchases=purchases.map(p=>{
+    if(!p?.sourceSubcategory||p.sourceSubcategory!=='Groceries') return p;
+    return {...p,store:getValidStoreName(p.store)};
+  });
+}
+function getCombinedEntriesForMonth(cursor){
+  const purchasesMonth=purchases.filter(p=>inMonth(p.datetime,cursor)).map(p=>({type:'purchase',datetime:p.datetime,amount:p.total,record:p}));
+  const expensesMonth=expenses.filter(e=>inMonth(e.datetime,cursor)).map(e=>({type:'expense',datetime:e.datetime,amount:e.amount,record:e}));
+  return [...purchasesMonth,...expensesMonth].sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
+}
+function periodLabel(v){
+  return v==='week'?'This Week':v==='month'?'This Month':v==='year'?'This Year':'All Time';
+}
+
+function inRange(date,range){
+  const d=new Date(date),now=new Date();
+  if(range==='all') return true;
+  if(range==='week'){
+    const day=now.getDay();
+    const monday=new Date(now);
+    monday.setDate(now.getDate()-day+(day===0?-6:1));
+    monday.setHours(0,0,0,0);
+    return d>=monday&&d<=now;
+  }
+  if(range==='year') return d.getFullYear()===now.getFullYear();
+  return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth();
+}
+function inMonth(date,cursor){
+  const d=new Date(date);
+  return d.getFullYear()===cursor.getFullYear()&&d.getMonth()===cursor.getMonth();
+}
+function rangePurchases(range){return purchases.filter(p=>inRange(p.datetime,range));}
+function categoryIcon(cat){
+  const map={
+    'Vegetables':'VE',
+    'Fruits':'FR',
+    'Pulses':'PU',
+    'Dairy':'DA',
+    'Meat & Fish':'MF',
+    'Snacks':'SN',
+    'Beverages':'BV',
+    'Frozen':'FZ',
+    'Household':'HH',
+    'Personal':'PE',
+    'Baby':'BY',
+    'Other':'OT'
+  };
+  return map[cat]||'OT';
+}
+function recentIcon(p){
+  const cat=p.items?.[0]?.category||'Other';
+  if(cat==='Vegetables'||cat==='Fruits') return ['ðŸ›’',''];
+  if(cat==='Snacks'||cat==='Beverages') return ['ðŸ½','food'];
+  if(cat==='Household'||cat==='Personal') return ['ðŸ§¼',''];
+  return ['ðŸ›',''];
+}
+
+
+function defaultCloudState(){
+  return {purchases:[],expenses:[],budget:0,catBudgets:{},deletedIds:[],categoryLabels:{},version:0};
+}
+function loadLocalState(){
+  try{purchases=JSON.parse(localStorage.getItem('gt_p')||'[]');}catch{purchases=[];}
+  try{expenses=JSON.parse(localStorage.getItem('gt_e')||'[]');}catch{expenses=[];}
+  budget=parseFloat(localStorage.getItem('gt_b')||'0');
+  try{catBudgets=JSON.parse(localStorage.getItem('gt_cb')||'{}');}catch{catBudgets={};}
+  try{deletedIds=uniq(JSON.parse(localStorage.getItem('gt_del')||'[]'));}catch{deletedIds=[];}
+  try{categoryLabels=JSON.parse(localStorage.getItem('gt_cl')||'{}');}catch{categoryLabels={};}
+}
+function normalizeCloudState(data){
+  const base=defaultCloudState();
+  const incoming=data&&typeof data==='object'?data:{};
+  return {
+    purchases:Array.isArray(incoming.purchases)?incoming.purchases:base.purchases,
+    expenses:Array.isArray(incoming.expenses)?incoming.expenses:base.expenses,
+    budget:incoming.budget!==undefined?parseFloat(incoming.budget)||0:base.budget,
+    catBudgets:incoming.catBudgets&&typeof incoming.catBudgets==='object'?incoming.catBudgets:base.catBudgets,
+    deletedIds:uniq(Array.isArray(incoming.deletedIds)?incoming.deletedIds:base.deletedIds),
+    categoryLabels:incoming.categoryLabels&&typeof incoming.categoryLabels==='object'?incoming.categoryLabels:base.categoryLabels,
+    version:incoming.version!==undefined?Number(incoming.version)||0:base.version
+  };
+}
+function applyCloudState(data){
+  const state=normalizeCloudState(data);
+  purchases=state.purchases;
+  expenses=state.expenses;
+  budget=state.budget;
+  catBudgets=state.catBudgets;
+  deletedIds=state.deletedIds;
+  categoryLabels=state.categoryLabels;
+  normalizePurchaseStores();
+  serverVersion=state.version;
+  saveLocal();
+  _buildPriceCache();
+  renderDash();
+  renderHist();
+}
+async function ensureFirebase(){
+  if(firebaseReady&&firestoreDb) return true;
+  if(typeof firebase==='undefined'){
+    setDot('off');
+    toast('Firebase library did not load');
+    return false;
+  }
+  try{
+    if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+    firestoreDb=firebase.firestore();
+    if(ensureFirebase._persistenceTried!==true){
+      ensureFirebase._persistenceTried=true;
+      try{
+        await firestoreDb.enablePersistence({synchronizeTabs:true});
+      }catch(err){
+        console.warn('Firestore persistence unavailable', err);
+      }
+    }
+    firebaseReady=true;
+    return true;
+  }catch(err){
+    console.error('Firebase init failed', err);
+    setDot('off');
+    toast('Could not connect to Firebase');
+    return false;
+  }
+}
+function cloudDoc(){
+  return firestoreDb.collection('moneyNestStates').doc(DKEY||'gt_default');
+}
+async function cloudGet(){
+  if(!(await ensureFirebase())) return null;
+  try{
+    setDot('syncing');
+    const snap=await cloudDoc().get();
+    const d=snap.exists?normalizeCloudState(snap.data()):defaultCloudState();
+    setDot('on');
+    return d;
+  }catch(err){
+    console.error('Firebase read failed', err);
+    setDot('off');
+    return null;
+  }
+}
+async function cloudPost(data){
+  if(!(await ensureFirebase())) return null;
+  try{
+    setDot('syncing');
+    const payload=normalizeCloudState({...data,version:Date.now()});
+    await cloudDoc().set({...payload,list:firebase.firestore.FieldValue.delete()},{merge:true});
+    setDot('on');
+    if(payload.version) serverVersion=payload.version;
+    return {ok:true,version:payload.version};
+  }catch(err){
+    console.error('Firebase write failed', err);
+    setDot('off');
+    return null;
+  }
+}
+function saveLocal(){
+  deletedIds=uniq(deletedIds);
+  localStorage.setItem('gt_p',JSON.stringify(purchases));
+  localStorage.setItem('gt_e',JSON.stringify(expenses));
+  localStorage.setItem('gt_b',String(budget));
+  localStorage.setItem('gt_cb',JSON.stringify(catBudgets));
+  localStorage.setItem('gt_del',JSON.stringify(deletedIds));
+  localStorage.setItem('gt_cl',JSON.stringify(categoryLabels));
+}
+async function push(){
+  saveLocal();
+  return await cloudPost({purchases,expenses,budget,catBudgets,deletedIds:uniq(deletedIds),categoryLabels});
+}
+async function pull(){
+  const d=await cloudGet();
+  if(!d) return;
+  const hasRemoteData=(d.version||0)>0||d.purchases.length||d.expenses.length||d.budget>0||Object.keys(d.catBudgets||{}).length||d.deletedIds.length;
+  const hasLocalData=purchases.length||expenses.length||budget>0||Object.keys(catBudgets||{}).length||deletedIds.length;
+  if(!hasRemoteData&&hasLocalData){
+    await push();
+    return;
+  }
+  applyCloudState(d);
+}
+
+async function startApp(){
+  const code=(document.getElementById('sCode').value||'').trim().toLowerCase().replace(/\s+/g,'_')||'default';
+  SCODE=code;
+  DKEY='gt_'+code;
+  localStorage.setItem('gt_code',SCODE);
+  localStorage.setItem('gt_dkey',DKEY);
+  loadLocalState();
+  _buildPriceCache();
+  document.getElementById('setup').style.display='none';
+  document.getElementById('wrap').style.display='block';
+  initApp();
+  toast('Connecting to Firebase...');
+  await pull();
+  startAutoSync();
+}
+
+
+function initApp(){
+  const sc=document.getElementById('stChips');
+  if(sc&&!sc.children.length){
+    STORES.forEach((s,i)=>{
+      const c=document.createElement('div');
+      c.className='chip st'+(i===0?' on':'');
+      c.textContent=s;
+      c.onclick=()=>{
+        selSt=s;
+        sc.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));
+        c.classList.add('on');
+      };
+      sc.appendChild(c);
+    });
+  }
+  const pc=document.getElementById('pyChips');
+  if(pc&&!pc.children.length){
+    PAYS.forEach((p,i)=>{
+      const c=document.createElement('div');
+      c.className='chip py'+(i===1?' on':'');
+      c.textContent=p;
+      c.onclick=()=>{
+        selPy=p;
+        pc.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));
+        c.classList.add('on');
+      };
+      pc.appendChild(c);
+    });
+  }
+  if(document.getElementById('aDt')&&!document.getElementById('aDt').value) document.getElementById('aDt').value=new Date().toISOString().slice(0,16);
+  if(budget>0) document.getElementById('binput').value=budget;
+  if(document.getElementById('iCont')&&!iRows.length) addRow();
+  if(document.getElementById('expDrillDown')) renderExpDrillDown();
+  document.getElementById('sSC').textContent=SCODE||'default';
+  document.getElementById('sURL').textContent='Firebase · '+FIREBASE_CONFIG.projectId;
+  document.getElementById('settSyncCode').textContent=SCODE||'default';
+  document.getElementById('settURL').textContent=FIREBASE_CONFIG.projectId;
+  updateHdr();
+}
+
+function startAutoSync(){
+  clearInterval(autoT);
+  autoT=setInterval(async()=>{
+    // Fix #15: skip sync if user is actively editing a purchase to avoid overwriting mid-entry
+    if(editingId||document.getElementById('v-add').classList.contains('on')) return;
+    const d=await cloudGet();
+    if(!d||d.version===serverVersion) return;
+    applyCloudState(d);
+    updateHdr();
+  },30000);
+}
+
+function goTab(id,btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('on'));
+  document.getElementById('v-'+id).classList.add('on');
+  if(btn && btn.id) btn.classList.add('on');
+  if(id==='dash') renderDash();
+  if(id==='hist'){renderHSF();renderHist();}
+  if(id==='ins') renderIns();
+  if(id==='list') renderSessions();
+  if(id==='add') renderExpDrillDown();
+}
+function showSubTab(id){
+  document.querySelectorAll('.stab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('st-'+id).classList.add('on');
+  document.getElementById('sub-sess').style.display=id==='sess'?'block':'none';
+  document.getElementById('sub-cal').style.display=id==='cal'?'block':'none';
+  if(id==='sess') renderSessions();
+  if(id==='cal') renderCalendarView();
+}
+function shiftBudgetMonth(delta){
+  budgetCursor=new Date(budgetCursor.getFullYear(),budgetCursor.getMonth()+delta,1);
+  renderDash();
+}
+function shiftSessionMonth(delta){
+  sessionCursor=new Date(sessionCursor.getFullYear(),sessionCursor.getMonth()+delta,1);
+  renderSessions();
+}
+function openListSessions(){
+  goTab('list',document.getElementById('navList'));
+  showSubTab('sess');
+}
+function openCalendarView(){
+  goTab('list',document.getElementById('navList'));
+  showSubTab('cal');
+  document.getElementById('sub-cal')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function closeCalendarView(){
+  showSubTab('sess');
+}
+function setDashRangeFromMore(v){
+  dashRange=v;
+  goTab('dash',document.getElementById('navDash'));
+}
+
+function svgPie(data,size=150){
+  const total=data.reduce((s,d)=>s+d.value,0);
+  if(!total) return '<div class="empty" style="padding:.5rem">No data</div>';
+  const cx=size/2,cy=size/2,r=size/2-10,ir=r*0.55;
+  let angle=-Math.PI/2,paths='',leg='';
+  data.filter(d=>d.value>0).forEach(d=>{
+    const pct=d.value/total,slice=pct*Math.PI*2;
+    const a1=angle,a2=angle+slice;
+    const x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
+    const x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2);
+    const ix1=cx+ir*Math.cos(a2),iy1=cy+ir*Math.sin(a2);
+    const ix2=cx+ir*Math.cos(a1),iy2=cy+ir*Math.sin(a1);
+    const large=slice>Math.PI?1:0;
+    paths+=`<path d="M${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${large},1 ${x2.toFixed(1)},${y2.toFixed(1)} L${ix1.toFixed(1)},${iy1.toFixed(1)} A${ir},${ir} 0 ${large},0 ${ix2.toFixed(1)},${iy2.toFixed(1)} Z" fill="${d.color}" stroke="#fff" stroke-width="1.5"/>`;
+    leg+=`<div class="pie-row"><div class="pie-dot" style="background:${d.color}"></div><span style="font-size:11px;flex:1;color:#44515a">${d.label}</span><span style="font-size:11px;color:#88959f;font-weight:700">${fmt(d.value)}</span></div>`;
+    angle=a2;
+  });
+  paths+=`<circle cx="${cx}" cy="${cy}" r="${ir-1}" fill="#fff"/>`;
+  return `<div class="pie-wrap"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${paths}</svg><div class="pie-legend">${leg}</div></div>`;
+}
+
+function getCatSpend(rangeOrMonth){
+  let ps=purchases;
+  if(!rangeOrMonth) ps=purchases;
+  else if(['week','month','year','all'].includes(rangeOrMonth)) ps=rangePurchases(rangeOrMonth);
+  else ps=purchases.filter(p=>mKey(p.datetime)===rangeOrMonth);
+  return ps.flatMap(p=>p.items).reduce((a,it)=>{
+    const v=parseFloat(it.price||0);
+    a[it.category]=(a[it.category]||0)+v;
+    return a;
+  },{});
+}
+
+function renderDash(){
+  const list=purchases.filter(p=>inMonth(p.datetime,budgetCursor));
+  const expList=expenses.filter(e=>inMonth(e.datetime,budgetCursor));
+  const combinedEntries=getCombinedEntriesForMonth(budgetCursor);
+  const groceryTotal=list.reduce((s,p)=>s+p.total,0);
+  const expenseTotal=expList.reduce((s,e)=>s+e.amount,0);
+  const total=groceryTotal+expenseTotal;
+  const allT=purchases.reduce((s,p)=>s+p.total,0)+expenses.reduce((s,e)=>s+e.amount,0);
+  const avg=combinedEntries.length?total/combinedEntries.length:0;
+  const remaining=(budget||0)-total;
+  const stC=list.reduce((a,p)=>{a[p.store]=(a[p.store]||0)+1;return a;},{});
+  const tSt=Object.entries(stC).sort((a,b)=>b[1]-a[1])[0];
+  const heroBudget=budget||0;
+  const pctBudget=heroBudget>0?Math.min((total/heroBudget)*100,100):0;
+  const over=heroBudget>0&&total>heroBudget;
+  const ringColor=over?'#d63f3f':'#305f39';
+
+  document.getElementById('budgetMonthTitle').textContent=budgetCursor.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+  document.getElementById('budgetMonthCount').textContent=`${list.length} grocery · ${expList.length} expense`;
+  document.getElementById('dm').textContent=fmt(total);
+  document.getElementById('dv').textContent=`${list.length} visit${list.length!==1?'s':''} + ${expList.length} expense${expList.length!==1?'s':''} in ${budgetCursor.toLocaleDateString('en-IN',{month:'short',year:'numeric'})}`;
+  document.getElementById('da').textContent=list.length?fmt(Math.round(groceryTotal/list.length)):'—';
+  document.getElementById('dc').textContent=combinedEntries.length?`${combinedEntries.length} total entr${combinedEntries.length!==1?'ies':'y'}`:'No entries yet';
+  document.getElementById('ds').textContent=tSt?tSt[0]:'—';
+  document.getElementById('dsc').textContent=tSt?`${tSt[1]} visit${tSt[1]!==1?'s':''}`:'Add more data';
+  document.getElementById('dat').textContent=fmt(allT);
+
+  document.getElementById('arcBar').setAttribute('stroke',ringColor);
+  document.getElementById('arcBar').setAttribute('stroke-dasharray',`${pctBudget.toFixed(1)} 100`);
+  document.getElementById('ringStatus').textContent=heroBudget?(over?'LIMIT EXCEEDED':'WITHIN LIMIT'):'NO BUDGET';
+  document.getElementById('ringStatus').setAttribute('fill',over?'#c54848':'#305f39');
+  document.getElementById('ringValue').textContent=heroBudget?`${remaining<0?'-':''}${fmt(Math.abs(remaining))}`:'₹0';
+  document.getElementById('ringSpent').textContent=fmt(total);
+  document.getElementById('ringLimit').textContent=heroBudget?fmt(heroBudget):'₹0';
+  document.getElementById('budgetWarn').className='budget-warning'+(over?' over':'');
+  document.getElementById('budgetWarn').textContent=
+    !heroBudget?'Set a monthly budget to get overspending alerts and a cleaner spending target.'
+    :over?`Limit crossed. You are over by ${fmt(total-heroBudget)} in ${budgetCursor.toLocaleDateString('en-IN',{month:'long'})}.`
+    :`${fmt(heroBudget-total)} left in budget. Keep an eye on snacks, beverages, and impulse adds.`;
+
+  if(budget>0) document.getElementById('binput').value=budget;
+
+  const catS=getCatSpend(mKey(budgetCursor));
+  let alerts='';
+  CATS.forEach(cat=>{
+    const lim=parseFloat(catBudgets[cat])||0,sp=catS[cat]||0;
+    if(!lim) return;
+    const pct2=sp/lim;
+    if(pct2>=1) alerts+=`<div class="alert alert-red"><strong>${cat}</strong> is over budget at ${fmt(sp)} of ${fmt(lim)}.</div>`;
+    else if(pct2>=0.8) alerts+=`<div class="alert"><strong>${cat}</strong> is at ${Math.round(pct2*100)}% of its monthly limit.</div>`;
+  });
+  document.getElementById('catAlerts').innerHTML=alerts;
+
+  const months=[];
+  for(let i=5;i>=0;i--){
+    const d=new Date();
+    d.setDate(1);
+    d.setMonth(d.getMonth()-i);
+    months.push({key:mKey(d),label:d.toLocaleDateString('en-IN',{month:'short'})});
+  }
+  const data=months.map(m=>({
+    label:m.label,
+    val:purchases.filter(p=>mKey(p.datetime)===m.key).reduce((s,p)=>s+p.total,0)
+      +expenses.filter(e=>mKey(e.datetime)===m.key).reduce((s,e)=>s+e.amount,0),
+    cur:m.key===curM()
+  }));
+  const mx=Math.max(...data.map(d=>d.val),1),bW=34,H=78,sp2=(320-bW*6)/7;
+  document.getElementById('schart').innerHTML=data.map((d,i)=>{
+    const x=sp2+i*(bW+sp2),bh=Math.max((d.val/mx)*H,d.val>0?3:0),y=H-bh+8;
+    return `<rect x="${x}" y="${y}" width="${bW}" height="${bh}" rx="8" fill="${d.cur?'#21313a':'#a8d5b0'}"/><text x="${x+bW/2}" y="102" text-anchor="middle" font-size="9" fill="#98a4ac" font-family="inherit">${d.label}</text>${d.val>0?`<text x="${x+bW/2}" y="${y-4}" text-anchor="middle" font-size="8" fill="${d.cur?'#21313a':'#7e8a93'}" font-family="inherit">${d.val>=1000?(d.val/1000).toFixed(1)+'k':Math.round(d.val)}</text>`:''}`;
+  }).join('');
+
+  const iC=list.flatMap(p=>p.items).reduce((a,it)=>{a[it.name]=(a[it.name]||0)+1;return a;},{});
+  const tI=Object.entries(iC).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  document.getElementById('tItems').innerHTML=tI.length?tI.map(([n,c])=>{
+    const cat=purchases.flatMap(p=>p.items).find(it=>it.name===n)?.category||'Other';
+    const lp=lastPrice(n);
+    return `<div class="row" style="padding:7px 0;border-bottom:1px solid #f1ede6">
+      <div style="display:flex;align-items:center;gap:8px">${tag(cat,cat.slice(0,3))}<span style="font-size:13px">${n}</span>${lp?`<span style="font-size:10px;color:#97a3ac">${fmt(parseFloat(lp.price))}</span>`:''}</div>
+      <span style="font-size:12px;color:#87949d;font-weight:700">×${c}</span>
+    </div>`;
+  }).join(''):'<div class="empty" style="padding:.5rem">No data yet</div>';
+  const recentEl=document.getElementById('recentActivity');
+  if(recentEl){
+    recentEl.innerHTML=combinedEntries.slice(0,5).map(entry=>{
+      if(entry.type==='purchase'){
+        const p=entry.record;
+        return `<div class="row" style="padding:10px 0;border-bottom:1px solid #f1ede6">
+          <div>
+            <div style="font-size:13px;font-weight:800">${tag('store',p.store)} <span style="margin-left:6px">${safeText(p.items?.[0]?.name||p.store)}</span></div>
+            <div style="font-size:11px;color:#97a3ac;margin-top:4px">${fmtS(p.datetime)} · ${safeText(p.payMode||'')}</div>
+          </div>
+          <div style="font-size:14px;font-weight:900">${fmt(p.total)}</div>
+        </div>`;
+      }
+      const e=entry.record;
+      const labels=getExpenseDisplayPath(e);
+      return `<div class="row" style="padding:10px 0;border-bottom:1px solid #f1ede6">
+        <div>
+          <div style="font-size:13px;font-weight:800"><span style="font-size:16px">${getExpenseIcon(e.category,e.subcategory,e.leaf)}</span> <span style="margin-left:6px">${safeText(labels.leaf||labels.subcategory||labels.category)}</span></div>
+          <div style="font-size:11px;color:#97a3ac;margin-top:4px">${safeText(labels.category)} · ${fmtS(e.datetime)}</div>
+        </div>
+        <div style="font-size:14px;font-weight:900">${fmt(e.amount)}</div>
+      </div>`;
+    }).join('')||'<div class="empty" style="padding:.5rem">No activity yet</div>';
+  }
+
+  updateHdr();
+}
+
+function unitSpendHint(cat,sp){
+  const lim=parseFloat(catBudgets[cat])||0;
+  if(!lim) return 'No cap';
+  const diff=lim-sp;
+  return diff>=0?`${fmt(diff)} left`:`${fmt(Math.abs(diff))} over`;
+}
+
+function updateHdr(state){
+  const status=getConnectionLabel(state);
+  document.getElementById('hsub').textContent=`${status} · Sync code ${SCODE||'default'}`;
+  document.getElementById('lNavLbl').textContent='List';
+  document.getElementById('sSC').textContent=SCODE||'default';
+  document.getElementById('sURL').textContent='Firebase · '+FIREBASE_CONFIG.projectId;
+  const now=new Date();
+  document.getElementById('settSyncCode').textContent=SCODE||'default';
+  document.getElementById('settURL').textContent=FIREBASE_CONFIG.projectId;
+  const backupInfoEl=document.getElementById('backupInfo');
+  if(backupInfoEl){
+    backupInfoEl.textContent=`Last backup view ${now.toLocaleDateString('en-IN',{day:'2-digit',month:'short'})} at ${now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}`;
+  }
+}
+
+async function saveBudget(){
+  budget=parseFloat(document.getElementById('binput').value)||0;
+  renderDash();
+  await push();
+  toast('Budget saved');
+}
+
+function openCatBudget(){
+  document.getElementById('catBudFields').innerHTML=CATS.map(cat=>`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <div style="flex:1;font-size:13px;display:flex;align-items:center;gap:8px">${tag(cat,cat.slice(0,3))} ${cat}</div>
+      <input type="number" min="0" id="cb_${cat.replace(/[^a-z]/gi,'_')}" value="${catBudgets[cat]||''}" placeholder="₹ limit"
+        oninput="updateCatBudgetTotal()"
+        style="width:110px;border:1px solid #dfe6df;border-radius:12px;padding:8px 9px;font-size:13px;font-family:inherit;outline:none;text-align:right"/>
+    </div>`).join('');
+  document.getElementById('catBudAll').value='';
+  updateCatBudgetTotal();
+  document.getElementById('catBudMod').classList.add('on');
+}
+function closeCatBudget(){document.getElementById('catBudMod').classList.remove('on');}
+function updateCatBudgetTotal(){
+  const total=CATS.reduce((sum,cat)=>{
+    const el=document.getElementById('cb_'+cat.replace(/[^a-z]/gi,'_'));
+    return sum+(parseFloat(el?.value)||0);
+  },0);
+  const totalEl=document.getElementById('catBudTotal');
+  if(totalEl) totalEl.textContent=fmt(total);
+}
+function applyAllCatBudgets(){
+  const amount=parseFloat(document.getElementById('catBudAll')?.value)||0;
+  CATS.forEach(cat=>{
+    const el=document.getElementById('cb_'+cat.replace(/[^a-z]/gi,'_'));
+    if(el) el.value=amount>0?amount:'';
+  });
+  updateCatBudgetTotal();
+}
+async function saveCatBudgets(){
+  CATS.forEach(cat=>{
+    const v=parseFloat(document.getElementById('cb_'+cat.replace(/[^a-z]/gi,'_'))?.value)||0;
+    if(v>0) catBudgets[cat]=v;
+    else delete catBudgets[cat];
+  });
+  closeCatBudget();
+  renderDash();
+  await push();
+  toast('Category budgets saved');
+}
+
+function swMode(m){
+  curMd=m;
+  document.getElementById('normMode').style.display=m==='normal'?'block':'none';
+  document.getElementById('bulkMode').style.display=m==='bulk'?'block':'none';
+  document.getElementById('mNorm').classList.toggle('on',m==='normal');
+  document.getElementById('mBulk').classList.toggle('on',m==='bulk');
+}
+
+function resetExpPath(){
+  expState={l1:null,l2:null,l3:null};
+  groceryEntryMode='normal';
+  editingEntry=null;
+  document.getElementById('expForm').style.display='none';
+  document.getElementById('expResetBtn').style.display='none';
+  document.getElementById('expTotal').textContent='₹0';
+  const banner=document.getElementById('editBanner');
+  if(banner){
+    banner.style.display='none';
+    const label=banner.querySelector('span');
+    if(label) label.textContent='Editing entry';
+  }
+  const saveBtn=document.getElementById('expSaveBtn');
+  if(saveBtn) saveBtn.textContent='Save Entry';
+  renderExpDrillDown();
+}
+
+function getEntryMeta(){
+  const {l1,l2,l3}=expState;
+  if(!l1) return null;
+  const level1=EXPENSE_TREE[l1]||null;
+  const level2=l2?level1?.sub?.[l2]||null:null;
+  const level3=l3?level2?.sub?.[l3]||null:null;
+  const node=level3||level2||level1;
+  const leafName=l3||l2||l1;
+  const groceryCategory=CATS.includes(leafName)?leafName:(CATS.includes(l2)?l2:'Other');
+  return {
+    l1,l2,l3,level1,level2,level3,node,leafName,
+    path:[l1,l2,l3].filter(Boolean),
+    isGrocery:!!(level3?._grocery||level2?._grocery),
+    groceryCategory
+  };
+}
+
+function renderExpDrillDown(){
+  const bc=document.getElementById('expBreadcrumb');
+  const dd=document.getElementById('expDrillDown');
+  const form=document.getElementById('expForm');
+  const resetBtn=document.getElementById('expResetBtn');
+  const {l1,l2,l3}=expState;
+
+  // Breadcrumb
+  const crumbs=[];
+  if(l1) crumbs.push(`<span onclick="expState.l2=null;expState.l3=null;document.getElementById('expForm').style.display='none';renderExpDrillDown()" style="cursor:pointer;color:var(--accent)">${EXPENSE_TREE[l1].icon} ${safeText(getCategoryLabel(l1))}</span>`);
+  if(l2){
+    const n2=EXPENSE_TREE[l1].sub[l2];
+    crumbs.push(`<span style="color:#ccc">›</span><span onclick="expState.l3=null;document.getElementById('expForm').style.display='none';renderExpDrillDown()" style="cursor:pointer;color:var(--accent)">${n2.icon} ${safeText(getCategoryLabel(l1,l2))}</span>`);
+  }
+  if(l3&&EXPENSE_TREE[l1]?.sub?.[l2]?.sub?.[l3]) crumbs.push(`<span style="color:#ccc">›</span><span style="color:var(--text)">${EXPENSE_TREE[l1].sub[l2].sub[l3].icon} ${safeText(getCategoryLabel(l1,l2,l3))}</span>`);
+  bc.style.display=crumbs.length?'flex':'none';
+  bc.innerHTML=crumbs.join('');
+  resetBtn.style.display=l1?'block':'none';
+
+  // Determine which level to render
+  let node=null, level=0, label='Category';
+  if(!l1){
+    node=EXPENSE_TREE; level=1; label='Category';
+  } else if(!l2){
+    const n=EXPENSE_TREE[l1];
+    if(n.sub){ node=n.sub; level=2; label='Sub-Category'; }
+  } else {
+    const n=EXPENSE_TREE[l1].sub[l2];
+    if(!l3){
+      if(n.sub){ node=n.sub; level=3; label='Sub-Category'; }
+      else{
+        dd.innerHTML='';
+        form.style.display='none';
+        showExpForm();
+        return;
+      }
+    } else {
+      dd.innerHTML='';
+      form.style.display='none';
+      showExpForm();
+      return;
+    }
+  }
+
+  if(node){
+    form.style.display='none';
+    dd.innerHTML=`
+      <div style="margin-bottom:10px;font-size:11px;font-weight:800;letter-spacing:.7px;color:#9ba5ad;text-transform:uppercase">${label}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        ${Object.entries(node).map(([name,val])=>`
+          <button onclick="selectExpLevel(${level},this.dataset.n)"
+            data-n="${name.replace(/"/g,'&quot;')}"
+            style="display:flex;align-items:center;gap:10px;padding:14px 12px;background:#fffaf2;border:1px solid #eee2d1;border-radius:18px;cursor:pointer;text-align:left;box-shadow:var(--shadow);width:100%">
+            <span style="font-size:22px">${val.icon}</span>
+            <span style="font-size:13px;font-weight:700;color:var(--text)">${safeText(getCategoryLabel(l1,l2,name))}</span>
+          </button>`).join('')}
+      </div>`;
+  }
+}
+
+function selectExpLevel(level, name){
+  if(level===1) expState={l1:name,l2:null,l3:null};
+  else if(level===2) expState.l2=name;
+  else expState.l3=name;
+  renderExpDrillDown();
+}
+
+function getLeafFields(meta){
+  const leafFields=Array.isArray(meta?.node?.fields)?meta.node.fields:[];
+  const seen=new Set();
+  const ordered=['date','amount','payMode',...leafFields.filter(field=>field!=='notes'),'notes'];
+  return ordered.filter(field=>{
+    if(!FIELD_DEFS[field]||seen.has(field)) return false;
+    seen.add(field);
+    return true;
+  });
+}
+
+function getGroceryExtraFields(meta){
+  return getLeafFields(meta).filter(field=>!STANDARD_ENTRY_FIELDS.includes(field));
+}
+
+function buildFieldHtml(field, meta){
+  const def=FIELD_DEFS[field];
+  if(!def) return '';
+  const id=`ef_${field}`;
+  if(field==='payMode'){
+    const activeValue=editingEntry
+      ?(editingEntry.type==='purchase'
+        ?(purchases.find(p=>p.id===editingEntry.id)?.payMode||selPy)
+        :(expenses.find(e=>e.id===editingEntry.id)?.payMode||selPy))
+      :selPy;
+    return `<div class="f">
+      <label>${def.label}</label>
+      <input type="hidden" id="${id}" value="${safeText(activeValue)}"/>
+      <div class="chips">
+        ${PAYS.map(pm=>`<button type="button" class="chip py entry-chip${pm===activeValue?' on':''}" data-field="payMode" data-value="${safeText(pm)}">${safeText(pm)}</button>`).join('')}
+      </div>
+    </div>`;
+  }
+  if(def.type==='select'){
+    const opts=(def.options||[]).map(opt=>{
+      const selected=opt===selPy?' selected':'';
+      return `<option${selected}>${safeText(opt)}</option>`;
+    }).join('');
+    return `<div class="f"><label>${def.label}</label><select id="${id}" class="fi">${opts}</select></div>`;
+  }
+  if(def.type==='textarea'){
+    return `<div class="f"><label>${def.label}</label><textarea id="${id}" class="fi" rows="${def.rows||3}" placeholder="${safeText(def.placeholder||'')}"></textarea></div>`;
+  }
+  const value=field==='date'?new Date().toISOString().slice(0,16):'';
+  const inputAttrs=[
+    `type="${def.type||'text'}"`,
+    `id="${id}"`,
+    `class="fi"`
+  ];
+  let extraMarkup='';
+  if(value) inputAttrs.push(`value="${value}"`);
+  if(def.placeholder) inputAttrs.push(`placeholder="${safeText(def.placeholder)}"`);
+  if(def.min!==undefined) inputAttrs.push(`min="${def.min}"`);
+  if(def.step!==undefined) inputAttrs.push(`step="${def.step}"`);
+  if(field==='itemName'&&meta?.groceryCategory){
+    const suggestions=SUGG[meta.groceryCategory]||[];
+    if(suggestions.length){
+      const listId=`ef_itemName_list`;
+      inputAttrs.push(`list="${listId}"`);
+      extraMarkup=`<datalist id="${listId}">${suggestions.map(item=>`<option value="${safeText(item)}"></option>`).join('')}</datalist>`;
+    }
+  }
+  const totalHook=(field==='amount'||(field==='price'&&meta?.isGrocery))
+    ?` oninput="document.getElementById('expTotal').textContent='₹'+(parseFloat(this.value)||0).toLocaleString('en-IN')"`
+    :'';
+  return `<div class="f"><label>${def.label}</label><input ${inputAttrs.join(' ')}${totalHook}/>${extraMarkup}</div>`;
+}
+
+function getFormValue(field){
+  const el=document.getElementById(`ef_${field}`);
+  if(!el) return '';
+  return (el.value||'').trim();
+}
+
+function setFormValue(field, value){
+  const el=document.getElementById(`ef_${field}`);
+  if(!el) return;
+  el.value=value ?? '';
+}
+
+function setEntryChip(field,value,selector){
+  const input=document.getElementById(`ef_${field}`);
+  if(input) input.value=value;
+  if(field==='store') selSt=value||selSt;
+  if(field==='payMode') selPy=value||selPy;
+  document.querySelectorAll(selector).forEach(el=>el.classList.toggle('on',el.dataset.value===value));
+}
+
+function syncExpTotal(value){
+  document.getElementById('expTotal').textContent='₹'+(parseFloat(value)||0).toLocaleString('en-IN');
+}
+
+function showEditBanner(label){
+  const banner=document.getElementById('editBanner');
+  if(!banner) return;
+  const textEl=banner.querySelector('span');
+  if(textEl) textEl.textContent=label;
+  banner.style.display='flex';
+  const saveBtn=document.getElementById('expSaveBtn');
+  if(saveBtn) saveBtn.textContent='Update Entry';
+}
+
+function setGroceryEntryMode(mode){
+  groceryEntryMode=mode;
+  showExpForm();
+}
+
+function parseBulkGroceryItems(text, category){
+  return String(text||'').split('\n').map(line=>line.trim()).filter(Boolean).map(line=>{
+    const parts=line.split(',').map(part=>part.trim());
+    return {
+      name:parts[0]||'',
+      qty:parts[1]||'1',
+      unit:parts[2]||'pcs',
+      price:parseFloat(parts[3]||0)||0,
+      category
+    };
+  }).filter(item=>item.name&&item.price>0);
+}
+
+function updateGroceryBulkAmount(){
+  const meta=getEntryMeta();
+  if(!meta) return;
+  const text=document.getElementById('ef_bulkItems')?.value||'';
+  const items=parseBulkGroceryItems(text,meta.groceryCategory);
+  const total=items.reduce((sum,item)=>sum+item.price,0);
+  document.getElementById('expTotal').textContent='₹'+total.toLocaleString('en-IN');
+}
+
+function showExpForm(){
+  const form=document.getElementById('expForm');
+  const fieldsEl=document.getElementById('expFormFields');
+  const meta=getEntryMeta();
+  if(!meta) return;
+  const selectedPath=meta.path.map((part,index)=>getCategoryLabel(...meta.path.slice(0,index+1))).join(' › ');
+  const fields=getLeafFields(meta);
+  const baseFields=meta.isGrocery
+    ?fields.filter(field=>field==='date')
+    :fields.filter(field=>STANDARD_ENTRY_FIELDS.includes(field)&&field!=='notes'&&field!=='payMode');
+  const notesField=fields.includes('notes')?['notes']:[];
+  const groceryExtraFields=getGroceryExtraFields(meta);
+  const groceryModeBlock=meta.isGrocery?`
+    <div class="f">
+      <label>Entry Mode</label>
+      <div class="chips">
+        <div class="chip md${groceryEntryMode==='normal'?' on':''}" onclick="setGroceryEntryMode('normal')">Single Item</div>
+        <div class="chip md${groceryEntryMode==='bulk'?' on':''}" onclick="setGroceryEntryMode('bulk')">Bulk Entry</div>
+      </div>
+    </div>`:'';
+  const groceryStore=editingEntry?.type==='purchase'
+    ?getValidStoreName(purchases.find(p=>p.id===editingEntry.id)?.store)
+    :selSt;
+  const groceryPayment=editingEntry
+    ?(editingEntry.type==='purchase'
+      ?(purchases.find(p=>p.id===editingEntry.id)?.payMode||selPy)
+      :(expenses.find(e=>e.id===editingEntry.id)?.payMode||selPy))
+    :selPy;
+  const groceryHeaderBlock=meta.isGrocery?`
+    <div class="f">
+      <label>Store</label>
+      <input type="hidden" id="ef_store" value="${safeText(groceryStore)}"/>
+      <div class="chips">
+        ${STORES.map(store=>`<button type="button" class="chip sub g-store-chip entry-chip${store===groceryStore?' on':''}" data-field="store" data-group=".g-store-chip" data-value="${safeText(store)}">${safeText(store)}</button>`).join('')}
+      </div>
+    </div>
+    <div class="f"><label>Date &amp; Time</label><input type="datetime-local" id="ef_date" class="fi" value="${editingEntry?.type==='purchase'?(purchases.find(p=>p.id===editingEntry.id)?.datetime?.slice(0,16)||new Date().toISOString().slice(0,16)):(new Date().toISOString().slice(0,16))}"/></div>
+    <div class="f">
+      <label>Payment</label>
+      <input type="hidden" id="ef_payMode" value="${safeText(groceryPayment)}"/>
+      <div class="chips">
+        ${PAYS.map(pm=>`<button type="button" class="chip py g-pay-chip entry-chip${pm===groceryPayment?' on':''}" data-field="payMode" data-group=".g-pay-chip" data-value="${safeText(pm)}">${safeText(pm)}</button>`).join('')}
+      </div>
+    </div>
+  `:'';
+  const groceryFieldsBlock=meta.isGrocery?(
+    groceryEntryMode==='bulk'
+      ?`
+        <div class="f">
+          <label>Items</label>
+          <div style="background:#fffaf2;border:1px solid #eee2d1;border-radius:22px;padding:14px">
+          <label>Bulk Items</label>
+          <textarea id="ef_bulkItems" class="fi" rows="6" placeholder="Tomatoes, 1, kg, 40&#10;Onions, 2, kg, 70" oninput="updateGroceryBulkAmount()"></textarea>
+          <div class="snote">Format: Item name, Qty, Unit, Price</div>
+          ${(SUGG[meta.groceryCategory]||[]).length?`<div class="autofill-hint">Suggestions: ${safeText((SUGG[meta.groceryCategory]||[]).slice(0,8).join(', '))}</div>`:''}
+          </div>
+        </div>`
+      :`
+        <div class="f">
+          <label>Items</label>
+          <div style="background:#fffaf2;border:1px solid #eee2d1;border-radius:22px;padding:14px">
+            ${groceryExtraFields.map(field=>buildFieldHtml(field,meta)).join('')}
+          </div>
+        </div>`
+  ):'';
+  fieldsEl.innerHTML=`
+    <div class="alert" style="margin-bottom:12px">
+      <strong>Selected:</strong> ${safeText(selectedPath)}
+    </div>
+    ${meta.isGrocery?groceryHeaderBlock:''}
+    ${groceryModeBlock}
+    ${meta.isGrocery?'':baseFields.map(field=>buildFieldHtml(field,meta)).join('')}
+    ${!meta.isGrocery?buildFieldHtml('payMode',meta):''}
+    ${groceryFieldsBlock||(!meta.isGrocery?fields.filter(field=>!STANDARD_ENTRY_FIELDS.includes(field)&&field!=='notes').map(field=>buildFieldHtml(field,meta)).join(''):'')}
+    ${notesField.map(field=>buildFieldHtml(field,meta)).join('')}
+  `;
+  if(groceryEntryMode==='bulk') updateGroceryBulkAmount();
+  form.style.display='block';
+}
+
+async function saveUnifiedEntry(){
+  const meta=getEntryMeta();
+  if(!meta){toast('Choose a category first');return;}
+  const date=getFormValue('date')||new Date().toISOString();
+  const payMode=getFormValue('payMode')||PAYS[1]||'Cash';
+  const notes=getFormValue('notes');
+  const extraFields=getLeafFields(meta).reduce((acc,field)=>{
+    if(STANDARD_ENTRY_FIELDS.includes(field)) return acc;
+    const value=getFormValue(field);
+    if(value!=='') acc[field]=value;
+    return acc;
+  },{});
+  let amount=meta.isGrocery&&groceryEntryMode!=='bulk'
+    ?parseFloat(getFormValue('price'))||0
+    :parseFloat(getFormValue('amount'))||0;
+
+  if(meta.isGrocery){
+    let items=[];
+    if(groceryEntryMode==='bulk'){
+      items=parseBulkGroceryItems(document.getElementById('ef_bulkItems')?.value||'',meta.groceryCategory).map(item=>({
+        id:uid(),
+        name:item.name,
+        category:meta.groceryCategory,
+        qty:String(item.qty||'1'),
+        unit:String(item.unit||'pcs'),
+        price:String(item.price)
+      }));
+      amount=items.reduce((sum,item)=>sum+(parseFloat(item.price)||0),0);
+      if(!items.length){toast('Add at least one bulk grocery item');return;}
+    }else{
+      if(!amount){toast('Enter a price');return;}
+      const itemName=extraFields.itemName||meta.leafName;
+      const qty=extraFields.qty||'1';
+      const unit=extraFields.unit||'pcs';
+      items=[{
+        id:uid(),
+        name:itemName,
+        category:meta.groceryCategory,
+        qty:String(qty),
+        unit:String(unit),
+        price:String(amount)
+      }];
+    }
+    if(!amount){toast('Enter a price');return;}
+    const purchaseRecord={
+      id:editingEntry?.type==='purchase'?editingEntry.id:uid(),
+      datetime:date,
+      store:getValidStoreName(getFormValue('store')||selSt),
+      payMode,
+      total:amount,
+      notes,
+      sourceCategory:meta.l1,
+      sourceSubcategory:meta.l2,
+      sourceLeaf:meta.leafName,
+      entryDetails:{...extraFields,entryMode:groceryEntryMode},
+      items
+    };
+    if(editingEntry?.type==='purchase'){
+      purchases=purchases.map(p=>p.id===editingEntry.id?purchaseRecord:p);
+    }else{
+      purchases.push(purchaseRecord);
+    }
+  }else{
+    if(!amount){toast('Enter an amount');return;}
+    const expenseRecord={
+      id:editingEntry?.type==='expense'?editingEntry.id:uid(),
+      datetime:date,
+      category:meta.l1||'Others',
+      subcategory:meta.l2||'Misc',
+      leaf:meta.leafName||'Misc',
+      amount,
+      payMode,
+      notes,
+      ...extraFields
+    };
+    if(editingEntry?.type==='expense'){
+      expenses=expenses.map(e=>e.id===editingEntry.id?expenseRecord:e);
+    }else{
+      expenses.push(expenseRecord);
+    }
+  }
+
+  const actionLabel=editingEntry?'Entry updated':'Entry saved';
+  resetExpPath();
+  document.getElementById('expTotal').textContent='₹0';
+  await push();
+  _buildPriceCache();
+  renderDash();
+  renderHist();
+  renderSessions();
+  updateHdr();
+  toast(actionLabel);
+}
+
+async function delExpense(id){
+  if(!confirm('Delete this expense?'))return;
+  expenses=expenses.filter(e=>e.id!==id);
+  if(editingEntry?.type==='expense'&&editingEntry.id===id) resetExpPath();
+  renderDash();
+  renderHist();
+  renderSessions();
+  await push();
+  updateHdr();
+}
+
+function addRow(n='',cat='Vegetables',qty='1',unit='pcs',price=''){
+  const id=uid();
+  iRows.push(id);
+  const w=document.getElementById('iCont');
+  const r=document.createElement('div');
+  r.id='r-'+id;
+  r.style.cssText='background:#fcfbf8;border:1px solid #ebe6dc;border-radius:18px;padding:12px;margin-bottom:8px';
+  r.innerHTML=`
+  <div style="display:grid;grid-template-columns:1fr auto;gap:5px;margin-bottom:7px;align-items:start">
+    <div class="acw"><input type="text" id="n-${id}" value="${safeText(n)}" placeholder="Item name"
+      oninput="rAC('${id}')" onfocus="rAC('${id}')" autocomplete="off"
+      onblur="autoFillPrice('${id}')"
+      style="width:100%;border:1px solid #dfe6df;border-radius:14px;padding:10px 11px;font-size:14px;font-family:inherit;outline:none;background:#fff"/>
+    <div class="acl" id="ac-${id}" style="display:none"></div>
+    <div class="autofill-hint" id="af-${id}"></div></div>
+    <button onclick="removeRow('${id}')" style="background:none;border:none;color:#c2c9ce;font-size:22px;cursor:pointer;padding:3px 7px;line-height:1">×</button>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px;margin-bottom:4px">
+    <div>
+      <div class="flbl">Category</div>
+      <select id="c-${id}" style="width:100%;border:1px solid #dfe6df;border-radius:12px;padding:9px 6px;font-size:12px;font-family:inherit;outline:none;background:#fff">
+        ${CATS.map(c=>`<option${c===cat?' selected':''}>${c}</option>`).join('')}
+      </select>
+    </div>
+    <div>
+      <div class="flbl">Qty</div>
+      <input type="number" id="q-${id}" value="${qty}" min="0" step="0.1" oninput="calcT();updUP('${id}')"
+        style="width:100%;border:1px solid #dfe6df;border-radius:12px;padding:9px 10px;font-size:14px;font-family:inherit;outline:none;background:#fff"/>
+    </div>
+    <div>
+      <div class="flbl">Unit</div>
+      <select id="u-${id}" style="width:100%;border:1px solid #dfe6df;border-radius:12px;padding:9px 5px;font-size:12px;font-family:inherit;outline:none;background:#fff"
+        onchange="updUP('${id}')">
+        ${UNITS.map(u=>`<option${u===unit?' selected':''}>${u}</option>`).join('')}
+      </select>
+    </div>
+    <div>
+      <div class="flbl">Price ₹</div>
+      <input type="number" id="p-${id}" value="${price}" min="0" step="0.5" placeholder="0"
+        oninput="calcT();updUP('${id}')"
+        style="width:100%;border:1px solid #dfe6df;border-radius:12px;padding:9px 10px;font-size:14px;font-family:inherit;outline:none;background:#fff"/>
+    </div>
+  </div>
+  <div class="uphint" id="up-${id}"></div>`;
+  w.appendChild(r);
+  if(price) updUP(id);
+  calcT();
+}
+function updUP(id){
+  const p=document.getElementById('p-'+id)?.value,q=document.getElementById('q-'+id)?.value,u=document.getElementById('u-'+id)?.value||'pcs';
+  document.getElementById('up-'+id).textContent=unitPrice(p,q,u);
+}
+function removeRow(id){
+  iRows=iRows.filter(r=>r!==id);
+  document.getElementById('r-'+id)?.remove();
+  calcT();
+}
+function calcT(){
+  let t=0;
+  iRows.forEach(id=>{
+    const p=parseFloat(document.getElementById('p-'+id)?.value||0);
+    t+=p;
+  });
+  document.getElementById('aTotal').textContent=fmt(t);
+}
+function autoFillPrice(id){
+  const name=document.getElementById('n-'+id)?.value||'';
+  if(!name.trim()) return;
+  const lp=lastPrice(name);
+  if(!lp) return;
+  const priceEl=document.getElementById('p-'+id);
+  const afEl=document.getElementById('af-'+id);
+  if(priceEl&&!priceEl.value){
+    priceEl.value=lp.price;
+    const unitEl=document.getElementById('u-'+id);
+    if(unitEl&&lp.unit) unitEl.value=lp.unit;
+    const qEl=document.getElementById('q-'+id);
+    if(qEl&&lp.qty) qEl.value=lp.qty;
+    updUP(id);
+    calcT();
+    if(afEl) afEl.textContent=`Auto-filled from ${lp.store} on ${fmtS(lp.datetime)}`;
+    setTimeout(()=>{if(afEl)afEl.textContent='';},3000);
+  }
+}
+function dupeLast(){
+  if(!purchases.length) return;
+  const l=[...purchases].sort((a,b)=>new Date(b.datetime)-new Date(a.datetime))[0];
+  selSt=l.store;
+  selPy=l.payMode||PAYS[1];
+  document.querySelectorAll('#stChips .chip').forEach(c=>c.classList.toggle('on',c.textContent===selSt));
+  document.querySelectorAll('#pyChips .chip').forEach(c=>c.classList.toggle('on',c.textContent===selPy));
+  document.getElementById('iCont').innerHTML='';
+  iRows=[];
+  l.items.forEach(it=>addRow(it.name,it.category,it.qty,it.unit||'pcs',it.price));
+  // Fix #11: reset date to now so duplicated entry doesn't inherit the old date
+  document.getElementById('aDt').value=new Date().toISOString().slice(0,16);
+  swMode('normal');
+  calcT();
+  toast('Copied last purchase');
+}
+
+async function savePurchase(){
+  let items=[];
+  if(curMd==='bulk'){
+    items=document.getElementById('bText').value.trim().split('\n').filter(l=>l.trim()).map(l=>{
+      const p=l.split(',').map(s=>s.trim());
+      return{id:uid(),name:p[0]||'',category:p[1]||'Vegetables',qty:p[2]||'1',unit:p[3]||'pcs',price:p[4]||''};
+    });
+  }else{
+    items=iRows.map(id=>({
+      id:uid(),
+      name:document.getElementById('n-'+id)?.value||'',
+      category:document.getElementById('c-'+id)?.value||'Vegetables',
+      qty:document.getElementById('q-'+id)?.value||'1',
+      unit:document.getElementById('u-'+id)?.value||'pcs',
+      price:document.getElementById('p-'+id)?.value||''
+    }));
+  }
+  items=items.filter(it=>it.name&&it.price);
+  if(!items.length){toast('Add at least one item with name and price');return;}
+  const total=items.reduce((s,it)=>s+parseFloat(it.price||0),0);
+  const dt=document.getElementById('aDt').value||new Date().toISOString();
+  const notes=document.getElementById('aNotes').value;
+
+  if(editingId){
+    purchases=purchases.map(p=>p.id===editingId?{...p,datetime:dt,store:selSt,payMode:selPy,items,total,notes}:p);
+    editingId=null;
+    document.getElementById('editBanner').style.display='none';
+    toast('Purchase updated');
+  }else{
+    purchases.push({id:uid(),datetime:dt,store:selSt,payMode:selPy,items,total,notes});
+    toast('Purchase saved');
+  }
+
+  document.getElementById('iCont').innerHTML='';
+  iRows=[];
+  addRow();
+  document.getElementById('aNotes').value='';
+  document.getElementById('bText').value='';
+  document.getElementById('aDt').value=new Date().toISOString().slice(0,16);
+  calcT();
+  const btn=document.getElementById('saveBtn');
+  btn.textContent='Saved';
+  setTimeout(()=>{btn.textContent='Save Purchase';},1400);
+  await push();
+  _buildPriceCache();
+  renderDash();
+  renderHist();
+  updateHdr();
+}
+function cancelEdit(){
+  editingId=null;
+  resetExpPath();
+  toast('Edit cancelled');
+}
+function startEdit(id,type='purchase'){
+  const record=type==='expense'?expenses.find(x=>x.id===id):purchases.find(x=>x.id===id);
+  if(!record)return;
+  editingEntry={type,id};
+  goTab('add',document.getElementById('navAdd'));
+  if(type==='purchase'){
+    const itemCategory=record.items?.[0]?.category||record.store||'Other';
+    expState={
+      l1:record.sourceCategory||'Essentials',
+      l2:record.sourceSubcategory||'Groceries',
+      l3:record.sourceLeaf||itemCategory
+    };
+    groceryEntryMode=record.items&&record.items.length>1?'bulk':'normal';
+    renderExpDrillDown();
+    setFormValue('date',record.datetime?.slice(0,16)||new Date().toISOString().slice(0,16));
+    setFormValue('payMode',record.payMode||PAYS[1]||'Cash');
+    setFormValue('notes',record.notes||'');
+    if(groceryEntryMode==='bulk'){
+      const bulkText=(record.items||[]).map(it=>`${it.name||''}, ${it.qty||'1'}, ${it.unit||'pcs'}, ${it.price||0}`).join('\n');
+      setFormValue('bulkItems',bulkText);
+      updateGroceryBulkAmount();
+    }else{
+      const item=record.items?.[0]||{};
+      setFormValue('itemName',item.name||record.sourceLeaf||itemCategory);
+      setFormValue('qty',item.qty||'1');
+      setFormValue('unit',item.unit||'pcs');
+      setFormValue('price',item.price||record.total||'');
+      syncExpTotal(item.price||record.total||0);
+    }
+    showEditBanner('Editing grocery entry');
+  }else{
+    expState={
+      l1:record.category||'Others',
+      l2:record.subcategory||record.leaf||'Misc',
+      l3:record.leaf&&record.leaf!==record.subcategory?record.leaf:null
+    };
+    renderExpDrillDown();
+    setFormValue('date',record.datetime?.slice(0,16)||new Date().toISOString().slice(0,16));
+    setFormValue('payMode',record.payMode||PAYS[1]||'Cash');
+    setFormValue('notes',record.notes||'');
+    setFormValue('amount',record.amount||'');
+    ['liters','odometer','recipient','warranty','hospital','medicine','customName'].forEach(field=>setFormValue(field,record[field]||''));
+    syncExpTotal(record.amount||0);
+    showEditBanner('Editing expense entry');
+  }
+  window.scrollTo(0,0);
+  toast('Editing entry');
+}
+
+function rAC(id){
+  const inp=document.getElementById('n-'+id);
+  const cat=document.getElementById('c-'+id)?.value||'Vegetables';
+  const q=inp.value.toLowerCase();
+  const pool=SUGG[cat]||ALL_ITEMS;
+  const hits=q?pool.filter(x=>x.toLowerCase().includes(q)).slice(0,6):[];
+  const l=document.getElementById('ac-'+id);
+  if(!hits.length){l.style.display='none';return;}
+  l.innerHTML=hits.map(x=>{
+    const lp=lastPrice(x);
+    const sub=lp?`Last: ${fmt(parseFloat(lp.price))} at ${safeText(lp.store)}`:'';
+    return `<div class="aci" onmousedown="document.getElementById('n-${id}').value='${safeText(x)}';document.getElementById('ac-${id}').style.display='none';autoFillPrice('${id}')">${safeText(x)}${sub?`<div class="sub">${sub}</div>`:''}</div>`;
+  }).join('');
+  l.style.display='block';
+}
+function iAC(){
+  const q=document.getElementById('iSrch').value.toLowerCase();
+  // Fix #24: build names set from current purchases instead of rebuilding every keystroke
+  const names=[...new Set(purchases.flatMap(p=>p.items.map(it=>it.name)))];
+  const hits=q?names.filter(x=>x.toLowerCase().includes(q)).slice(0,6):[];
+  const l=document.getElementById('iACl');
+  if(!hits.length){l.style.display='none';return;}
+  // Fix #5: escape item name in innerHTML
+  l.innerHTML=hits.map(x=>`<div class="aci" onmousedown="loadIns('${safeText(x)}')">${safeText(x)}</div>`).join('');
+  l.style.display='block';
+}
+document.addEventListener('click',e=>{
+  document.querySelectorAll('.acl').forEach(l=>{
+    if(!l.parentElement?.contains(e.target)) l.style.display='none';
+  });
+  const chipBtn=e.target.closest('.entry-chip');
+  if(chipBtn){
+    setEntryChip(chipBtn.dataset.field||'',chipBtn.dataset.value||'',chipBtn.dataset.group||'');
+  }
+});
+
+function renderSessions(){
+  const c=document.getElementById('sessContainer');
+  const filtered=getCombinedEntriesForMonth(sessionCursor);
+  const countEl=document.getElementById('sessCount');
+  if(countEl) countEl.textContent=`${filtered.length} session${filtered.length!==1?'s':''}`;
+  const titleEl=document.getElementById('sessionMonthTitle');
+  const countTopEl=document.getElementById('sessionMonthCount');
+  if(titleEl) titleEl.textContent=sessionCursor.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+  if(countTopEl) countTopEl.textContent=`${filtered.length} transaction${filtered.length!==1?'s':''}`;
+  if(!filtered.length){c.innerHTML='<div class="empty">No transactions in this range</div>';return;}
+  const groups={};
+  filtered.forEach(entry=>{
+    const dk=new Date(entry.datetime).toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});
+    if(!groups[dk]) groups[dk]=[];
+    groups[dk].push(entry);
+  });
+  c.innerHTML=Object.entries(groups).map(([date,ps])=>`
+    <div class="sdate">${safeText(date)}</div>
+    ${ps.map(entry=>entry.type==='purchase'?(()=>{
+      const p=entry.record;
+      const purchaseIcon=getExpenseIcon(p.sourceCategory||'Essentials',p.sourceSubcategory||'Groceries',p.sourceLeaf||p.items?.[0]?.category||'Other');
+      const categoryLabel=getCategoryLabel(p.sourceCategory||'Essentials');
+      const subcategoryLabel=getCategoryLabel(p.sourceCategory||'Essentials',p.sourceSubcategory||'Groceries');
+      const leafLabel=getCategoryLabel(p.sourceCategory||'Essentials',p.sourceSubcategory||'Groceries',p.sourceLeaf||p.items?.[0]?.category||'Other');
+      const storeLabel=getValidStoreName(p.store);
+      return `<div class="hi" style="padding:12px 14px;border-radius:18px">
+        <div class="row" style="cursor:pointer" onclick="togHist('sess-${p.id}')">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span style="font-size:18px">${purchaseIcon}</span>
+            ${tag('pay',p.payMode||'NA')}
+            ${tag('store',storeLabel)}
+            <span style="font-size:11px;color:#99a4ac">${new Date(p.datetime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span>
+          </div>
+          <div style="font-size:17px;font-weight:900">${fmt(p.total)}</div>
+        </div>
+        <div style="font-size:14px;font-weight:800;color:var(--text);margin-top:8px">${safeText(leafLabel)}</div>
+        <div style="font-size:12px;color:#95a0a8;margin-top:3px">${safeText(categoryLabel)} › ${safeText(subcategoryLabel)}${p.notes?` · ${safeText(p.notes)}`:''}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:9px">
+          ${p.items.slice(0,5).map(it=>`<span style="font-size:11px;background:#f5f2eb;border-radius:999px;padding:5px 9px;color:#56636b;font-weight:700">${safeText(it.name)} · ${safeText(it.qty)} ${safeText(it.unit)} · ${fmt(parseFloat(it.price||0))}</span>`).join('')}
+          ${p.items.length>5?`<span style="font-size:10px;color:#99a4ac">+${p.items.length-5} more</span>`:''}
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="sbtn" style="padding:7px 11px;font-size:11px" onclick="event.stopPropagation();togHist('sess-${p.id}')">Details</button>
+          <div style="display:flex;gap:7px">
+            <button class="ebtn" style="padding:7px 11px;font-size:11px" onclick="event.stopPropagation();startEdit('${p.id}')">Edit</button>
+            <button class="rbtn" style="padding:7px 11px;font-size:11px" onclick="event.stopPropagation();delPurch('${p.id}')">Delete</button>
+          </div>
+        </div>
+        <div class="hd" id="hd-sess-${p.id}">
+          <table style="width:100%;font-size:12px;border-collapse:collapse">
+            <tr>${['Item','Cat','Qty','Unit','Price','Total'].map(h=>`<th style="text-align:${h==='Item'||h==='Cat'?'left':'right'};padding:4px 0;color:#98a4ac;font-weight:700;border-bottom:1px solid #f2eee7">${h}</th>`).join('')}</tr>
+            ${p.items.map(it=>`<tr>
+              <td style="padding:5px 0;padding-right:5px">${safeText(it.name)}</td>
+              <td>${tag(it.category,(it.category||'').slice(0,3))}</td>
+              <td style="text-align:right">${safeText(it.qty)}</td>
+              <td style="text-align:right;color:#a0abb2">${safeText(it.unit||'pcs')}</td>
+              <td style="text-align:right">${fmt(parseFloat(it.price||0))}</td>
+              <td style="text-align:right;font-weight:800">${fmt(parseFloat(it.price||0)*parseFloat(it.qty||1))}</td>
+            </tr>`).join('')}
+          </table>
+        </div>
+      </div>`;
+    })():(()=>{
+      const e=entry.record;
+      const labels=getExpenseDisplayPath(e);
+      const icon=getExpenseIcon(e.category,e.subcategory,e.leaf);
+      const extra=Object.entries({liters:'L',odometer:'km',recipient:'To',warranty:'Warranty',hospital:'Hospital',medicine:'Medicine',customName:'Name'}).map(([k,lbl])=>e[k]?`<span style="font-size:10px;background:#f5f2eb;border-radius:999px;padding:4px 8px;color:#66747d">${lbl}: ${safeText(e[k])}</span>`:'').filter(Boolean).join('');
+      return `<div class="hi" style="padding:12px 14px;border-radius:18px">
+        <div class="row">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span style="font-size:18px">${icon}</span>
+            ${tag('pay',e.payMode||'NA')}
+            <span style="font-size:11px;color:#99a4ac">${new Date(e.datetime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span>
+          </div>
+          <div style="font-size:17px;font-weight:900">${fmt(e.amount)}</div>
+        </div>
+        <div style="font-size:14px;font-weight:800;color:var(--text);margin-top:8px">${safeText(labels.leaf||labels.subcategory||labels.category)}</div>
+        <div style="font-size:12px;color:#95a0a8;margin-top:3px">${safeText(labels.category)} › ${safeText(labels.subcategory)}${e.notes?` · ${safeText(e.notes)}`:''}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:9px">
+          <span style="font-size:11px;background:#f5f2eb;border-radius:999px;padding:5px 9px;color:#56636b;font-weight:700">${safeText(labels.leaf||labels.subcategory||labels.category)}</span>
+          ${extra}
+        </div>
+        <div class="row" style="margin-top:10px">
+          <div></div>
+          <div style="display:flex;gap:7px">
+            <button class="ebtn" style="padding:7px 11px;font-size:11px" onclick="startEdit('${e.id}','expense')">Edit</button>
+            <button class="rbtn" style="padding:7px 11px;font-size:11px" onclick="delExpense('${e.id}')">Delete</button>
+          </div>
+        </div>
+      </div>`;
+    })()).join('')}
+  `).join('');
+}
+
+function renderHSF(){
+  document.getElementById('hSF').innerHTML=['All',...STORES].map(s=>`<button class="chip-filter${s===histSF?' on':''}" onclick="setHSF('${s}')">${s}</button>`).join('');
+}
+function setHSF(s){
+  histSF=s;
+  renderHSF();
+  renderHist();
+}
+function renderHist(){
+  if(!document.getElementById('hSrch')) return;
+  const q=document.getElementById('hSrch').value.toLowerCase();
+  const list=[...purchases].filter(p=>{
+    if(histSF!=='All'&&p.store!==histSF)return false;
+    if(q&&!p.store.toLowerCase().includes(q)&&!p.items.some(it=>it.name.toLowerCase().includes(q))&&!(p.notes||'').toLowerCase().includes(q))return false;
+    return true;
+  }).sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
+
+  // Include non-grocery expenses in total count
+  const expFiltered=expenses.filter(e=>!q||(e.category+e.subcategory+e.leaf+e.notes).toLowerCase().includes(q));
+  const grandTotal=list.reduce((s,p)=>s+p.total,0)+expFiltered.reduce((s,e)=>s+e.amount,0);
+  document.getElementById('hCnt').textContent=`${list.length} grocery · ${expFiltered.length} expense · ${fmt(grandTotal)}`;
+
+  // Category pie: groceries + expense categories merged
+  const cs=list.flatMap(p=>p.items).reduce((a,it)=>{
+    const v=parseFloat(it.price||0);
+    a[it.category]=(a[it.category]||0)+v;
+    return a;
+  },{});
+  // Add expense categories to pie
+  expFiltered.forEach(e=>{
+    const key=e.subcategory||e.category;
+    cs[key]=(cs[key]||0)+e.amount;
+  });
+  const EXP_COLORS={Rent:'#8B5CF6',Bills:'#EC4899','Mobile Recharge':'#F59E0B',Electricity:'#F97316',Water:'#3B82F6',WiFi:'#6366F1',DTH:'#8B5CF6',Gas:'#EF4444',Fuel:'#F59E0B',Travel:'#14B8A6',Restaurant:'#F97316',Shopping:'#D946EF',Electronics:'#3B82F6','Personal Care':'#F472B6',Entertainment:'#8B5CF6',Gifts:'#EC4899',Medical:'#EF4444',Misc:'#9CA3AF',Custom:'#6B7280'};
+  const allColors={...CCOLOR,...EXP_COLORS};
+  const pd=Object.entries(cs).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([cat,v])=>({label:getCategoryLabel(cat)||cat,value:v,color:allColors[cat]||'#a0abb2'}));
+  document.getElementById('histPie').innerHTML=pd.length?svgPie(pd):'<div class="empty" style="padding:.5rem">No data</div>';
+
+  const allI=list.flatMap(p=>p.items.map(it=>({...it,datetime:p.datetime,store:p.store})));
+  const tN=Object.entries(allI.reduce((a,it)=>{a[it.name]=(a[it.name]||0)+1;return a;},{})).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([n])=>n);
+  const sAvg=(name,store)=>{
+    const e=allI.filter(it=>it.name===name&&it.store===store&&it.price&&parseFloat(it.qty)>0);
+    if(!e.length) return null;
+    return e.reduce((s,it)=>s+parseFloat(it.price)/parseFloat(it.qty),0)/e.length;
+  };
+  document.getElementById('compT').innerHTML=tN.length?`<div style="overflow-x:auto"><table style="width:100%;font-size:11px;border-collapse:collapse">
+    <tr><th style="text-align:left;padding:4px;color:#8f9aa3;font-weight:700">Item</th>${STORES.map(s=>`<th style="text-align:right;padding:4px;color:#8f9aa3;font-weight:700">${safeText(s)}</th>`).join('')}</tr>
+    ${tN.map(name=>{
+      const prices=STORES.map(s=>sAvg(name,s));
+      const minP=Math.min(...prices.filter(p=>p!==null),Infinity);
+      return `<tr><td style="padding:6px 4px;font-weight:700;border-bottom:1px solid #f2eee7">${safeText(name)}</td>${prices.map(p=>`<td style="text-align:right;padding:6px 4px;border-bottom:1px solid #f2eee7;${p!==null&&p===minP?'background:#e9f4ea;color:#27500A;font-weight:800;border-radius:8px':'color:#88959f'}">${p!==null?'₹'+p.toFixed(1):'—'}</td>`).join('')}</tr>`;
+    }).join('')}
+  </table></div>`:'<div class="empty" style="padding:.5rem">Not enough repeat purchases for comparison yet</div>';
+
+  const stSp=list.reduce((a,p)=>{a[p.store]=(a[p.store]||0)+p.total;return a;},{});
+  const spT=Math.max(Object.values(stSp).reduce((a,b)=>a+b,0),1);
+  document.getElementById('stSp').innerHTML=Object.keys(stSp).length===0?'<div class="empty" style="padding:.5rem">No data</div>':Object.entries(stSp).sort((a,b)=>b[1]-a[1]).map(([s,sp])=>{
+    const pct=Math.round(sp/spT*100);
+    return `<div style="margin-bottom:8px"><div class="row" style="font-size:11px;margin-bottom:3px"><span>${s}</span><span style="color:#89959e">${fmt(sp)}</span></div><div class="pb"><div class="pf" style="width:${pct}%;background:#ef9f27"></div></div></div>`;
+  }).join('');
+  const pyC={};
+  list.forEach(p=>{pyC[p.payMode]=(pyC[p.payMode]||0)+1;});
+  expFiltered.forEach(e=>{pyC[e.payMode]=(pyC[e.payMode]||0)+1;});
+  const paymentCount=list.length+expFiltered.length;
+  document.getElementById('paySp').innerHTML=PAYS.map(pm=>{
+    const c=pyC[pm]||0,pct=paymentCount?Math.round(c/paymentCount*100):0;
+    return `<div style="margin-bottom:8px"><div class="row" style="font-size:11px;margin-bottom:3px"><span style="font-size:10px">${pm}</span><span style="color:#89959e">${c} · ${pct}%</span></div><div class="pb"><div class="pf" style="width:${pct}%;background:#378ADD"></div></div></div>`;
+  }).join('');
+
+  // Render non-grocery expenses
+  const expEl=document.getElementById('expenseList');
+  if(expEl){
+    const sorted=[...expFiltered].sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
+    expEl.innerHTML=sorted.length?sorted.map(e=>{
+      const icon=getExpenseIcon(e.category,e.subcategory,e.leaf);
+      const labels=getExpenseDisplayPath(e);
+      const extra=Object.entries({liters:'L',odometer:'km',recipient:'To',warranty:'Warranty',hospital:'Hospital',medicine:'Medicine',customName:'Name'}).map(([k,lbl])=>e[k]?`<span style="font-size:10px;background:#f5f2eb;border-radius:999px;padding:3px 8px;color:#66747d">${lbl}: ${e[k]}</span>`:'').filter(Boolean).join('');
+      return `<div class="hi" style="margin-bottom:10px">
+        <div class="row">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:20px">${icon}</span>
+            <div>
+              <div style="font-size:14px;font-weight:800">${safeText(labels.leaf||labels.subcategory||labels.category)}</div>
+              <div style="font-size:11px;color:#95a0a8">${safeText(labels.category)} › ${safeText(labels.subcategory)}${e.notes?' · '+e.notes:''}</div>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:18px;font-weight:900">${fmt(e.amount)}</div>
+            <div style="font-size:11px;color:#99a4ac">${fmtS(e.datetime)}</div>
+          </div>
+        </div>
+        ${extra?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">${extra}</div>`:''}
+        <div style="margin-top:8px;text-align:right;display:flex;justify-content:flex-end;gap:6px">
+          <button class="ebtn" style="padding:5px 10px;font-size:11px" onclick="startEdit('${e.id}','expense')">Edit</button>
+          <button class="rbtn" style="padding:5px 10px;font-size:11px" onclick="delExpense('${e.id}')">Delete</button>
+        </div>
+      </div>`;
+    }).join(''):'<div class="empty">No other expenses recorded yet.<br>Use the Add tab → 💳 Expense to log bills, fuel, dining, etc.</div>';
+  }
+}
+function togHist(id){document.getElementById('hd-'+id)?.classList.toggle('on');}
+async function delPurch(id){
+  if(!confirm('Delete this purchase?'))return;
+  purchases=purchases.filter(p=>p.id!==id);
+  if(editingEntry?.type==='purchase'&&editingEntry.id===id) resetExpPath();
+  deletedIds=uniq(deletedIds.concat(id));
+  _buildPriceCache();
+  renderDash();
+  renderHist();
+  renderSessions();
+  await push();
+  updateHdr();
+}
+function expCSV(){
+  const esc=v=>`"${String(v??'').replace(/"/g,'""')}"`;
+  const rows=[['Date','Store','Payment','Item','Category','Qty','Unit','Price','Item Total']];
+  // Fix #26: "Total" column now shows item-level total (price × qty), not the full purchase total
+  // fmtS now includes year so exported dates are unambiguous
+  purchases.forEach(p=>p.items.forEach(it=>rows.push([
+    fmtS(p.datetime),p.store,p.payMode,it.name,it.category,
+    it.qty,it.unit||'pcs',it.price,
+    (parseFloat(it.price||0)*parseFloat(it.qty||1)).toFixed(2)
+  ])));
+  const blob=new Blob([rows.map(r=>r.map(esc).join(',')).join('\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='grocery_history.csv';
+  a.click();
+}
+
+function loadIns(name){
+  document.getElementById('iSrch').value=name;
+  document.getElementById('iACl').style.display='none';
+  const allI=purchases.flatMap(p=>p.items.map(it=>({...it,datetime:p.datetime,store:p.store})));
+  const items=allI.filter(it=>it.name.toLowerCase()===name.toLowerCase()).sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
+  if(!items.length){
+    document.getElementById('iRes').innerHTML='<div class="empty" style="padding:.5rem">No data found.</div>';
+    return;
+  }
+  const avgP=items.reduce((s,it)=>s+parseFloat(it.price||0)/Math.max(parseFloat(it.qty),1),0)/items.length;
+  let best=null,bestV=Infinity;
+  STORES.forEach(s=>{
+    const e=items.filter(it=>it.store===s&&it.price&&parseFloat(it.qty)>0);
+    if(e.length){
+      const a=e.reduce((x,it)=>x+parseFloat(it.price)/parseFloat(it.qty),0)/e.length;
+      if(a<bestV){bestV=a;best=s;}
+    }
+  });
+  const last=items[0];
+  document.getElementById('iRes').innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">
+      <div class="mc"><div class="l">Avg Price</div><div class="v" style="font-size:15px">₹${avgP.toFixed(1)}</div></div>
+      <div class="mc"><div class="l">Bought</div><div class="v" style="font-size:15px">${items.length}×</div></div>
+      <div class="mc"><div class="l">Cheapest At</div><div class="v" style="font-size:13px">${best||'—'}</div></div>
+    </div>
+    <div style="background:#f5f2eb;border-radius:16px;padding:11px 12px;margin-bottom:10px;font-size:12px">
+      <strong>Last bought:</strong> ${fmt(parseFloat(last.price||0))} for ${last.qty} ${last.unit||'pcs'} at ${last.store} on ${fmtS(last.datetime)}
+      ${unitPrice(last.price,last.qty,last.unit||'pcs')?` · <span style="color:#305f39;font-weight:700">${unitPrice(last.price,last.qty,last.unit||'pcs')}</span>`:''}
+    </div>
+    <table style="width:100%;font-size:12px;border-collapse:collapse">
+      <tr>${['Date','Store','Qty','Unit','Price','Per Unit'].map(h=>`<th style="text-align:${h==='Date'||h==='Store'?'left':'right'};padding:4px 0;color:#96a2ab;font-weight:700;border-bottom:1px solid #f2eee7">${h}</th>`).join('')}</tr>
+      ${items.map(it=>`<tr>
+        <td style="padding:5px 0">${fmtS(it.datetime)}</td>
+        <td style="font-size:11px">${tag('store',it.store)}</td>
+        <td style="text-align:right">${it.qty}</td>
+        <td style="text-align:right;color:#a2adb4">${it.unit||'pcs'}</td>
+        <td style="text-align:right;font-weight:800">${fmt(parseFloat(it.price||0))}</td>
+        <td style="text-align:right;color:#305f39;font-weight:700">${unitPrice(it.price,it.qty,it.unit||'pcs')||'—'}</td>
+      </tr>`).join('')}
+    </table>`;
+}
+function renderIns(){
+  document.getElementById('sSC').textContent=SCODE||'default';
+  document.getElementById('sURL').textContent='Firebase · '+FIREBASE_CONFIG.projectId;
+}
+
+function renderCategoryManager(){
+  const wrap=document.getElementById('catMgrFields');
+  if(!wrap) return;
+  const rows=[];
+  Object.entries(EXPENSE_TREE).forEach(([cat,catNode])=>{
+    rows.push(`
+      <div class="card" style="margin-bottom:0">
+        <div class="row" style="margin-bottom:10px">
+          <div style="font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px"><span>${catNode.icon}</span><span>${safeText(cat)}</span></div>
+        </div>
+        <div class="f" style="margin-bottom:10px">
+          <label>Category Name</label>
+          <input class="fi" id="cl_${safeText(pathKey([cat]))}" value="${safeText(getCategoryLabel(cat))}" data-path="${safeText(pathKey([cat]))}"/>
+        </div>
+        ${Object.entries(catNode.sub||{}).map(([sub,subNode])=>`
+          <div style="padding:12px;border:1px solid #eee2d1;border-radius:16px;background:#fffaf2;margin-bottom:10px">
+            <div class="f" style="margin-bottom:${subNode.sub?10:0}px">
+              <label>Sub-Category</label>
+              <input class="fi" id="cl_${safeText(pathKey([cat,sub]))}" value="${safeText(getCategoryLabel(cat,sub))}" data-path="${safeText(pathKey([cat,sub]))}"/>
+            </div>
+            ${(subNode.sub?Object.entries(subNode.sub).map(([leaf,leafNode])=>`
+              <div class="f" style="margin-bottom:0">
+                <label>${safeText(sub)} Item</label>
+                <input class="fi" id="cl_${safeText(pathKey([cat,sub,leaf]))}" value="${safeText(getCategoryLabel(cat,sub,leaf))}" data-path="${safeText(pathKey([cat,sub,leaf]))}"/>
+              </div>
+            `).join(''):'')}
+          </div>
+        `).join('')}
+      </div>
+    `);
+  });
+  wrap.innerHTML=rows.join('');
+}
+
+function openCategoriesManager(){
+  renderCategoryManager();
+  document.getElementById('catMgrMod').classList.add('on');
+}
+
+function closeCategoriesManager(){
+  document.getElementById('catMgrMod').classList.remove('on');
+}
+
+async function saveCategoryLabels(){
+  const next={};
+  document.querySelectorAll('#catMgrFields input[data-path]').forEach(input=>{
+    const path=input.getAttribute('data-path');
+    const value=(input.value||'').trim();
+    const fallback=path.split('>').slice(-1)[0]||'';
+    if(value&&value!==fallback) next[path]=value;
+  });
+  categoryLabels=next;
+  saveLocal();
+  closeCategoriesManager();
+  await push();
+  renderDash();
+  renderHist();
+  renderSessions();
+  renderCalendarView();
+  toast('Category names saved');
+}
+
+function shiftCalendarMonth(delta){
+  calCursor=new Date(calCursor.getFullYear(),calCursor.getMonth()+delta,1);
+  if(selectedCalendarDate&&(selectedCalendarDate.getFullYear()!==calCursor.getFullYear()||selectedCalendarDate.getMonth()!==calCursor.getMonth())){
+    selectedCalendarDate=null;
+  }
+  renderCalendarView();
+}
+
+function sameDay(a,b){
+  return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();
+}
+
+function getTransactionsForDate(date){
+  const purchaseEntries=purchases.filter(p=>sameDay(new Date(p.datetime),date)).map(p=>({type:'purchase',datetime:p.datetime,amount:p.total,record:p}));
+  const expenseEntries=expenses.filter(e=>sameDay(new Date(e.datetime),date)).map(e=>({type:'expense',datetime:e.datetime,amount:e.amount,record:e}));
+  return [...purchaseEntries,...expenseEntries].sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
+}
+
+function selectCalendarDate(year,month,day){
+  selectedCalendarDate=new Date(year,month,day);
+  renderCalendarView();
+}
+
+function clearCalendarSelection(){
+  selectedCalendarDate=null;
+  renderCalendarView();
+}
+
+function renderCalendarDayTransactions(){
+  const emptyEl=document.getElementById('calendarDayEmpty');
+  const contentEl=document.getElementById('calendarDayContent');
+  const titleEl=document.getElementById('calendarDayTitle');
+  const countEl=document.getElementById('calendarDayCount');
+  const listEl=document.getElementById('calendarDayTransactions');
+  if(!emptyEl||!contentEl||!titleEl||!countEl||!listEl) return;
+
+  if(!selectedCalendarDate){
+    emptyEl.style.display='block';
+    contentEl.style.display='none';
+    return;
+  }
+
+  const dayEntries=getTransactionsForDate(selectedCalendarDate);
+  const total=dayEntries.reduce((sum,entry)=>sum+entry.amount,0);
+  titleEl.textContent=selectedCalendarDate.toLocaleDateString('en-IN',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+  countEl.textContent=`${dayEntries.length} transaction${dayEntries.length!==1?'s':''} · ${fmt(total)}`;
+  emptyEl.style.display='none';
+  contentEl.style.display='block';
+
+  if(!dayEntries.length){
+    listEl.innerHTML='<div class="calendar-empty" style="background:#fff;border-radius:18px;box-shadow:var(--shadow)">No transactions recorded for this date.</div>';
+    return;
+  }
+
+  listEl.innerHTML=dayEntries.map(entry=>{
+    if(entry.type==='purchase'){
+      const p=entry.record;
+      return `<div class="hi" style="margin-bottom:0">
+        <div class="row">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            ${tag('store',p.store)}
+            ${tag('pay',p.payMode||'NA')}
+            <span style="font-size:11px;color:#99a4ac">${new Date(p.datetime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span>
+          </div>
+          <div style="font-size:17px;font-weight:900">${fmt(p.total)}</div>
+        </div>
+        <div style="font-size:11px;color:#95a0a8;margin-top:4px">${p.items.length} items${p.notes?` · ${safeText(p.notes)}`:''}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">
+          ${p.items.map(it=>`<span style="font-size:10px;background:#f5f2eb;border-radius:999px;padding:4px 8px;color:#66747d">${safeText(it.name)} ${safeText(it.qty)}${safeText(it.unit||'pcs')}</span>`).join('')}
+        </div>
+      </div>`;
+    }
+    const e=entry.record;
+    const labels=getExpenseDisplayPath(e);
+    const extra=Object.entries({liters:'L',odometer:'km',recipient:'To',warranty:'Warranty',hospital:'Hospital',medicine:'Medicine',customName:'Name'}).map(([k,lbl])=>e[k]?`<span style="font-size:10px;background:#f5f2eb;border-radius:999px;padding:4px 8px;color:#66747d">${lbl}: ${safeText(e[k])}</span>`:'').filter(Boolean).join('');
+    return `<div class="hi" style="margin-bottom:0">
+      <div class="row">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span style="font-size:18px">${getExpenseIcon(e.category,e.subcategory,e.leaf)}</span>
+          ${tag('pay',e.payMode||'NA')}
+          <span style="font-size:11px;color:#99a4ac">${new Date(e.datetime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span>
+        </div>
+        <div style="font-size:17px;font-weight:900">${fmt(e.amount)}</div>
+      </div>
+      <div style="font-size:11px;color:#95a0a8;margin-top:4px">${safeText(labels.category)} › ${safeText(labels.subcategory)}${e.notes?` · ${safeText(e.notes)}`:''}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">
+        <span style="font-size:10px;background:#f5f2eb;border-radius:999px;padding:4px 8px;color:#66747d">${safeText(labels.leaf||labels.subcategory||labels.category)}</span>
+        ${extra}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderCalendarView(){
+  const title=document.getElementById('calTitle');
+  const count=document.getElementById('calCount');
+  const grid=document.getElementById('calendarGrid');
+  if(!title||!count||!grid) return;
+  const year=calCursor.getFullYear();
+  const month=calCursor.getMonth();
+  const first=new Date(year,month,1);
+  const startDay=first.getDay();
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  const monthly=getCombinedEntriesForMonth(calCursor);
+  const byDay={};
+  monthly.forEach(entry=>{
+    const day=new Date(entry.datetime).getDate();
+    byDay[day]=(byDay[day]||0)+entry.amount;
+  });
+  title.textContent=first.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+  count.textContent=`${monthly.length} transactions`;
+  const amounts=Object.values(byDay);
+  const max=Math.max(...amounts,0);
+  let html='';
+  for(let i=0;i<startDay;i++) html+='<div class="calendar-cell empty"></div>';
+  for(let day=1;day<=daysInMonth;day++){
+    const amt=byDay[day]||0;
+    let cls='';
+    if(amt>0&&max>0){
+      const ratio=amt/max;
+      cls=ratio>.85?' top':ratio>.55?' high':ratio>.25?' mid':'';
+    }
+    const selected=selectedCalendarDate&&selectedCalendarDate.getFullYear()===year&&selectedCalendarDate.getMonth()===month&&selectedCalendarDate.getDate()===day;
+    html+=`<div class="calendar-cell${selected?' sel':''}" onclick="selectCalendarDate(${year},${month},${day})">
+      <div class="calendar-day">${day}</div>
+      ${amt?`<div class="calendar-amt${cls}">${fmt(amt)}</div>`:''}
+    </div>`;
+  }
+  const totalCells=startDay+daysInMonth;
+  const tail=(7-(totalCells%7))%7;
+  for(let i=0;i<tail;i++) html+='<div class="calendar-cell empty"></div>';
+  grid.innerHTML=html;
+  renderCalendarDayTransactions();
+}
+
+function openSett(){document.getElementById('settMod').classList.add('on');}
+function closeSett(){document.getElementById('settMod').classList.remove('on');}
+function resetApp(){
+  if(!confirm('Clear this device session? Your cloud data will stay safe in Firebase.'))return;
+  ['gt_code','gt_dkey','gt_p','gt_e','gt_b','gt_cb','gt_del','gt_cl'].forEach(k=>localStorage.removeItem(k));
+  location.reload();
+}
+
+(function(){
+  const code=localStorage.getItem('gt_code'),dkey=localStorage.getItem('gt_dkey');
+  if(code&&dkey){
+    SCODE=code;
+    DKEY=dkey;
+    loadLocalState();
+    _buildPriceCache();
+    document.getElementById('setup').style.display='none';
+    document.getElementById('wrap').style.display='block';
+    initApp();
+    renderDash();
+    renderHSF();
+    renderHist();
+    renderIns();
+    pull();
+    startAutoSync();
+  }
+})();
+</script>
+<script>
+if ("serviceWorker" in navigator && !location.hostname.includes("claudeusercontent.com")) {
+  navigator.serviceWorker.register("service-worker.js", { scope: "./" })
+    .then(() => console.log("SW registered"))
+    .catch((err) => console.warn("SW registration failed", err));
+}
+</script>
+<script>
+let deferredPrompt;
+const installBtn=document.getElementById("installBtn");
+const isStandalone=window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true;
+
+if(installBtn&&isStandalone){
+  installBtn.style.display="none";
+}
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if(installBtn&&!isStandalone) installBtn.style.display = "block";
+});
+
+if(installBtn){
+  installBtn.addEventListener("click", () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => {
+        deferredPrompt = null;
+        installBtn.style.display="none";
+      });
+    }else if(isStandalone){
+      toast("App already installed");
+    }else{
+      toast("Install prompt is not available on this device yet");
+    }
+  });
+}
+
+window.addEventListener("appinstalled", () => {
+  deferredPrompt = null;
+  if(installBtn) installBtn.style.display = "none";
+  toast("MoneyNest installed");
+});
+
+window.addEventListener("online", () => {
+  setDot("on");
+  toast("Back online");
+});
+
+window.addEventListener("offline", () => {
+  setDot("off");
+  toast("You are offline");
+});
+
+setDot(navigator.onLine===false?"off":"on");
+</script>
+</body>
+</html>
+

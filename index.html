@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>MoneyNest</title>
+
+  <!-- Required for PWABuilder to detect this as a PWA -->
+  <link rel="manifest" href="./manifest.json"/>
+  <meta name="theme-color" content="#4a7a30"/>
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png"/>
+
+  <script>
+    // The main app page registers the service worker.
+    // Keep this launcher focused on redirecting to the real entry.
+    window.location.replace("./moneynest-app.html");
+  </script>
+</head>
+<body>
+  <p>Opening MoneyNest...</p>
+</body>
+</html>
