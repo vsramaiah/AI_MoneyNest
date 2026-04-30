@@ -1,4 +1,4 @@
-{
+﻿{
   "id": "./",
   "name": "MoneyNest Smart Grocery and Budget Tracker",
   "short_name": "MoneyNest",
@@ -46,3 +46,4 @@
     }
   ]
 }
+
