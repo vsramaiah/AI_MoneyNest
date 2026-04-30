@@ -187,5 +187,4 @@ Personal / family use. Not for redistribution.
 
 ## 🙏 Credits
 
-Built with ❤️ by VISIRA.  
-Designed for Indian households tracking daily grocery and household expenses.
+Built with ❤️ by VISIRA.
