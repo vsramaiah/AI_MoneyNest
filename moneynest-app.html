@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -445,10 +445,16 @@ body{
 .cbudget-row{margin-bottom:12px}
 .cbudget-row .row{font-size:12px;margin-bottom:3px}
 .nav{
-  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
-  width:100%;max-width:480px;padding:14px 18px 18px;z-index:120
+  position:fixed;left:0;right:0;bottom:0;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  padding:14px 18px calc(18px + env(safe-area-inset-bottom));
+  z-index:120
 }
 .nav-shell{
+  width:100%;
+  max-width:480px;
   background:rgba(255,250,242,.96);
   border:1px solid #efe3cf;
   border-radius:34px;
@@ -782,12 +788,12 @@ body{
       <div class="summary-block">
         <div class="summary-mini">
           <div class="stat-card">
-            <small>Average Spend</small>
+            <small>Income This Month</small>
             <div class="big" id="da">—</div>
             <div class="note" id="dc"></div>
           </div>
           <div class="stat-card">
-            <small>Top Store</small>
+            <small>Net Cashflow</small>
             <div class="big" id="ds">—</div>
             <div class="note" id="dsc"></div>
           </div>
@@ -824,9 +830,14 @@ body{
 
       <div class="section-title" style="margin-top:0">
         <h2>Add Entry</h2>
-        <button onclick="resetExpPath()" id="expResetBtn" style="display:none">Reset</button>
+        <button onclick="goExpBack()" id="expResetBtn" style="display:none">Back</button>
       </div>
-      <div class="small-note" style="margin-bottom:12px">Select a category first, then a sub-category, and log the amount in one simple flow.</div>
+      <div class="small-note" id="addModeHint" style="margin-bottom:12px">Select a category first, then a sub-category, and log the amount in one simple flow.</div>
+      <div class="subtabs" style="margin-bottom:14px">
+        <div class="stab on" id="addTab-expense" onclick="setAddMode('expense')">Expense</div>
+        <div class="stab" id="addTab-income" onclick="setAddMode('income')">Income</div>
+        <div class="stab" id="addTab-transfer" onclick="setAddMode('transfer')">Transfer</div>
+      </div>
 
       <div id="expBreadcrumb" style="display:none;font-size:12px;color:#8a969f;margin-bottom:12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap"></div>
       <div id="expDrillDown"></div>
@@ -868,7 +879,10 @@ body{
       <div class="card" style="margin-bottom:10px">
         <div class="section-title" style="margin-top:0">
           <h2>Calendar View</h2>
-          <button onclick="clearCalendarSelection()">Clear</button>
+          <div style="display:flex;gap:8px">
+            <button onclick="clearCalendarSelection()">Clear</button>
+            <button class="rbtn" style="padding:9px 14px;font-size:12px" onclick="deleteCalendarMonth()">Delete Month</button>
+          </div>
         </div>
       </div>
       <div class="calendar-shell" id="calendarSection">
@@ -892,7 +906,10 @@ body{
                 <strong id="calendarDayTitle">Selected Day</strong>
                 <span id="calendarDayCount">0 transactions</span>
               </div>
-              <button class="sbtn" style="padding:8px 12px;font-size:12px" onclick="clearCalendarSelection()">Clear</button>
+              <div style="display:flex;gap:8px">
+                <button class="sbtn" style="padding:8px 12px;font-size:12px" onclick="clearCalendarSelection()">Clear</button>
+                <button class="rbtn" style="padding:8px 12px;font-size:12px" onclick="deleteCalendarDay()">Delete Day</button>
+              </div>
             </div>
             <div class="calendar-day-list" id="calendarDayTransactions"></div>
           </div>
@@ -964,6 +981,11 @@ body{
         <button class="obtn" onclick="openSett()">Open</button>
       </div>
       <div class="mval" id="sURL" style="margin-top:12px;margin-bottom:0"></div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Built with ❤️ by VISIRA.</div>
+      <div class="small-note">App Version: <span id="appVersionText">1.1.0</span></div>
     </div>
   </div>
 
@@ -1047,6 +1069,8 @@ body{
 const STORES=['Dmart','RelianceMart','Local Shop','Other'];
 const CATS=['Vegetables','Fruits','Pulses','Dairy','Meat & Fish','Snacks','Beverages','Frozen','Bakery','Spices','Oils','Rice & Flour','Ready Mixes','Dry Fruits','Household','Cleaning Supplies','Personal','Baby','Other'];
 const PAYS=['Cash','UPI','Debit Card','Credit Card','Rupay Credit UPI'];
+const TRANSFER_CHANNELS=['Account','Cash','UPI','Credit Card','Rupay Credit UPI'];
+const INCOME_CATEGORIES=['Salary','Business','Interest','Dividends','Gifts','Refunds','Rewards','Coupons'];
 const UNITS=['pcs','g','kg','ml','L','packet','dozen'];
 
 const EXPENSE_TREE={
@@ -1087,6 +1111,9 @@ const EXPENSE_TREE={
   }},
   "Food & Dining":{icon:"🍔",sub:{
     "Restaurant":{icon:"🍽️",fields:["amount","date","notes"]},
+    "Street Food":{icon:"🌮",fields:["amount","date","notes"]},
+    "Tiffin Center":{icon:"🥣",fields:["amount","date","notes"]},
+    "Curry Point":{icon:"🍛",fields:["amount","date","notes"]},
   }},
   "Lifestyle":{icon:"🛍️",sub:{
     "Shopping":{icon:"🛍️",fields:["amount","date","notes"]},
@@ -1099,7 +1126,11 @@ const EXPENSE_TREE={
     "Snacks":{icon:"🍟",fields:["amount","date","notes"]}
   }},
   "Health":{icon:"🏥",sub:{
-    "Medical":{icon:"🏥",fields:["amount","hospital","medicine","date","notes"]}
+    "Medical":{icon:"🏥",fields:["amount","hospital","medicine","date","notes"]},
+    "Insurance":{icon:"🛡️",sub:{
+      "Health":{icon:"🩺",fields:["amount","date","notes"]},
+      "Life":{icon:"🫶",fields:["amount","date","notes"]}
+    }}
   }},
   "Vehicle":{icon:"🛵",sub:{
     "Fuel":{icon:"⛽",fields:["amount","liters","odometer","date","notes"]},
@@ -1118,12 +1149,41 @@ const EXPENSE_TREE={
     "Cleaning Help":{icon:"🧹",fields:["amount","date","notes"]},
     "Decor":{icon:"🖼️",fields:["amount","date","notes"]}
   }},
+  "Finance":{icon:"💰",sub:{
+    "EMI":{icon:"💸",sub:{
+      "Credit Card EMI":{icon:"💳",fields:["amount","date","notes"]},
+      "Home Loan":{icon:"🏠",fields:["amount","date","notes"]},
+      "Personal Loan":{icon:"🤝",fields:["amount","date","notes"]},
+      "Vehicle Loan":{icon:"🛵",fields:["amount","date","notes"]}
+    }},
+    "Investments":{icon:"📈",sub:{
+      "Stocks":{icon:"📊",fields:["amount","date","notes"]},
+      "Mutual Funds":{icon:"🧾",fields:["amount","date","notes"]},
+      "PPF":{icon:"🏦",fields:["amount","date","notes"]},
+      "EPF":{icon:"🪙",fields:["amount","date","notes"]},
+      "Fixed Deposits (FD)":{icon:"💼",fields:["amount","date","notes"]},
+      "Bonds":{icon:"📜",fields:["amount","date","notes"]},
+      "Gold":{icon:"🥇",fields:["amount","date","notes"]},
+      "Crypto":{icon:"₿",fields:["amount","date","notes"]}
+    }},
+    "Savings":{icon:"🐖",sub:{
+      "General Savings":{icon:"💵",fields:["amount","date","notes"]},
+      "Emergency Fund":{icon:"🆘",fields:["amount","date","notes"]}
+    }},
+    "Bank Charges":{icon:"🏧",sub:{
+      "ATM Charges":{icon:"🏧",fields:["amount","date","notes"]},
+      "SMS Charges":{icon:"📩",fields:["amount","date","notes"]},
+      "Account Fees":{icon:"📒",fields:["amount","date","notes"]},
+      "Penalties":{icon:"⚠️",fields:["amount","date","notes"]}
+    }}
+  }},
   "Others":{icon:"📦",sub:{
     "Misc":{icon:"📦",fields:["amount","date","notes"]},
     "Custom":{icon:"➕",fields:["customName","amount","date","notes"]}
   }}
 };
 const DASH_ORDER=['week','month','year','all'];
+const APP_VERSION='1.1.0';
 const CATEGORY_ICONS={
   'Vegetables':'🥦','Fruits':'🍎','Pulses':'🫘','Dairy':'🥛','Meat & Fish':'🍗','Snacks':'🍪','Beverages':'🥤',
   'Frozen':'🧊','Bakery':'🥖','Spices':'🌶️','Oils':'🫗','Rice & Flour':'🌾','Ready Mixes':'🥣','Dry Fruits':'🥜',
@@ -1168,6 +1228,17 @@ const SUGG={
 };
 const ALL_ITEMS=Object.values(SUGG).flat();
 
+const INCOME_ICONS={
+  Salary:'💼',
+  Business:'🏪',
+  Interest:'📈',
+  Dividends:'💹',
+  Gifts:'🎁',
+  Refunds:'↩️',
+  Rewards:'🏆',
+  Coupons:'🎟️'
+};
+
 const FIREBASE_CONFIG={
   apiKey:"AIzaSyCDDjTcTdp0ffdq7vfR4U8I8llGaOIYzQE",
   authDomain:"moneynest-d1027.firebaseapp.com",
@@ -1178,8 +1249,8 @@ const FIREBASE_CONFIG={
 };
 
 let DKEY='',SCODE='';
-let purchases=[],expenses=[],budget=0,catBudgets={},deletedIds=[],categoryLabels={};
-let addMode='grocery',expPath=[],expState={l1:null,l2:null,l3:null};
+let purchases=[],expenses=[],incomes=[],transfers=[],monthlyBudgets={},catBudgetsByMonth={},deletedIds=[],categoryLabels={};
+let addMode='expense',expPath=[],expState={l1:null,l2:null,l3:null};
 // Reference arrays for defaults so changes to STORES/PAYS propagate automatically
 let selSt=STORES[0],selPy=PAYS[1],curMd='normal',groceryEntryMode='normal';
 let iRows=[],histSF='All';
@@ -1215,6 +1286,11 @@ const FIELD_DEFS={
   amount:{label:'Amount (₹)',type:'number',placeholder:'0',min:'0',step:'0.5'},
   payMode:{label:'Payment Mode',type:'select',options:PAYS},
   notes:{label:'Notes',type:'textarea',rows:'3',placeholder:'Optional note'},
+  incomeCategory:{label:'Income Category',type:'select',options:INCOME_CATEGORIES},
+  transferFrom:{label:'From',type:'select',options:TRANSFER_CHANNELS},
+  transferTo:{label:'To',type:'select',options:TRANSFER_CHANNELS},
+  personName:{label:'Person Name',type:'text',placeholder:'e.g. Varun'},
+  direction:{label:'Direction',type:'select',options:['Sent','Receive']},
   liters:{label:'Liters',type:'number',placeholder:'0',min:'0',step:'0.01'},
   odometer:{label:'Odometer',type:'number',placeholder:'Current odometer reading',min:'0',step:'1'},
   hospital:{label:'Hospital / Clinic',type:'text',placeholder:'e.g. Apollo Clinic'},
@@ -1300,10 +1376,32 @@ function normalizePurchaseStores(){
     return {...p,store:getValidStoreName(p.store)};
   });
 }
+function getBudgetMonthKey(cursor=budgetCursor){
+  return typeof cursor==='string'?cursor:mKey(cursor);
+}
+function getBudgetForMonth(cursor=budgetCursor){
+  return parseFloat(monthlyBudgets[getBudgetMonthKey(cursor)]||0)||0;
+}
+function setBudgetForMonth(cursor,amount){
+  const key=getBudgetMonthKey(cursor);
+  if(amount>0) monthlyBudgets[key]=amount;
+  else delete monthlyBudgets[key];
+}
+function getCategoryBudgetsForMonth(cursor=budgetCursor){
+  return catBudgetsByMonth[getBudgetMonthKey(cursor)]||{};
+}
+function setCategoryBudgetsForMonth(cursor,budgets){
+  const key=getBudgetMonthKey(cursor);
+  const clean=Object.fromEntries(Object.entries(budgets||{}).filter(([,v])=>(parseFloat(v)||0)>0).map(([k,v])=>[k,parseFloat(v)||0]));
+  if(Object.keys(clean).length) catBudgetsByMonth[key]=clean;
+  else delete catBudgetsByMonth[key];
+}
 function getCombinedEntriesForMonth(cursor){
   const purchasesMonth=purchases.filter(p=>inMonth(p.datetime,cursor)).map(p=>({type:'purchase',datetime:p.datetime,amount:p.total,record:p}));
   const expensesMonth=expenses.filter(e=>inMonth(e.datetime,cursor)).map(e=>({type:'expense',datetime:e.datetime,amount:e.amount,record:e}));
-  return [...purchasesMonth,...expensesMonth].sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
+  const incomesMonth=incomes.filter(i=>inMonth(i.datetime,cursor)).map(i=>({type:'income',datetime:i.datetime,amount:i.amount,record:i}));
+  const transfersMonth=transfers.filter(t=>inMonth(t.datetime,cursor)).map(t=>({type:'transfer',datetime:t.datetime,amount:t.amount,record:t}));
+  return [...purchasesMonth,...expensesMonth,...incomesMonth,...transfersMonth].sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
 }
 function periodLabel(v){
   return v==='week'?'This Week':v==='month'?'This Month':v==='year'?'This Year':'All Time';
@@ -1354,24 +1452,42 @@ function recentIcon(p){
 
 
 function defaultCloudState(){
-  return {purchases:[],expenses:[],budget:0,catBudgets:{},deletedIds:[],categoryLabels:{},version:0};
+  return {purchases:[],expenses:[],incomes:[],transfers:[],monthlyBudgets:{},catBudgetsByMonth:{},deletedIds:[],categoryLabels:{},version:0};
 }
 function loadLocalState(){
   try{purchases=JSON.parse(localStorage.getItem('gt_p')||'[]');}catch{purchases=[];}
   try{expenses=JSON.parse(localStorage.getItem('gt_e')||'[]');}catch{expenses=[];}
-  budget=parseFloat(localStorage.getItem('gt_b')||'0');
-  try{catBudgets=JSON.parse(localStorage.getItem('gt_cb')||'{}');}catch{catBudgets={};}
+  try{incomes=JSON.parse(localStorage.getItem('gt_i')||'[]');}catch{incomes=[];}
+  try{transfers=JSON.parse(localStorage.getItem('gt_t')||'[]');}catch{transfers=[];}
+  try{monthlyBudgets=JSON.parse(localStorage.getItem('gt_bm')||'{}');}catch{monthlyBudgets={};}
+  try{catBudgetsByMonth=JSON.parse(localStorage.getItem('gt_cbm')||'{}');}catch{catBudgetsByMonth={};}
+  const legacyBudget=parseFloat(localStorage.getItem('gt_b')||'0');
+  if(legacyBudget>0&&!Object.keys(monthlyBudgets).length) monthlyBudgets[curM()]=legacyBudget;
+  try{
+    const legacyCatBudgets=JSON.parse(localStorage.getItem('gt_cb')||'{}');
+    if(legacyCatBudgets&&typeof legacyCatBudgets==='object'&&!Array.isArray(legacyCatBudgets)&&!Object.keys(catBudgetsByMonth).length){
+      catBudgetsByMonth[curM()]=legacyCatBudgets;
+    }
+  }catch{}
   try{deletedIds=uniq(JSON.parse(localStorage.getItem('gt_del')||'[]'));}catch{deletedIds=[];}
   try{categoryLabels=JSON.parse(localStorage.getItem('gt_cl')||'{}');}catch{categoryLabels={};}
 }
 function normalizeCloudState(data){
   const base=defaultCloudState();
   const incoming=data&&typeof data==='object'?data:{};
+  const monthly=incoming.monthlyBudgets&&typeof incoming.monthlyBudgets==='object'?incoming.monthlyBudgets:{};
+  const catMonthly=incoming.catBudgetsByMonth&&typeof incoming.catBudgetsByMonth==='object'?incoming.catBudgetsByMonth:{};
+  if((parseFloat(incoming.budget)||0)>0&&!Object.keys(monthly).length) monthly[curM()]=parseFloat(incoming.budget)||0;
+  if(incoming.catBudgets&&typeof incoming.catBudgets==='object'&&!Array.isArray(incoming.catBudgets)&&!Object.keys(catMonthly).length){
+    catMonthly[curM()]=incoming.catBudgets;
+  }
   return {
     purchases:Array.isArray(incoming.purchases)?incoming.purchases:base.purchases,
     expenses:Array.isArray(incoming.expenses)?incoming.expenses:base.expenses,
-    budget:incoming.budget!==undefined?parseFloat(incoming.budget)||0:base.budget,
-    catBudgets:incoming.catBudgets&&typeof incoming.catBudgets==='object'?incoming.catBudgets:base.catBudgets,
+    incomes:Array.isArray(incoming.incomes)?incoming.incomes:base.incomes,
+    transfers:Array.isArray(incoming.transfers)?incoming.transfers:base.transfers,
+    monthlyBudgets:monthly,
+    catBudgetsByMonth:catMonthly,
     deletedIds:uniq(Array.isArray(incoming.deletedIds)?incoming.deletedIds:base.deletedIds),
     categoryLabels:incoming.categoryLabels&&typeof incoming.categoryLabels==='object'?incoming.categoryLabels:base.categoryLabels,
     version:incoming.version!==undefined?Number(incoming.version)||0:base.version
@@ -1381,8 +1497,10 @@ function applyCloudState(data){
   const state=normalizeCloudState(data);
   purchases=state.purchases;
   expenses=state.expenses;
-  budget=state.budget;
-  catBudgets=state.catBudgets;
+  incomes=state.incomes;
+  transfers=state.transfers;
+  monthlyBudgets=state.monthlyBudgets;
+  catBudgetsByMonth=state.catBudgetsByMonth;
   deletedIds=state.deletedIds;
   categoryLabels=state.categoryLabels;
   normalizePurchaseStores();
@@ -1441,7 +1559,12 @@ async function cloudPost(data){
   try{
     setDot('syncing');
     const payload=normalizeCloudState({...data,version:Date.now()});
-    await cloudDoc().set({...payload,list:firebase.firestore.FieldValue.delete()},{merge:true});
+    await cloudDoc().set({
+      ...payload,
+      list:firebase.firestore.FieldValue.delete(),
+      budget:firebase.firestore.FieldValue.delete(),
+      catBudgets:firebase.firestore.FieldValue.delete()
+    },{merge:true});
     setDot('on');
     if(payload.version) serverVersion=payload.version;
     return {ok:true,version:payload.version};
@@ -1455,20 +1578,24 @@ function saveLocal(){
   deletedIds=uniq(deletedIds);
   localStorage.setItem('gt_p',JSON.stringify(purchases));
   localStorage.setItem('gt_e',JSON.stringify(expenses));
-  localStorage.setItem('gt_b',String(budget));
-  localStorage.setItem('gt_cb',JSON.stringify(catBudgets));
+  localStorage.setItem('gt_i',JSON.stringify(incomes));
+  localStorage.setItem('gt_t',JSON.stringify(transfers));
+  localStorage.setItem('gt_bm',JSON.stringify(monthlyBudgets));
+  localStorage.setItem('gt_cbm',JSON.stringify(catBudgetsByMonth));
+  localStorage.removeItem('gt_b');
+  localStorage.removeItem('gt_cb');
   localStorage.setItem('gt_del',JSON.stringify(deletedIds));
   localStorage.setItem('gt_cl',JSON.stringify(categoryLabels));
 }
 async function push(){
   saveLocal();
-  return await cloudPost({purchases,expenses,budget,catBudgets,deletedIds:uniq(deletedIds),categoryLabels});
+  return await cloudPost({purchases,expenses,incomes,transfers,monthlyBudgets,catBudgetsByMonth,deletedIds:uniq(deletedIds),categoryLabels});
 }
 async function pull(){
   const d=await cloudGet();
   if(!d) return;
-  const hasRemoteData=(d.version||0)>0||d.purchases.length||d.expenses.length||d.budget>0||Object.keys(d.catBudgets||{}).length||d.deletedIds.length;
-  const hasLocalData=purchases.length||expenses.length||budget>0||Object.keys(catBudgets||{}).length||deletedIds.length;
+  const hasRemoteData=(d.version||0)>0||d.purchases.length||d.expenses.length||d.incomes.length||d.transfers.length||Object.keys(d.monthlyBudgets||{}).length||Object.keys(d.catBudgetsByMonth||{}).length||d.deletedIds.length;
+  const hasLocalData=purchases.length||expenses.length||incomes.length||transfers.length||Object.keys(monthlyBudgets||{}).length||Object.keys(catBudgetsByMonth||{}).length||deletedIds.length;
   if(!hasRemoteData&&hasLocalData){
     await push();
     return;
@@ -1523,13 +1650,17 @@ function initApp(){
     });
   }
   if(document.getElementById('aDt')&&!document.getElementById('aDt').value) document.getElementById('aDt').value=new Date().toISOString().slice(0,16);
-  if(budget>0) document.getElementById('binput').value=budget;
+  const activeBudget=getBudgetForMonth(budgetCursor);
+  document.getElementById('binput').value=activeBudget>0?activeBudget:'';
   if(document.getElementById('iCont')&&!iRows.length) addRow();
   if(document.getElementById('expDrillDown')) renderExpDrillDown();
   document.getElementById('sSC').textContent=SCODE||'default';
   document.getElementById('sURL').textContent='Firebase · '+FIREBASE_CONFIG.projectId;
   document.getElementById('settSyncCode').textContent=SCODE||'default';
   document.getElementById('settURL').textContent=FIREBASE_CONFIG.projectId;
+  const versionEl=document.getElementById('appVersionText');
+  if(versionEl) versionEl.textContent=APP_VERSION;
+  setAddMode(addMode);
   updateHdr();
 }
 
@@ -1554,7 +1685,21 @@ function goTab(id,btn){
   if(id==='hist'){renderHSF();renderHist();}
   if(id==='ins') renderIns();
   if(id==='list') renderSessions();
-  if(id==='add') renderExpDrillDown();
+  if(id==='add') setAddMode(addMode);
+}
+function setAddMode(mode){
+  addMode=mode;
+  document.querySelectorAll('[id^="addTab-"]').forEach(el=>el.classList.remove('on'));
+  document.getElementById(`addTab-${mode}`)?.classList.add('on');
+  const hint=document.getElementById('addModeHint');
+  if(hint){
+    hint.textContent=mode==='expense'
+      ?'Select a category first, then a sub-category, and log the amount in one simple flow.'
+      :mode==='income'
+        ?'Choose the income category and record the incoming amount.'
+        :'Record money sent or received between people or channels. Transfers do not affect balance.';
+  }
+  resetExpPath();
 }
 function showSubTab(id){
   document.querySelectorAll('.stab').forEach(t=>t.classList.remove('on'));
@@ -1625,29 +1770,35 @@ function getCatSpend(rangeOrMonth){
 function renderDash(){
   const list=purchases.filter(p=>inMonth(p.datetime,budgetCursor));
   const expList=expenses.filter(e=>inMonth(e.datetime,budgetCursor));
+  const incomeList=incomes.filter(i=>inMonth(i.datetime,budgetCursor));
+  const transferList=transfers.filter(t=>inMonth(t.datetime,budgetCursor));
   const combinedEntries=getCombinedEntriesForMonth(budgetCursor);
   const groceryTotal=list.reduce((s,p)=>s+p.total,0);
   const expenseTotal=expList.reduce((s,e)=>s+e.amount,0);
+  const incomeTotal=incomeList.reduce((s,i)=>s+i.amount,0);
   const total=groceryTotal+expenseTotal;
-  const allT=purchases.reduce((s,p)=>s+p.total,0)+expenses.reduce((s,e)=>s+e.amount,0);
-  const avg=combinedEntries.length?total/combinedEntries.length:0;
-  const remaining=(budget||0)-total;
+  const allExpenseTotal=purchases.reduce((s,p)=>s+p.total,0)+expenses.reduce((s,e)=>s+e.amount,0);
+  const allIncomeTotal=incomes.reduce((s,i)=>s+i.amount,0);
+  const allNet=allIncomeTotal-allExpenseTotal;
+  const activeBudget=getBudgetForMonth(budgetCursor);
+  const activeCatBudgets=getCategoryBudgetsForMonth(budgetCursor);
+  const remaining=activeBudget-total;
   const stC=list.reduce((a,p)=>{a[p.store]=(a[p.store]||0)+1;return a;},{});
   const tSt=Object.entries(stC).sort((a,b)=>b[1]-a[1])[0];
-  const heroBudget=budget||0;
+  const heroBudget=activeBudget;
   const pctBudget=heroBudget>0?Math.min((total/heroBudget)*100,100):0;
   const over=heroBudget>0&&total>heroBudget;
   const ringColor=over?'#d63f3f':'#305f39';
 
   document.getElementById('budgetMonthTitle').textContent=budgetCursor.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
-  document.getElementById('budgetMonthCount').textContent=`${list.length} grocery · ${expList.length} expense`;
+  document.getElementById('budgetMonthCount').textContent=`${list.length} grocery · ${expList.length} expense · ${incomeList.length} income · ${transferList.length} transfer`;
   document.getElementById('dm').textContent=fmt(total);
-  document.getElementById('dv').textContent=`${list.length} visit${list.length!==1?'s':''} + ${expList.length} expense${expList.length!==1?'s':''} in ${budgetCursor.toLocaleDateString('en-IN',{month:'short',year:'numeric'})}`;
-  document.getElementById('da').textContent=list.length?fmt(Math.round(groceryTotal/list.length)):'—';
-  document.getElementById('dc').textContent=combinedEntries.length?`${combinedEntries.length} total entr${combinedEntries.length!==1?'ies':'y'}`:'No entries yet';
-  document.getElementById('ds').textContent=tSt?tSt[0]:'—';
-  document.getElementById('dsc').textContent=tSt?`${tSt[1]} visit${tSt[1]!==1?'s':''}`:'Add more data';
-  document.getElementById('dat').textContent=fmt(allT);
+  document.getElementById('dv').textContent=`${list.length} grocery + ${expList.length} expense in ${budgetCursor.toLocaleDateString('en-IN',{month:'short',year:'numeric'})}`;
+  document.getElementById('da').textContent=incomeList.length?fmt(incomeTotal):'—';
+  document.getElementById('dc').textContent=incomeList.length?`${incomeList.length} income entr${incomeList.length!==1?'ies':'y'}`:'No income this month';
+  document.getElementById('ds').textContent=(allIncomeTotal||allExpenseTotal)?fmt(allNet):'—';
+  document.getElementById('dsc').textContent='Income - expense · transfers excluded';
+  document.getElementById('dat').textContent=fmt(allExpenseTotal);
 
   document.getElementById('arcBar').setAttribute('stroke',ringColor);
   document.getElementById('arcBar').setAttribute('stroke-dasharray',`${pctBudget.toFixed(1)} 100`);
@@ -1662,12 +1813,12 @@ function renderDash(){
     :over?`Limit crossed. You are over by ${fmt(total-heroBudget)} in ${budgetCursor.toLocaleDateString('en-IN',{month:'long'})}.`
     :`${fmt(heroBudget-total)} left in budget. Keep an eye on snacks, beverages, and impulse adds.`;
 
-  if(budget>0) document.getElementById('binput').value=budget;
+  document.getElementById('binput').value=heroBudget>0?heroBudget:'';
 
   const catS=getCatSpend(mKey(budgetCursor));
   let alerts='';
   CATS.forEach(cat=>{
-    const lim=parseFloat(catBudgets[cat])||0,sp=catS[cat]||0;
+    const lim=parseFloat(activeCatBudgets[cat])||0,sp=catS[cat]||0;
     if(!lim) return;
     const pct2=sp/lim;
     if(pct2>=1) alerts+=`<div class="alert alert-red"><strong>${cat}</strong> is over budget at ${fmt(sp)} of ${fmt(lim)}.</div>`;
@@ -1717,6 +1868,26 @@ function renderDash(){
           <div style="font-size:14px;font-weight:900">${fmt(p.total)}</div>
         </div>`;
       }
+      if(entry.type==='income'){
+        const i=entry.record;
+        return `<div class="row" style="padding:10px 0;border-bottom:1px solid #f1ede6">
+          <div>
+            <div style="font-size:13px;font-weight:800"><span style="font-size:16px">${INCOME_ICONS[i.category]||'💰'}</span> <span style="margin-left:6px">${safeText(i.category)}</span></div>
+            <div style="font-size:11px;color:#97a3ac;margin-top:4px">${fmtS(i.datetime)}${i.notes?` · ${safeText(i.notes)}`:''}</div>
+          </div>
+          <div style="font-size:14px;font-weight:900;color:#305f39">+${fmt(i.amount).replace('₹','₹')}</div>
+        </div>`;
+      }
+      if(entry.type==='transfer'){
+        const t=entry.record;
+        return `<div class="row" style="padding:10px 0;border-bottom:1px solid #f1ede6">
+          <div>
+            <div style="font-size:13px;font-weight:800"><span style="font-size:16px">🔁</span> <span style="margin-left:6px">${safeText(t.direction)} ${safeText(t.personName||'Transfer')}</span></div>
+            <div style="font-size:11px;color:#97a3ac;margin-top:4px">${safeText(t.from)} → ${safeText(t.to)} · ${fmtS(t.datetime)}</div>
+          </div>
+          <div style="font-size:14px;font-weight:900;color:#6b7280">${fmt(t.amount)}</div>
+        </div>`;
+      }
       const e=entry.record;
       const labels=getExpenseDisplayPath(e);
       return `<div class="row" style="padding:10px 0;border-bottom:1px solid #f1ede6">
@@ -1733,7 +1904,7 @@ function renderDash(){
 }
 
 function unitSpendHint(cat,sp){
-  const lim=parseFloat(catBudgets[cat])||0;
+  const lim=parseFloat(getCategoryBudgetsForMonth(budgetCursor)[cat])||0;
   if(!lim) return 'No cap';
   const diff=lim-sp;
   return diff>=0?`${fmt(diff)} left`:`${fmt(Math.abs(diff))} over`;
@@ -1755,17 +1926,18 @@ function updateHdr(state){
 }
 
 async function saveBudget(){
-  budget=parseFloat(document.getElementById('binput').value)||0;
+  setBudgetForMonth(budgetCursor,parseFloat(document.getElementById('binput').value)||0);
   renderDash();
   await push();
   toast('Budget saved');
 }
 
 function openCatBudget(){
+  const monthCatBudgets=getCategoryBudgetsForMonth(budgetCursor);
   document.getElementById('catBudFields').innerHTML=CATS.map(cat=>`
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
       <div style="flex:1;font-size:13px;display:flex;align-items:center;gap:8px">${tag(cat,cat.slice(0,3))} ${cat}</div>
-      <input type="number" min="0" id="cb_${cat.replace(/[^a-z]/gi,'_')}" value="${catBudgets[cat]||''}" placeholder="₹ limit"
+      <input type="number" min="0" id="cb_${cat.replace(/[^a-z]/gi,'_')}" value="${monthCatBudgets[cat]||''}" placeholder="₹ limit"
         oninput="updateCatBudgetTotal()"
         style="width:110px;border:1px solid #dfe6df;border-radius:12px;padding:8px 9px;font-size:13px;font-family:inherit;outline:none;text-align:right"/>
     </div>`).join('');
@@ -1791,11 +1963,12 @@ function applyAllCatBudgets(){
   updateCatBudgetTotal();
 }
 async function saveCatBudgets(){
+  const next={};
   CATS.forEach(cat=>{
     const v=parseFloat(document.getElementById('cb_'+cat.replace(/[^a-z]/gi,'_'))?.value)||0;
-    if(v>0) catBudgets[cat]=v;
-    else delete catBudgets[cat];
+    if(v>0) next[cat]=v;
   });
+  setCategoryBudgetsForMonth(budgetCursor,next);
   closeCatBudget();
   renderDash();
   await push();
@@ -1827,8 +2000,38 @@ function resetExpPath(){
   if(saveBtn) saveBtn.textContent='Save Entry';
   renderExpDrillDown();
 }
+function goExpBack(){
+  if(addMode==='income' || addMode==='transfer'){
+    resetExpPath();
+    return;
+  }
+  if(expState.l3){
+    expState.l3=null;
+  }else if(expState.l2){
+    expState.l2=null;
+  }else if(expState.l1){
+    expState.l1=null;
+  }else{
+    return;
+  }
+  document.getElementById('expForm').style.display='none';
+  document.getElementById('expTotal').textContent='₹0';
+  renderExpDrillDown();
+}
 
 function getEntryMeta(){
+  if(addMode==='income'){
+    return {
+      type:'income',
+      fields:['date','amount','incomeCategory','notes']
+    };
+  }
+  if(addMode==='transfer'){
+    return {
+      type:'transfer',
+      fields:['date','amount','transferFrom','transferTo','direction','personName','notes']
+    };
+  }
   const {l1,l2,l3}=expState;
   if(!l1) return null;
   const level1=EXPENSE_TREE[l1]||null;
@@ -1840,6 +2043,7 @@ function getEntryMeta(){
   return {
     l1,l2,l3,level1,level2,level3,node,leafName,
     path:[l1,l2,l3].filter(Boolean),
+    type:'expense',
     isGrocery:!!(level3?._grocery||level2?._grocery),
     groceryCategory
   };
@@ -1851,6 +2055,15 @@ function renderExpDrillDown(){
   const form=document.getElementById('expForm');
   const resetBtn=document.getElementById('expResetBtn');
   const {l1,l2,l3}=expState;
+
+  if(addMode==='income' || addMode==='transfer'){
+    bc.style.display='none';
+    dd.innerHTML='';
+    form.style.display='none';
+    showExpForm();
+    resetBtn.style.display='none';
+    return;
+  }
 
   // Breadcrumb
   const crumbs=[];
@@ -1913,6 +2126,7 @@ function selectExpLevel(level, name){
 }
 
 function getLeafFields(meta){
+  if(meta?.type==='income' || meta?.type==='transfer') return meta.fields||[];
   const leafFields=Array.isArray(meta?.node?.fields)?meta.node.fields:[];
   const seen=new Set();
   const ordered=['date','amount','payMode',...leafFields.filter(field=>field!=='notes'),'notes'];
@@ -1946,8 +2160,11 @@ function buildFieldHtml(field, meta){
     </div>`;
   }
   if(def.type==='select'){
+    const currentValue=editingEntry
+      ?(getFormValue(field)||'')
+      :'';
     const opts=(def.options||[]).map(opt=>{
-      const selected=opt===selPy?' selected':'';
+      const selected=(currentValue?opt===currentValue:opt===def.options?.[0])?' selected':'';
       return `<option${selected}>${safeText(opt)}</option>`;
     }).join('');
     return `<div class="f"><label>${def.label}</label><select id="${id}" class="fi">${opts}</select></div>`;
@@ -2046,7 +2263,11 @@ function showExpForm(){
   const fieldsEl=document.getElementById('expFormFields');
   const meta=getEntryMeta();
   if(!meta) return;
-  const selectedPath=meta.path.map((part,index)=>getCategoryLabel(...meta.path.slice(0,index+1))).join(' › ');
+  const selectedPath=meta.type==='income'
+    ?'Income'
+    :meta.type==='transfer'
+      ?'Transfer'
+      :meta.path.map((part,index)=>getCategoryLabel(...meta.path.slice(0,index+1))).join(' › ');
   const fields=getLeafFields(meta);
   const baseFields=meta.isGrocery
     ?fields.filter(field=>field==='date')
@@ -2086,6 +2307,11 @@ function showExpForm(){
       </div>
     </div>
   `:'';
+  const nonExpenseIntro=meta.type==='income'
+    ?`<div class="alert" style="margin-bottom:12px"><strong>Income Entry</strong> Record incoming money like salary, business income, gifts, or refunds.</div>`
+    :meta.type==='transfer'
+      ?`<div class="alert" style="margin-bottom:12px"><strong>Transfer Entry</strong> Record money sent or received. Transfers do not affect balance reports.</div>`
+      :'';
   const groceryFieldsBlock=meta.isGrocery?(
     groceryEntryMode==='bulk'
       ?`
@@ -2107,23 +2333,31 @@ function showExpForm(){
         </div>`
   ):'';
   fieldsEl.innerHTML=`
-    <div class="alert" style="margin-bottom:12px">
+    ${meta.type==='expense'?`<div class="alert" style="margin-bottom:12px">
       <strong>Selected:</strong> ${safeText(selectedPath)}
-    </div>
+    </div>`:nonExpenseIntro}
     ${meta.isGrocery?groceryHeaderBlock:''}
     ${groceryModeBlock}
     ${meta.isGrocery?'':baseFields.map(field=>buildFieldHtml(field,meta)).join('')}
-    ${!meta.isGrocery?buildFieldHtml('payMode',meta):''}
+    ${(!meta.isGrocery&&meta.type==='expense')?buildFieldHtml('payMode',meta):''}
     ${groceryFieldsBlock||(!meta.isGrocery?fields.filter(field=>!STANDARD_ENTRY_FIELDS.includes(field)&&field!=='notes').map(field=>buildFieldHtml(field,meta)).join(''):'')}
     ${notesField.map(field=>buildFieldHtml(field,meta)).join('')}
   `;
+  if(meta.type==='income' && !editingEntry){
+    setFormValue('incomeCategory',INCOME_CATEGORIES[0]);
+  }
+  if(meta.type==='transfer' && !editingEntry){
+    setFormValue('transferFrom',TRANSFER_CHANNELS[0]);
+    setFormValue('transferTo',TRANSFER_CHANNELS[1]||TRANSFER_CHANNELS[0]);
+    setFormValue('direction','Sent');
+  }
   if(groceryEntryMode==='bulk') updateGroceryBulkAmount();
   form.style.display='block';
 }
 
 async function saveUnifiedEntry(){
   const meta=getEntryMeta();
-  if(!meta){toast('Choose a category first');return;}
+  if(!meta){toast(addMode==='expense'?'Choose a category first':'Fill the form');return;}
   const date=getFormValue('date')||new Date().toISOString();
   const payMode=getFormValue('payMode')||PAYS[1]||'Cash';
   const notes=getFormValue('notes');
@@ -2137,7 +2371,32 @@ async function saveUnifiedEntry(){
     ?parseFloat(getFormValue('price'))||0
     :parseFloat(getFormValue('amount'))||0;
 
-  if(meta.isGrocery){
+  if(meta.type==='income'){
+    if(!amount){toast('Enter an amount');return;}
+    const incomeRecord={
+      id:editingEntry?.type==='income'?editingEntry.id:uid(),
+      datetime:date,
+      category:getFormValue('incomeCategory')||INCOME_CATEGORIES[0],
+      amount,
+      notes
+    };
+    if(editingEntry?.type==='income') incomes=incomes.map(i=>i.id===editingEntry.id?incomeRecord:i);
+    else incomes.push(incomeRecord);
+  }else if(meta.type==='transfer'){
+    if(!amount){toast('Enter an amount');return;}
+    const transferRecord={
+      id:editingEntry?.type==='transfer'?editingEntry.id:uid(),
+      datetime:date,
+      amount,
+      from:getFormValue('transferFrom')||TRANSFER_CHANNELS[0],
+      to:getFormValue('transferTo')||TRANSFER_CHANNELS[1]||TRANSFER_CHANNELS[0],
+      direction:getFormValue('direction')||'Sent',
+      personName:getFormValue('personName'),
+      notes
+    };
+    if(editingEntry?.type==='transfer') transfers=transfers.map(t=>t.id===editingEntry.id?transferRecord:t);
+    else transfers.push(transferRecord);
+  }else if(meta.isGrocery){
     let items=[];
     if(groceryEntryMode==='bulk'){
       items=parseBulkGroceryItems(document.getElementById('ef_bulkItems')?.value||'',meta.groceryCategory).map(item=>({
@@ -2221,6 +2480,24 @@ async function delExpense(id){
   if(editingEntry?.type==='expense'&&editingEntry.id===id) resetExpPath();
   renderDash();
   renderHist();
+  renderSessions();
+  await push();
+  updateHdr();
+}
+async function delIncome(id){
+  if(!confirm('Delete this income entry?'))return;
+  incomes=incomes.filter(i=>i.id!==id);
+  if(editingEntry?.type==='income'&&editingEntry.id===id) resetExpPath();
+  renderDash();
+  renderSessions();
+  await push();
+  updateHdr();
+}
+async function delTransfer(id){
+  if(!confirm('Delete this transfer entry?'))return;
+  transfers=transfers.filter(t=>t.id!==id);
+  if(editingEntry?.type==='transfer'&&editingEntry.id===id) resetExpPath();
+  renderDash();
   renderSessions();
   await push();
   updateHdr();
@@ -2382,10 +2659,17 @@ function cancelEdit(){
   toast('Edit cancelled');
 }
 function startEdit(id,type='purchase'){
-  const record=type==='expense'?expenses.find(x=>x.id===id):purchases.find(x=>x.id===id);
+  const record=type==='expense'
+    ?expenses.find(x=>x.id===id)
+    :type==='income'
+      ?incomes.find(x=>x.id===id)
+      :type==='transfer'
+        ?transfers.find(x=>x.id===id)
+        :purchases.find(x=>x.id===id);
   if(!record)return;
-  editingEntry={type,id};
+  addMode=(type==='income')?'income':(type==='transfer'?'transfer':'expense');
   goTab('add',document.getElementById('navAdd'));
+  editingEntry={type,id};
   if(type==='purchase'){
     const itemCategory=record.items?.[0]?.category||record.store||'Other';
     expState={
@@ -2411,7 +2695,7 @@ function startEdit(id,type='purchase'){
       syncExpTotal(item.price||record.total||0);
     }
     showEditBanner('Editing grocery entry');
-  }else{
+  }else if(type==='expense'){
     expState={
       l1:record.category||'Others',
       l2:record.subcategory||record.leaf||'Misc',
@@ -2425,6 +2709,25 @@ function startEdit(id,type='purchase'){
     ['liters','odometer','recipient','warranty','hospital','medicine','customName'].forEach(field=>setFormValue(field,record[field]||''));
     syncExpTotal(record.amount||0);
     showEditBanner('Editing expense entry');
+  }else if(type==='income'){
+    renderExpDrillDown();
+    setFormValue('date',record.datetime?.slice(0,16)||new Date().toISOString().slice(0,16));
+    setFormValue('amount',record.amount||'');
+    setFormValue('incomeCategory',record.category||INCOME_CATEGORIES[0]);
+    setFormValue('notes',record.notes||'');
+    syncExpTotal(record.amount||0);
+    showEditBanner('Editing income entry');
+  }else if(type==='transfer'){
+    renderExpDrillDown();
+    setFormValue('date',record.datetime?.slice(0,16)||new Date().toISOString().slice(0,16));
+    setFormValue('amount',record.amount||'');
+    setFormValue('transferFrom',record.from||TRANSFER_CHANNELS[0]);
+    setFormValue('transferTo',record.to||TRANSFER_CHANNELS[1]||TRANSFER_CHANNELS[0]);
+    setFormValue('direction',record.direction||'Sent');
+    setFormValue('personName',record.personName||'');
+    setFormValue('notes',record.notes||'');
+    syncExpTotal(record.amount||0);
+    showEditBanner('Editing transfer entry');
   }
   window.scrollTo(0,0);
   toast('Editing entry');
@@ -2528,7 +2831,7 @@ function renderSessions(){
           </table>
         </div>
       </div>`;
-    })():(()=>{
+    })():entry.type==='expense'?(()=>{
       const e=entry.record;
       const labels=getExpenseDisplayPath(e);
       const icon=getExpenseIcon(e.category,e.subcategory,e.leaf);
@@ -2553,6 +2856,46 @@ function renderSessions(){
           <div style="display:flex;gap:7px">
             <button class="ebtn" style="padding:7px 11px;font-size:11px" onclick="startEdit('${e.id}','expense')">Edit</button>
             <button class="rbtn" style="padding:7px 11px;font-size:11px" onclick="delExpense('${e.id}')">Delete</button>
+          </div>
+        </div>
+      </div>`;
+    })():entry.type==='income'?(()=>{
+      const i=entry.record;
+      return `<div class="hi" style="padding:12px 14px;border-radius:18px">
+        <div class="row">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span style="font-size:18px">${INCOME_ICONS[i.category]||'💰'}</span>
+            <span style="font-size:11px;color:#99a4ac">${new Date(i.datetime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span>
+          </div>
+          <div style="font-size:17px;font-weight:900;color:#305f39">+${fmt(i.amount).replace('₹','₹')}</div>
+        </div>
+        <div style="font-size:14px;font-weight:800;color:var(--text);margin-top:8px">${safeText(i.category)}</div>
+        <div style="font-size:12px;color:#95a0a8;margin-top:3px">Income${i.notes?` · ${safeText(i.notes)}`:''}</div>
+        <div class="row" style="margin-top:10px">
+          <div></div>
+          <div style="display:flex;gap:7px">
+            <button class="ebtn" style="padding:7px 11px;font-size:11px" onclick="startEdit('${i.id}','income')">Edit</button>
+            <button class="rbtn" style="padding:7px 11px;font-size:11px" onclick="delIncome('${i.id}')">Delete</button>
+          </div>
+        </div>
+      </div>`;
+    })():(()=>{
+      const t=entry.record;
+      return `<div class="hi" style="padding:12px 14px;border-radius:18px">
+        <div class="row">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span style="font-size:18px">🔁</span>
+            <span style="font-size:11px;color:#99a4ac">${new Date(t.datetime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span>
+          </div>
+          <div style="font-size:17px;font-weight:900;color:#6b7280">${fmt(t.amount)}</div>
+        </div>
+        <div style="font-size:14px;font-weight:800;color:var(--text);margin-top:8px">${safeText(t.direction)} ${safeText(t.personName||'Transfer')}</div>
+        <div style="font-size:12px;color:#95a0a8;margin-top:3px">${safeText(t.from)} → ${safeText(t.to)}${t.notes?` · ${safeText(t.notes)}`:''}</div>
+        <div class="row" style="margin-top:10px">
+          <div></div>
+          <div style="display:flex;gap:7px">
+            <button class="ebtn" style="padding:7px 11px;font-size:11px" onclick="startEdit('${t.id}','transfer')">Edit</button>
+            <button class="rbtn" style="padding:7px 11px;font-size:11px" onclick="delTransfer('${t.id}')">Delete</button>
           </div>
         </div>
       </div>`;
@@ -2675,18 +3018,67 @@ async function delPurch(id){
 }
 function expCSV(){
   const esc=v=>`"${String(v??'').replace(/"/g,'""')}"`;
-  const rows=[['Date','Store','Payment','Item','Category','Qty','Unit','Price','Item Total']];
-  // Fix #26: "Total" column now shows item-level total (price × qty), not the full purchase total
-  // fmtS now includes year so exported dates are unambiguous
+  const rows=[['Type','Date','Category','Subcategory / Label','Store / From','To','Payment','Item','Qty','Unit','Amount','Notes']];
   purchases.forEach(p=>p.items.forEach(it=>rows.push([
-    fmtS(p.datetime),p.store,p.payMode,it.name,it.category,
-    it.qty,it.unit||'pcs',it.price,
-    (parseFloat(it.price||0)*parseFloat(it.qty||1)).toFixed(2)
+    'Expense',
+    fmtS(p.datetime),
+    p.sourceCategory||'Essentials',
+    p.sourceLeaf||it.category,
+    p.store,
+    '',
+    p.payMode,
+    it.name,
+    it.qty,
+    it.unit||'pcs',
+    (parseFloat(it.price||0)*parseFloat(it.qty||1)).toFixed(2),
+    p.notes||''
   ])));
+  expenses.forEach(e=>rows.push([
+    'Expense',
+    fmtS(e.datetime),
+    e.category,
+    e.leaf||e.subcategory,
+    '',
+    '',
+    e.payMode||'',
+    '',
+    '',
+    '',
+    e.amount,
+    e.notes||''
+  ]));
+  incomes.forEach(i=>rows.push([
+    'Income',
+    fmtS(i.datetime),
+    'Income',
+    i.category,
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    i.amount,
+    i.notes||''
+  ]));
+  transfers.forEach(t=>rows.push([
+    'Transfer',
+    fmtS(t.datetime),
+    'Transfer',
+    t.direction,
+    t.from,
+    t.to,
+    '',
+    t.personName||'',
+    '',
+    '',
+    t.amount,
+    t.notes||''
+  ]));
   const blob=new Blob([rows.map(r=>r.map(esc).join(',')).join('\n')],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download='grocery_history.csv';
+  a.download='moneynest_history.csv';
   a.click();
 }
 
@@ -2813,7 +3205,9 @@ function sameDay(a,b){
 function getTransactionsForDate(date){
   const purchaseEntries=purchases.filter(p=>sameDay(new Date(p.datetime),date)).map(p=>({type:'purchase',datetime:p.datetime,amount:p.total,record:p}));
   const expenseEntries=expenses.filter(e=>sameDay(new Date(e.datetime),date)).map(e=>({type:'expense',datetime:e.datetime,amount:e.amount,record:e}));
-  return [...purchaseEntries,...expenseEntries].sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
+  const incomeEntries=incomes.filter(i=>sameDay(new Date(i.datetime),date)).map(i=>({type:'income',datetime:i.datetime,amount:i.amount,record:i}));
+  const transferEntries=transfers.filter(t=>sameDay(new Date(t.datetime),date)).map(t=>({type:'transfer',datetime:t.datetime,amount:t.amount,record:t}));
+  return [...purchaseEntries,...expenseEntries,...incomeEntries,...transferEntries].sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
 }
 
 function selectCalendarDate(year,month,day){
@@ -2824,6 +3218,57 @@ function selectCalendarDate(year,month,day){
 function clearCalendarSelection(){
   selectedCalendarDate=null;
   renderCalendarView();
+}
+async function deleteEntriesForPredicate(predicate, label){
+  const purchaseIds=purchases.filter(p=>predicate(new Date(p.datetime))).map(p=>p.id);
+  const expenseIds=expenses.filter(e=>predicate(new Date(e.datetime))).map(e=>e.id);
+  const incomeIds=incomes.filter(i=>predicate(new Date(i.datetime))).map(i=>i.id);
+  const transferIds=transfers.filter(t=>predicate(new Date(t.datetime))).map(t=>t.id);
+  const totalCount=purchaseIds.length+expenseIds.length+incomeIds.length+transferIds.length;
+  if(!totalCount){
+    toast(`No entries found for this ${label}`);
+    return;
+  }
+  if(!confirm(`Delete ${totalCount} entr${totalCount!==1?'ies':'y'} for this ${label}?`)) return;
+  purchases=purchases.filter(p=>!purchaseIds.includes(p.id));
+  expenses=expenses.filter(e=>!expenseIds.includes(e.id));
+  incomes=incomes.filter(i=>!incomeIds.includes(i.id));
+  transfers=transfers.filter(t=>!transferIds.includes(t.id));
+  deletedIds=uniq(deletedIds.concat(purchaseIds,expenseIds,incomeIds,transferIds));
+  if(editingEntry&&(
+    (editingEntry.type==='purchase'&&purchaseIds.includes(editingEntry.id))||
+    (editingEntry.type==='expense'&&expenseIds.includes(editingEntry.id))||
+    (editingEntry.type==='income'&&incomeIds.includes(editingEntry.id))||
+    (editingEntry.type==='transfer'&&transferIds.includes(editingEntry.id))
+  )){
+    resetExpPath();
+  }
+  await push();
+  _buildPriceCache();
+  renderDash();
+  renderHist();
+  renderSessions();
+  renderCalendarView();
+  updateHdr();
+  toast(`${totalCount} entr${totalCount!==1?'ies':'y'} deleted`);
+}
+async function deleteCalendarDay(){
+  if(!selectedCalendarDate){
+    toast('Select a day first');
+    return;
+  }
+  const day=new Date(selectedCalendarDate);
+  await deleteEntriesForPredicate(date=>sameDay(date,day),'day');
+}
+async function deleteCalendarMonth(){
+  const year=calCursor.getFullYear();
+  const month=calCursor.getMonth();
+  const monthLabel=calCursor.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+  await deleteEntriesForPredicate(date=>date.getFullYear()===year&&date.getMonth()===month,monthLabel);
+  if(selectedCalendarDate&&selectedCalendarDate.getFullYear()===year&&selectedCalendarDate.getMonth()===month){
+    selectedCalendarDate=null;
+    renderCalendarView();
+  }
 }
 
 function renderCalendarDayTransactions(){
@@ -2870,23 +3315,49 @@ function renderCalendarDayTransactions(){
         </div>
       </div>`;
     }
-    const e=entry.record;
-    const labels=getExpenseDisplayPath(e);
-    const extra=Object.entries({liters:'L',odometer:'km',recipient:'To',warranty:'Warranty',hospital:'Hospital',medicine:'Medicine',customName:'Name'}).map(([k,lbl])=>e[k]?`<span style="font-size:10px;background:#f5f2eb;border-radius:999px;padding:4px 8px;color:#66747d">${lbl}: ${safeText(e[k])}</span>`:'').filter(Boolean).join('');
+    if(entry.type==='expense'){
+      const e=entry.record;
+      const labels=getExpenseDisplayPath(e);
+      const extra=Object.entries({liters:'L',odometer:'km',recipient:'To',warranty:'Warranty',hospital:'Hospital',medicine:'Medicine',customName:'Name'}).map(([k,lbl])=>e[k]?`<span style="font-size:10px;background:#f5f2eb;border-radius:999px;padding:4px 8px;color:#66747d">${lbl}: ${safeText(e[k])}</span>`:'').filter(Boolean).join('');
+      return `<div class="hi" style="margin-bottom:0">
+        <div class="row">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span style="font-size:18px">${getExpenseIcon(e.category,e.subcategory,e.leaf)}</span>
+            ${tag('pay',e.payMode||'NA')}
+            <span style="font-size:11px;color:#99a4ac">${new Date(e.datetime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span>
+          </div>
+          <div style="font-size:17px;font-weight:900">${fmt(e.amount)}</div>
+        </div>
+        <div style="font-size:11px;color:#95a0a8;margin-top:4px">${safeText(labels.category)} › ${safeText(labels.subcategory)}${e.notes?` · ${safeText(e.notes)}`:''}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">
+          <span style="font-size:10px;background:#f5f2eb;border-radius:999px;padding:4px 8px;color:#66747d">${safeText(labels.leaf||labels.subcategory||labels.category)}</span>
+          ${extra}
+        </div>
+      </div>`;
+    }
+    if(entry.type==='income'){
+      const i=entry.record;
+      return `<div class="hi" style="margin-bottom:0">
+        <div class="row">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span style="font-size:18px">${INCOME_ICONS[i.category]||'💰'}</span>
+            <span style="font-size:11px;color:#99a4ac">${new Date(i.datetime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span>
+          </div>
+          <div style="font-size:17px;font-weight:900;color:#305f39">+${fmt(i.amount).replace('₹','₹')}</div>
+        </div>
+        <div style="font-size:11px;color:#95a0a8;margin-top:4px">Income · ${safeText(i.category)}${i.notes?` · ${safeText(i.notes)}`:''}</div>
+      </div>`;
+    }
+    const t=entry.record;
     return `<div class="hi" style="margin-bottom:0">
       <div class="row">
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-          <span style="font-size:18px">${getExpenseIcon(e.category,e.subcategory,e.leaf)}</span>
-          ${tag('pay',e.payMode||'NA')}
-          <span style="font-size:11px;color:#99a4ac">${new Date(e.datetime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span>
+          <span style="font-size:18px">🔁</span>
+          <span style="font-size:11px;color:#99a4ac">${new Date(t.datetime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span>
         </div>
-        <div style="font-size:17px;font-weight:900">${fmt(e.amount)}</div>
+        <div style="font-size:17px;font-weight:900;color:#6b7280">${fmt(t.amount)}</div>
       </div>
-      <div style="font-size:11px;color:#95a0a8;margin-top:4px">${safeText(labels.category)} › ${safeText(labels.subcategory)}${e.notes?` · ${safeText(e.notes)}`:''}</div>
-      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">
-        <span style="font-size:10px;background:#f5f2eb;border-radius:999px;padding:4px 8px;color:#66747d">${safeText(labels.leaf||labels.subcategory||labels.category)}</span>
-        ${extra}
-      </div>
+      <div style="font-size:11px;color:#95a0a8;margin-top:4px">${safeText(t.direction)} · ${safeText(t.personName||'Transfer')} · ${safeText(t.from)} → ${safeText(t.to)}${t.notes?` · ${safeText(t.notes)}`:''}</div>
     </div>`;
   }).join('');
 }
@@ -2937,7 +3408,7 @@ function openSett(){document.getElementById('settMod').classList.add('on');}
 function closeSett(){document.getElementById('settMod').classList.remove('on');}
 function resetApp(){
   if(!confirm('Clear this device session? Your cloud data will stay safe in Firebase.'))return;
-  ['gt_code','gt_dkey','gt_p','gt_e','gt_b','gt_cb','gt_del','gt_cl'].forEach(k=>localStorage.removeItem(k));
+  ['gt_code','gt_dkey','gt_p','gt_e','gt_i','gt_t','gt_b','gt_cb','gt_bm','gt_cbm','gt_del','gt_cl'].forEach(k=>localStorage.removeItem(k));
   location.reload();
 }
 
