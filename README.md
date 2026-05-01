@@ -18,17 +18,18 @@ https://<your-github-username>.github.io/AI_MoneyNest/
 
 | Feature | Description |
 |---|---|
-| Unified Expense Logger | Category -> sub-category flow for groceries and other expenses |
+| Complete Transaction System | Add Income, Expense, and Transfer entries from one Add tab |
 | Grocery Tracker | Single-item and bulk grocery entry with store, payment, qty, unit, and price |
-| Budget Ring | Monthly budget progress on the Home tab |
-| Category Budgets | Per-category limits with alerts |
+| Monthly Budgeting | Budget is saved month by month instead of one global value |
+| Monthly Category Limits | Category budget limits are also saved month by month |
+| Home Cashflow Summary | Home now shows income-aware cashflow while excluding transfers from balance logic |
 | Past Sessions | Review transactions grouped by date |
-| Calendar View | See entries day by day by month |
+| Calendar View | Browse month-wise entries and delete all entries for a day or whole month |
 | Analysis | Category spend, payment breakdown, trends, and price tracking |
 | Firebase Sync | Shared real-time data using the same sync code |
-| Offline Support | App shell cached with service worker |
+| Offline Support | App shell cached with a service worker |
 | PWA Installable | Installable on Android, iPhone, Windows, and Mac |
-| CSV Export | Export your data for Excel or Sheets |
+| CSV Export | Export purchases, expenses, incomes, and transfers |
 
 ---
 
@@ -37,16 +38,52 @@ https://<your-github-username>.github.io/AI_MoneyNest/
 ```text
 Essentials       -> Rent · Bills (Electricity, WiFi, DTH, Gas, Mobile, Water) · Groceries (Vegetables, Fruits, Pulses, Dairy, Meat & Fish, Snacks, Beverages, Frozen, Bakery, Spices, Oils, Rice & Flour, Ready Mixes, Dry Fruits, Household, Cleaning Supplies, Personal, Baby, Other)
 Transport        -> Travel
-Food & Dining    -> Restaurant
+Food & Dining    -> Restaurant · Street Food · Tiffin Center · Curry Point
 Lifestyle        -> Shopping · Electronics · Personal Care · Gifts
 Leisure          -> Entertainment · Snacks
-Health           -> Medical
+Health           -> Medical · Insurance (Health, Life)
 Vehicle          -> Fuel · Service · Repairs · Insurance · Parking · Toll · Washing
 Home             -> Furniture · Appliances · Repairs · Maintenance · Cleaning Help · Decor
+Finance          -> EMI (Credit Card EMI, Home Loan, Personal Loan, Vehicle Loan) · Investments (Stocks, Mutual Funds, PPF, EPF, Fixed Deposits (FD), Bonds, Gold, Crypto) · Savings (General Savings, Emergency Fund) · Bank Charges (ATM Charges, SMS Charges, Account Fees, Penalties)
 Others           -> Misc · Custom
 ```
 
+## Income Categories
+
+- Salary
+- Business
+- Interest
+- Dividends
+- Gifts
+- Refunds
+- Rewards
+- Coupons
+
+## Transfer
+
+Transfer fields:
+- Date & Time
+- Amount
+- From
+- To
+- Sent / Receive
+- Person Name
+- Notes
+
+Transfer logic:
+- transfers are stored as transactions
+- transfers do not count as income or expense
+- transfers do not affect balance calculation on Home
+
+## Home Logic
+
+- Income increases balance
+- Expense decreases balance
+- Transfer does not affect balance
+- Budget cards remain expense-focused
+- Monthly budget and category budget limits are saved separately for each month  
 ---
+
 ## 🚀 Getting Started
 
 ### 1 — Clone / Download
@@ -214,3 +251,4 @@ Personal / family use. Not for redistribution.
 ## 🙏 Credits
 
 Built with ❤️ by VISIRA.
+App Version: 1.1.0
