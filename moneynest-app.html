@@ -2620,7 +2620,8 @@ const FIELD_DEFS={
 };
 // Fix #13: include year so exported dates are unambiguous
 const fmtS=d=>new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
-const fmtL=d=>new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+const fmtT=d=>new Date(d).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});
+const fmtL=d=>`${fmtS(d)} ${fmtT(d)}`;
 const mKey=d=>{const dt=new Date(d);return`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}`;};
 const curM=()=>mKey(new Date());
 // Fix #1: escape ALL HTML-significant characters, not just single quotes
@@ -2909,7 +2910,7 @@ function setLastSyncedAt(timestamp){
 function formatSyncTime(timestamp){
   if(!timestamp) return 'Never';
   const date=new Date(timestamp);
-  return `${date.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})} at ${date.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}`;
+  return `${date.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})} at ${date.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true})}`;
 }
 function hasAnyLocalData(){
   return !!(
@@ -3465,7 +3466,7 @@ function updateHdr(state){
   const now=new Date();
   const backupInfoEl=document.getElementById('backupInfo');
   if(backupInfoEl){
-    backupInfoEl.textContent=`Last backup view ${now.toLocaleDateString('en-IN',{day:'2-digit',month:'short'})} at ${now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}`;
+    backupInfoEl.textContent=`Last backup view ${now.toLocaleDateString('en-IN',{day:'2-digit',month:'short'})} at ${now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true})}`;
   }
 }
 
@@ -4555,7 +4556,7 @@ function renderSessions(){
             <span style="font-size:18px">${purchaseIcon}</span>
             ${tag('pay',p.payMode||'NA')}
             ${tag('store',storeLabel)}
-            <span style="font-size:11px;color:var(--text-secondary)">${new Date(p.datetime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span>
+            <span style="font-size:11px;color:var(--text-secondary)">${fmtT(p.datetime)}</span>
           </div>
           <div style="font-size:17px;font-weight:900;color:var(--expense)">${fmt(p.total)}</div>
         </div>
@@ -4593,7 +4594,7 @@ function renderSessions(){
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
             <span style="font-size:18px">${icon}</span>
             ${tag('pay',e.payMode||'NA')}
-            <span style="font-size:11px;color:var(--text-secondary)">${new Date(e.datetime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span>
+            <span style="font-size:11px;color:var(--text-secondary)">${fmtT(e.datetime)}</span>
           </div>
           <div style="font-size:17px;font-weight:900;color:var(--expense)">${fmt(e.amount)}</div>
         </div>
@@ -4613,7 +4614,7 @@ function renderSessions(){
         <div class="row">
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
             <span style="font-size:18px">${INCOME_ICONS[i.category]||'💰'}</span>
-            <span style="font-size:11px;color:var(--text-secondary)">${new Date(i.datetime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span>
+            <span style="font-size:11px;color:var(--text-secondary)">${fmtT(i.datetime)}</span>
           </div>
           <div style="font-size:17px;font-weight:900;color:var(--income)">+${fmt(i.amount).replace('₹','₹')}</div>
         </div>
@@ -4629,7 +4630,7 @@ function renderSessions(){
         <div class="row">
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
             <span style="font-size:18px">🔁</span>
-            <span style="font-size:11px;color:var(--text-secondary)">${new Date(t.datetime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span>
+            <span style="font-size:11px;color:var(--text-secondary)">${fmtT(t.datetime)}</span>
           </div>
           <div style="font-size:17px;font-weight:900;color:var(--text-secondary)">${fmt(t.amount)}</div>
         </div>
@@ -5164,7 +5165,7 @@ function exportBackupJson(){
   a.click();
   const backupInfoEl=document.getElementById('backupInfo');
   if(backupInfoEl){
-    backupInfoEl.textContent=`Backup exported on ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})} at ${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}`;
+    backupInfoEl.textContent=`Backup exported on ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})} at ${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true})}`;
   }
   toast('Backup exported');
 }
@@ -5499,7 +5500,7 @@ function renderCalendarDayTransactions(){
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
             ${tag('store',p.store)}
             ${tag('pay',p.payMode||'NA')}
-            <span style="font-size:11px;color:var(--text-secondary)">${new Date(p.datetime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span>
+            <span style="font-size:11px;color:var(--text-secondary)">${fmtT(p.datetime)}</span>
           </div>
           <div style="font-size:17px;font-weight:900;color:var(--expense)">${fmt(p.total)}</div>
         </div>
@@ -5518,7 +5519,7 @@ function renderCalendarDayTransactions(){
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
             <span style="font-size:18px">${getExpenseIcon(e.category,e.subcategory,e.leaf)}</span>
             ${tag('pay',e.payMode||'NA')}
-            <span style="font-size:11px;color:var(--text-secondary)">${new Date(e.datetime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span>
+            <span style="font-size:11px;color:var(--text-secondary)">${fmtT(e.datetime)}</span>
           </div>
           <div style="font-size:17px;font-weight:900;color:var(--expense)">${fmt(e.amount)}</div>
         </div>
@@ -5535,7 +5536,7 @@ function renderCalendarDayTransactions(){
         <div class="row">
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
             <span style="font-size:18px">${INCOME_ICONS[i.category]||'💰'}</span>
-            <span style="font-size:11px;color:var(--text-secondary)">${new Date(i.datetime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span>
+            <span style="font-size:11px;color:var(--text-secondary)">${fmtT(i.datetime)}</span>
           </div>
           <div style="font-size:17px;font-weight:900;color:var(--income)">+${fmt(i.amount).replace('₹','₹')}</div>
         </div>
@@ -5547,7 +5548,7 @@ function renderCalendarDayTransactions(){
       <div class="row">
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
           <span style="font-size:18px">🔁</span>
-          <span style="font-size:11px;color:var(--text-secondary)">${new Date(t.datetime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span>
+          <span style="font-size:11px;color:var(--text-secondary)">${fmtT(t.datetime)}</span>
         </div>
         <div style="font-size:17px;font-weight:900;color:var(--text-secondary)">${fmt(t.amount)}</div>
       </div>
