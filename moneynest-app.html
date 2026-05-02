@@ -953,10 +953,33 @@ body{
 .home-action .tool-icon{width:44px;height:44px;border-radius:16px}
 .home-action h3{font-size:15px;font-weight:800}
 .home-action p{font-size:12px;color:#83919a;margin-top:3px}
-.home-mini-grid{gap:12px;flex-wrap:wrap}
-.home-mini-card{flex:1;background:#fff;border:1px solid #eef0ea;border-radius:24px;padding:16px;box-shadow:var(--shadow)}
-.home-mini-card .big{font-size:28px;font-weight:900;margin:8px 0 4px}
-.home-mini-card .note{font-size:12px;color:#829098}
+.home-mini-grid{gap:10px;flex-wrap:wrap}
+.home-mini-card{
+  flex:1;
+  background:linear-gradient(180deg,#fff 0%,#fbfcfb 100%);
+  border:1px solid #edf1ee;
+  border-radius:20px;
+  padding:14px 14px 12px;
+  box-shadow:0 10px 22px rgba(27,27,27,.06);
+}
+.home-mini-card small{
+  display:block;
+  font-size:11px;
+  font-weight:800;
+  color:#7b8791;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+.home-mini-card .big{font-size:24px;font-weight:900;margin:6px 0 3px;line-height:1}
+.home-mini-card .note{
+  font-size:11px;
+  color:#829098;
+  line-height:1.45;
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
 .home-mini-card .accent{color:var(--accent)}
 .home-mini-card .warn{color:#c54848}
 .insight-strip{
@@ -1485,11 +1508,19 @@ body{
     gap:10px;
   }
   .home-mini-card{
-    border-radius:20px;
-    padding:14px;
+    border-radius:18px;
+    padding:12px 12px 10px;
+  }
+  .home-mini-card small{
+    font-size:10px;
   }
   .home-mini-card .big{
-    font-size:22px;
+    font-size:20px;
+    margin:5px 0 2px;
+  }
+  .home-mini-card .note{
+    font-size:10px;
+    line-height:1.4;
   }
   .card,.recent-card,.insights-card,.calendar-shell,.month-nav,.tool-card,.settings-card,.more-banner,.quick-card,.stat-card{
     border-radius:20px;
@@ -3249,15 +3280,19 @@ function svgPie(data,size=150){
   let angle=-Math.PI/2,paths='',leg='';
   data.filter(d=>d.value>0).forEach(d=>{
     const pct=d.value/total,slice=pct*Math.PI*2;
-    const a1=angle,a2=angle+slice;
-    const x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
-    const x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2);
-    const ix1=cx+ir*Math.cos(a2),iy1=cy+ir*Math.sin(a2);
-    const ix2=cx+ir*Math.cos(a1),iy2=cy+ir*Math.sin(a1);
-    const large=slice>Math.PI?1:0;
-    paths+=`<path d="M${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${large},1 ${x2.toFixed(1)},${y2.toFixed(1)} L${ix1.toFixed(1)},${iy1.toFixed(1)} A${ir},${ir} 0 ${large},0 ${ix2.toFixed(1)},${iy2.toFixed(1)} Z" fill="${d.color}" stroke="#fff" stroke-width="1.5"/>`;
+    if(pct>=0.9999){
+      paths+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${d.color}" stroke="#fff" stroke-width="1.5"/>`;
+    }else{
+      const a1=angle,a2=angle+slice;
+      const x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
+      const x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2);
+      const ix1=cx+ir*Math.cos(a2),iy1=cy+ir*Math.sin(a2);
+      const ix2=cx+ir*Math.cos(a1),iy2=cy+ir*Math.sin(a1);
+      const large=slice>Math.PI?1:0;
+      paths+=`<path d="M${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${large},1 ${x2.toFixed(1)},${y2.toFixed(1)} L${ix1.toFixed(1)},${iy1.toFixed(1)} A${ir},${ir} 0 ${large},0 ${ix2.toFixed(1)},${iy2.toFixed(1)} Z" fill="${d.color}" stroke="#fff" stroke-width="1.5"/>`;
+      angle=a2;
+    }
     leg+=`<div class="pie-row"><div class="pie-dot" style="background:${d.color}"></div><span style="font-size:11px;flex:1;color:#44515a">${d.label}</span><span style="font-size:11px;color:#88959f;font-weight:700">${fmt(d.value)}</span></div>`;
-    angle=a2;
   });
   paths+=`<circle cx="${cx}" cy="${cy}" r="${ir-1}" fill="#fff"/>`;
   return `<div class="pie-wrap"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${paths}</svg><div class="pie-legend">${leg}</div></div>`;
@@ -4652,6 +4687,7 @@ function renderHSF(){
 }
 function getInsightCategoryIcon(label){
   if(CATEGORY_ICONS[label]) return CATEGORY_ICONS[label];
+  if(INCOME_ICONS[label]) return INCOME_ICONS[label];
   if(EXPENSE_TREE[label]?.icon) return EXPENSE_TREE[label].icon;
   for(const catNode of Object.values(EXPENSE_TREE)){
     for(const [subName, subNode] of Object.entries(catNode.sub||{})){
@@ -4672,27 +4708,35 @@ function setInsightsTab(tab){
   document.querySelectorAll('[data-insights-tab]').forEach((button)=>{
     button.classList.toggle('active', button.dataset.insightsTab===tab);
   });
+  const tabToFilter={
+    overview:'All',
+    expense:'Expense',
+    income:'Income',
+    transfer:'Transfer'
+  };
+  histSF=tabToFilter[tab]||'All';
+  renderHist();
   const expenseSection=document.getElementById('insightsExpenseSection');
   if(expenseSection){
-    expenseSection.classList.toggle('insights-hidden', tab!=='expense');
+    expenseSection.classList.add('insights-hidden');
   }
-  const targets={
-    overview:'insightsOverviewSection',
-    expense:'insightsExpenseSection',
-    income:'insightsOverviewSection',
-    transfer:'insightsTrendSection'
-  };
-  const target=document.getElementById(targets[tab]||'insightsOverviewSection');
+  const target=document.getElementById('insightsBreakdownSection');
   if(target){
     target.scrollIntoView({behavior:'smooth', block:'start'});
   }
 }
 function openInsightsCategories(){
-  const expenseSection=document.getElementById('insightsExpenseSection');
-  if(expenseSection){
-    expenseSection.classList.remove('insights-hidden');
-  }
   setInsightsTab('expense');
+}
+function formatInsightCounts(parts){
+  return parts.filter(part=>part.count>0).map(part=>`${part.count} ${part.label}`).join(' · ') || 'No matching transactions';
+}
+function getInsightColor(label, fallback){
+  const normalized=String(label||'').trim();
+  return CCOLOR[normalized]
+    || CCOLOR[getCategoryLabel(normalized)||'']
+    || fallback
+    || '#94A3B8';
 }
 function renderHist(){
   if(!document.getElementById('hSrch')) return;
@@ -4715,12 +4759,17 @@ function renderHist(){
     transferListFiltered.reduce((s,t)=>s+t.amount,0);
   document.getElementById('hCnt').textContent=
     histSF==='Expense'
-      ?`${purchaseList.length} grocery · ${expenseList.length} expense · ${fmt(grandTotal)}`
+      ?`${formatInsightCounts([{count:purchaseList.length,label:'grocery'},{count:expenseList.length,label:'expense'}])} · ${fmt(grandTotal)}`
       :histSF==='Income'
         ?`${incomeListFiltered.length} income · ${fmt(grandTotal)}`
         :histSF==='Transfer'
           ?`${transferListFiltered.length} transfer · ${fmt(grandTotal)}`
-          :`${purchaseList.length} grocery · ${expenseList.length} expense · ${incomeListFiltered.length} income · ${transferListFiltered.length} transfer`;
+          :formatInsightCounts([
+              {count:purchaseList.length,label:'grocery'},
+              {count:expenseList.length,label:'expense'},
+              {count:incomeListFiltered.length,label:'income'},
+              {count:transferListFiltered.length,label:'transfer'}
+            ]);
 
   const insightMonth=budgetCursor||new Date();
   const monthPurchases=purchases.filter(p=>inMonth(p.datetime,insightMonth));
@@ -4804,7 +4853,7 @@ function renderHist(){
     label:getCategoryLabel(cat)||cat,
     value:v,
     prevValue:prevCs[cat]||0,
-    color:allColors[cat]||'var(--text-secondary)',
+    color:getInsightColor(getCategoryLabel(cat)||cat, allColors[cat]||allColors[getCategoryLabel(cat)||'']),
     icon:getInsightCategoryIcon(getCategoryLabel(cat)||cat)
   }));
   document.getElementById('histPie').innerHTML=pd.length?svgPie(pd):'<div class="empty" style="padding:.5rem">No data</div>';
@@ -4831,7 +4880,7 @@ function renderHist(){
           </div>
         </div>`;
         }).join('')
-      :'<div class="empty" style="padding:.5rem">No category data yet.</div>';
+      :'<div class="empty" style="padding:.5rem">Add your first entry to start tracking.</div>';
   }
 
   const topCategoryEl=document.getElementById('topCategoryCard');
@@ -4841,7 +4890,7 @@ function renderHist(){
     topCategoryEl.innerHTML=topCategory
       ?`<div class="insights-topcat">
           <div class="insights-topcat-main">
-            <div class="insights-topcat-icon">${CATEGORY_ICONS[topCategory.label]||'📊'}</div>
+            <div class="insights-topcat-icon">${getInsightCategoryIcon(topCategory.label)}</div>
             <div>
               <div class="insights-topcat-title">${safeText(topCategory.label)}</div>
               <div class="insights-topcat-sub">${totalCategorySpend?Math.round((topCategory.value/totalCategorySpend)*100):0}% of total spending</div>
@@ -4849,7 +4898,7 @@ function renderHist(){
           </div>
           <div class="insights-topcat-value">${fmt(topCategory.value)}</div>
         </div>`
-      :'<div class="empty">No category data yet.</div>';
+      :'<div class="empty">Add your first entry to start tracking.</div>';
   }
 
   const allI=purchaseList.flatMap(p=>p.items.map(it=>({...it,datetime:p.datetime,store:p.store})));
