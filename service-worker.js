@@ -1,10 +1,14 @@
-﻿const VERSION = "moneynest-v1";
+const VERSION = "moneynest-v2";
 const STATIC_CACHE = `${VERSION}-static`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const APP_SHELL = [
   "./",
   "./index.html",
   "./moneynest-app.html",
+  "./app-config.js",
+  "./firebase-sync.js",
+  "./local-store.js",
+  "./ui-shell.js",
   "./manifest.json",
   "./offline.html",
   "./icon.svg",
@@ -59,7 +63,6 @@ async function networkFirst(request, fallbackKey) {
     if (request.mode === "navigate") {
       return caches.match("./offline.html");
     }
-    // FIX: return 503 instead of throwing an unhandled error
     return new Response("Offline", { status: 503, statusText: "Service Unavailable" });
   }
 }
@@ -97,4 +100,3 @@ self.addEventListener("fetch", (event) => {
 
   event.respondWith(staleWhileRevalidate(request));
 });
-
