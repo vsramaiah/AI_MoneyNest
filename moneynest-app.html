@@ -3392,10 +3392,18 @@ function renderDash(){
   document.getElementById('binput').value=heroBudget>0?heroBudget:'';
 
   const catS=getCatSpend(mKey(budgetCursor));
+  // Also sum expense amounts by subcategory for non-grocery budget alerts
+  const expCatS={};
+  expList.forEach(e=>{
+    const key=e.subcategory||e.category;
+    expCatS[key]=(expCatS[key]||0)+e.amount;
+  });
+  const allBudgetKeys=new Set([...Object.keys(activeCatBudgets)]);
   let alerts='';
-  CATS.forEach(cat=>{
-    const lim=parseFloat(activeCatBudgets[cat])||0,sp=catS[cat]||0;
+  allBudgetKeys.forEach(cat=>{
+    const lim=parseFloat(activeCatBudgets[cat])||0;
     if(!lim) return;
+    const sp=(catS[cat]||0)+(expCatS[cat]||0);
     const pct2=sp/lim;
     if(pct2>=1) alerts+=`<div class="alert alert-red"><strong>${cat}</strong> is over budget at ${fmt(sp)} of ${fmt(lim)}.</div>`;
     else if(pct2>=0.8) alerts+=`<div class="alert"><strong>${cat}</strong> is at ${Math.round(pct2*100)}% of its monthly limit.</div>`;
@@ -3451,7 +3459,7 @@ function renderDash(){
             <div style="font-size:13px;font-weight:800"><span style="font-size:16px">${INCOME_ICONS[i.category]||'💰'}</span> <span style="margin-left:6px">${safeText(i.category)}</span></div>
             <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">${fmtS(i.datetime)}${i.notes?` · ${safeText(i.notes)}`:''}</div>
           </div>
-          <div style="font-size:14px;font-weight:900;color:var(--income)">+${fmt(i.amount).replace('₹','₹')}</div>
+          <div style="font-size:14px;font-weight:900;color:var(--income)">+${fmt(i.amount)}</div>
         </div>`;
       }
       if(entry.type==='transfer'){
@@ -3498,18 +3506,12 @@ function updateHdr(state){
   const syncProjectEl=document.getElementById('sURL');
   if(syncSourceEl) syncSourceEl.textContent=isSyncEnabled()?getSyncCode():'Sync disabled';
   if(syncProjectEl) syncProjectEl.textContent='Firebase · '+window.MoneyNestFirebase.getProjectId();
-  const now=new Date();
-  const backupInfoEl=document.getElementById('backupInfo');
-  if(backupInfoEl){
-    backupInfoEl.textContent=`Last backup view ${now.toLocaleDateString('en-IN',{day:'2-digit',month:'short'})} at ${now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true})}`;
-  }
 }
 
 async function saveBudget(){
   setBudgetForMonth(budgetCursor,parseFloat(document.getElementById('binput').value)||0);
   renderDash();
-  persistLocalChange();
-  updateHdr('off');
+  await push();
   toast('Budget saved');
 }
 
@@ -3548,8 +3550,7 @@ async function saveCatBudgets(){
   setCategoryBudgetsForMonth(budgetCursor,next);
   closeCatBudget();
   renderDash();
-  persistLocalChange();
-  updateHdr('off');
+  await push();
   toast('Category budgets saved');
 }
 
@@ -4254,19 +4255,33 @@ function autoFillPrice(id){
   }
 }
 function dupeLast(){
-  if(!purchases.length) return;
+  if(!purchases.length){ toast('No previous purchase to copy'); return; }
   const l=[...purchases].sort((a,b)=>new Date(b.datetime)-new Date(a.datetime))[0];
   selSt=l.store;
   selPy=l.payMode||PAYS[1];
-  document.querySelectorAll('#stChips .chip').forEach(c=>c.classList.toggle('on',c.textContent===selSt));
-  document.querySelectorAll('#pyChips .chip').forEach(c=>c.classList.toggle('on',c.textContent===selPy));
-  document.getElementById('iCont').innerHTML='';
-  iRows=[];
-  l.items.forEach(it=>addRow(it.name,it.category,it.qty,it.unit||'pcs',it.price));
-  // Fix #11: reset date to now so duplicated entry doesn't inherit the old date
-  document.getElementById('aDt').value=new Date().toISOString().slice(0,16);
-  swMode('normal');
-  calcT();
+  // Navigate to grocery drill-down pre-set to last store's first item category
+  const firstCat=l.items?.[0]?.category||'Vegetables';
+  expState={l1:'Essentials',l2:'Groceries',l3:firstCat};
+  groceryEntryMode=l.items&&l.items.length>1?'bulk':'normal';
+  goTab('add',document.getElementById('navAdd'));
+  renderExpDrillDown();
+  // After form renders, fill values
+  setTimeout(()=>{
+    setFormValue('date',new Date().toISOString().slice(0,16));
+    setFormValue('payMode',selPy);
+    if(groceryEntryMode==='bulk'){
+      const bulkText=(l.items||[]).map(it=>`${it.name}, ${it.qty||1}, ${it.unit||'pcs'}, ${it.price||0}`).join('\n');
+      setFormValue('bulkItems',bulkText);
+      updateGroceryBulkAmount();
+    }else{
+      const it=l.items?.[0]||{};
+      setFormValue('itemName',it.name||'');
+      setFormValue('qty',it.qty||'1');
+      setFormValue('unit',it.unit||'pcs');
+      setFormValue('price',it.price||'');
+      syncExpTotal(it.price||0);
+    }
+  },80);
   toast('Copied last purchase');
 }
 
@@ -4412,7 +4427,7 @@ function rAC(id){
   l.innerHTML=hits.map(x=>{
     const lp=lastPrice(x);
     const sub=lp?`Last: ${fmt(parseFloat(lp.price))} at ${safeText(lp.store)}`:'';
-    return `<div class="aci" onmousedown="document.getElementById('n-${id}').value='${safeText(x)}';document.getElementById('ac-${id}').style.display='none';autoFillPrice('${id}')">${safeText(x)}${sub?`<div class="sub">${sub}</div>`:''}</div>`;
+    return `<div class="aci" onmousedown="(function(){document.getElementById('n-${id}').value=${JSON.stringify(x)};document.getElementById('ac-${id}').style.display='none';autoFillPrice('${id}');})()">${safeText(x)}${sub?`<div class="sub">${sub}</div>`:''}</div>`;
   }).join('');
   l.style.display='block';
 }
@@ -4651,7 +4666,7 @@ function renderSessions(){
             <span style="font-size:18px">${INCOME_ICONS[i.category]||'💰'}</span>
             <span style="font-size:11px;color:var(--text-secondary)">${fmtT(i.datetime)}</span>
           </div>
-          <div style="font-size:17px;font-weight:900;color:var(--income)">+${fmt(i.amount).replace('₹','₹')}</div>
+          <div style="font-size:17px;font-weight:900;color:var(--income)">+${fmt(i.amount)}</div>
         </div>
         <div style="font-size:14px;font-weight:800;color:var(--text);margin-top:8px">${safeText(i.category)}</div>
         <div style="font-size:12px;color:var(--text-secondary);margin-top:3px">Income${i.notes?` · ${safeText(i.notes)}`:''}</div>
@@ -5209,8 +5224,17 @@ function exportBackupJson(){
   const blob=new Blob([JSON.stringify(snapshot,null,2)],{type:'application/json;charset=utf-8'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  const stamp=new Date().toISOString().slice(0,10).replace(/-/g,'');
-  a.download=`moneynest-backup-${stamp}.json`;
+const now = new Date();
+const stamp =
+  now.getFullYear().toString() +
+  String(now.getMonth() + 1).padStart(2, '0') +
+  String(now.getDate()).padStart(2, '0') +
+  'T' +
+  String(now.getHours()).padStart(2, '0') +
+  String(now.getMinutes()).padStart(2, '0') +
+  String(now.getSeconds()).padStart(2, '0');
+
+a.download = `moneynest-backup-${stamp}.json`;
   a.click();
   const backupInfoEl=document.getElementById('backupInfo');
   if(backupInfoEl){
@@ -5587,7 +5611,7 @@ function renderCalendarDayTransactions(){
             <span style="font-size:18px">${INCOME_ICONS[i.category]||'💰'}</span>
             <span style="font-size:11px;color:var(--text-secondary)">${fmtT(i.datetime)}</span>
           </div>
-          <div style="font-size:17px;font-weight:900;color:var(--income)">+${fmt(i.amount).replace('₹','₹')}</div>
+          <div style="font-size:17px;font-weight:900;color:var(--income)">+${fmt(i.amount)}</div>
         </div>
         <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">Income · ${safeText(i.category)}${i.notes?` · ${safeText(i.notes)}`:''}</div>
       </div>`;
