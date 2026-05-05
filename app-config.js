@@ -7,7 +7,7 @@
     : (FIREBASE_CONFIG?.projectId ? `https://console.firebase.google.com/project/${FIREBASE_CONFIG.projectId}/firestore` : "");
 
   window.MoneyNestConfig = {
-    APP_VERSION: "1.1.0",
+    APP_VERSION: "2.1.0",
     BACKEND_PROVIDER: activeProvider.name,
     BACKEND_SETTINGS: activeProvider,
     FIREBASE_CONFIG,

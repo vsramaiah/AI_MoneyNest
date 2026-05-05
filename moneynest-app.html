@@ -2232,10 +2232,10 @@ body{
         <div class="more-list">
           <div class="more-item">
             <div class="more-item-main">
-              <strong>Export Backup</strong>
+              <strong>Backup</strong>
               <span>Download your full local MoneyNest data as a JSON backup file.</span>
             </div>
-            <button class="obtn" onclick="exportBackupJson()">Export</button>
+            <button class="obtn" onclick="exportBackupJson()">Backup Now</button>
           </div>
           <div class="more-item">
             <div class="more-item-main">
@@ -2603,6 +2603,7 @@ let autoT=null,editingId=null,editingEntry=null;
 let serverVersion=0;
 const PROFILE_NAME_KEY='gt_profile_name';
 const LAST_SYNC_AT_KEY='gt_last_sync_at';
+const LAST_BACKUP_AT_KEY='gt_last_backup_at';
 const PENDING_SYNC_COUNT_KEY='gt_pending_sync_count';
 const SYNC_CODE_KEY='gt_sync_code';
 const SYNC_ENABLED_KEY='gt_sync_enabled';
@@ -2943,6 +2944,28 @@ function formatSyncTime(timestamp){
   const date=new Date(timestamp);
   return `${date.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})} at ${date.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true})}`;
 }
+function getLastBackupAt(){
+  return Number(localStorage.getItem(LAST_BACKUP_AT_KEY) || '0') || 0;
+}
+function setLastBackupAt(timestamp){
+  localStorage.setItem(LAST_BACKUP_AT_KEY, String(Number(timestamp) || Date.now()));
+}
+function formatBackupTime(timestamp){
+  if(!timestamp) return 'Never';
+  const date=new Date(timestamp);
+  return `${date.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})} at ${date.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false})}`;
+}
+function getBackupStamp(date=new Date()){
+  return `${date.getFullYear()}${String(date.getMonth()+1).padStart(2,'0')}${String(date.getDate()).padStart(2,'0')}T${String(date.getHours()).padStart(2,'0')}${String(date.getMinutes()).padStart(2,'0')}${String(date.getSeconds()).padStart(2,'0')}`;
+}
+function updateBackupInfo(){
+  const backupInfoEl=document.getElementById('backupInfo');
+  if(!backupInfoEl) return;
+  const lastBackupAt=getLastBackupAt();
+  backupInfoEl.textContent=lastBackupAt
+    ?`Last backup: ${formatBackupTime(lastBackupAt)}`
+    :'Last backup: Never';
+}
 function hasAnyLocalData(){
   return !!(
     purchases.length||
@@ -3178,6 +3201,7 @@ async function startAppWithSyncCode(){
 
 
 function initApp(){
+  updateBackupInfo();
   const sc=document.getElementById('stChips');
   if(sc&&!sc.children.length){
     STORES.forEach((s,i)=>{
@@ -3730,10 +3754,10 @@ function getEditingRecord(){
 }
 
 function getFieldInitialValue(field){
-  const nowValue=new Date().toISOString().slice(0,16);
+  const nowValue=toLocalDateTimeValue(new Date());
   const record=getEditingRecord();
   if(record){
-    if(field==='date') return record.datetime?.slice(0,16)||nowValue;
+    if(field==='date') return toLocalDateTimeValue(record.datetime)||nowValue;
     if(field==='notes') return record.notes||'';
     if(field==='amount') return record.total??record.amount??'';
     if(field==='payMode') return record.payMode||selPy;
@@ -3775,10 +3799,74 @@ function setQuickAmount(value){
   syncExpTotal(next);
 }
 
+function formatDateForInput(value){
+  const date=value?new Date(value):new Date();
+  if(Number.isNaN(date.getTime())) return '';
+  const year=date.getFullYear();
+  const month=String(date.getMonth()+1).padStart(2,'0');
+  const day=String(date.getDate()).padStart(2,'0');
+  return `${year}-${month}-${day}`;
+}
+
+function get12HourTimeParts(value){
+  const date=value?new Date(value):new Date();
+  if(Number.isNaN(date.getTime())){
+    return {time:'',ampm:'AM'};
+  }
+  const hours=date.getHours();
+  const minutes=String(date.getMinutes()).padStart(2,'0');
+  const ampm=hours>=12?'PM':'AM';
+  const hour12=hours%12||12;
+  return {
+    time:`${String(hour12).padStart(2,'0')}:${minutes}`,
+    ampm
+  };
+}
+
+function toLocalDateTimeValue(value){
+  const date=value?new Date(value):new Date();
+  if(Number.isNaN(date.getTime())) return '';
+  return `${formatDateForInput(date)}T${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+}
+
+function parse12HourDateTime(dateValue,timeValue,ampmValue){
+  const datePart=String(dateValue||'').trim();
+  const timePart=String(timeValue||'').trim();
+  const ampm=String(ampmValue||'AM').toUpperCase();
+  if(!datePart || !timePart) return '';
+  const match=timePart.match(/^(\d{1,2}):(\d{2})$/);
+  if(!match) return '';
+  let hour=Number(match[1]);
+  const minute=Number(match[2]);
+  if(hour<1 || hour>12 || minute<0 || minute>59) return '';
+  if(ampm==='PM' && hour!==12) hour+=12;
+  if(ampm==='AM' && hour===12) hour=0;
+  return `${datePart}T${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}`;
+}
+
+function buildDateTimeFieldHtml(field, value){
+  const dateValue=formatDateForInput(value);
+  const timeParts=get12HourTimeParts(value);
+  return `<div class="f">
+    <label>${FIELD_DEFS[field].label}</label>
+    <div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 92px;gap:8px">
+      <input type="date" id="ef_date_date" class="fi" value="${safeText(dateValue)}"/>
+      <input type="text" id="ef_date_time" class="fi" value="${safeText(timeParts.time)}" placeholder="hh:mm" inputmode="numeric" pattern="(0[1-9]|1[0-2]):[0-5][0-9]"/>
+      <select id="ef_date_ampm" class="fi">
+        <option value="AM"${timeParts.ampm==='AM'?' selected':''}>AM</option>
+        <option value="PM"${timeParts.ampm==='PM'?' selected':''}>PM</option>
+      </select>
+    </div>
+  </div>`;
+}
+
 function buildFieldHtml(field, meta){
   const def=FIELD_DEFS[field];
   if(!def) return '';
   const id=`ef_${field}`;
+  if(field==='date'){
+    return buildDateTimeFieldHtml(field,getFieldInitialValue(field));
+  }
   if(field==='payMode'){
     const activeValue=getFieldInitialValue('payMode');
     return `<div class="f">
@@ -3812,19 +3900,6 @@ function buildFieldHtml(field, meta){
   if(def.type==='textarea'){
     return `<div class="f"><label>${def.label}</label><textarea id="${id}" class="fi" rows="${def.rows||3}" placeholder="${safeText(def.placeholder||'')}">${safeText(getFieldInitialValue(field))}</textarea></div>`;
   }
-  if(field==='amount' && meta && (meta.type==='income' || meta.type==='transfer')){
-    const value=getFieldInitialValue(field);
-    return `<div class="f">
-      <label>${def.label}</label>
-      <div class="add-amount-field">
-        <span class="add-amount-currency">₹</span>
-        <input type="number" id="${id}" class="add-amount-input" placeholder="0" min="${def.min!==undefined?safeText(def.min):'0'}" step="${def.step!==undefined?safeText(def.step):'0.5'}" value="${safeText(value)}" oninput="syncExpTotal(this.value)"/>
-      </div>
-      <div class="add-quick-amounts">
-        ${[50,100,500,1000].map(amount=>`<button type="button" class="add-quick-btn" onclick="setQuickAmount(${amount})">+ ₹${amount.toLocaleString('en-IN')}</button>`).join('')}
-      </div>
-    </div>`;
-  }
   const value=getFieldInitialValue(field);
   const inputAttrs=[
     `type="${def.type||'text'}"`,
@@ -3851,12 +3926,30 @@ function buildFieldHtml(field, meta){
 }
 
 function getFormValue(field){
+  if(field==='date'){
+    return parse12HourDateTime(
+      document.getElementById('ef_date_date')?.value,
+      document.getElementById('ef_date_time')?.value,
+      document.getElementById('ef_date_ampm')?.value
+    );
+  }
   const el=document.getElementById(`ef_${field}`);
   if(!el) return '';
   return (el.value||'').trim();
 }
 
 function setFormValue(field, value){
+  if(field==='date'){
+    const dateInput=document.getElementById('ef_date_date');
+    const timeInput=document.getElementById('ef_date_time');
+    const ampmInput=document.getElementById('ef_date_ampm');
+    if(!dateInput || !timeInput || !ampmInput) return;
+    dateInput.value=formatDateForInput(value);
+    const timeParts=get12HourTimeParts(value);
+    timeInput.value=timeParts.time;
+    ampmInput.value=timeParts.ampm;
+    return;
+  }
   const el=document.getElementById(`ef_${field}`);
   if(!el) return;
   el.value=value ?? '';
@@ -3955,7 +4048,7 @@ function showExpForm(){
         ${STORES.map(store=>`<button type="button" class="chip sub g-store-chip entry-chip${store===groceryStore?' on':''}" data-field="store" data-group=".g-store-chip" data-value="${safeText(store)}">${safeText(store)}</button>`).join('')}
       </div>
     </div>
-    <div class="f"><label>Date &amp; Time</label><input type="datetime-local" id="ef_date" class="fi" value="${editingEntry?.type==='purchase'?(purchases.find(p=>p.id===editingEntry.id)?.datetime?.slice(0,16)||new Date().toISOString().slice(0,16)):(new Date().toISOString().slice(0,16))}"/></div>
+    ${buildDateTimeFieldHtml('date', editingEntry?.type==='purchase' ? purchases.find(p=>p.id===editingEntry.id)?.datetime : new Date())}
     <div class="f">
       <label>Payment</label>
       <input type="hidden" id="ef_payMode" value="${safeText(groceryPayment)}"/>
@@ -4019,7 +4112,11 @@ function showExpForm(){
 async function saveUnifiedEntry(){
   const meta=getEntryMeta();
   if(!meta){toast(addMode==='expense'?'Choose a category first':'Fill the form');return;}
-  const date=getFormValue('date')||new Date().toISOString();
+  const date=getFormValue('date');
+  if(!date){
+    toast('Enter a valid date and time in hh:mm AM/PM format');
+    return;
+  }
   const payMode=getFormValue('payMode')||PAYS[1]||'Cash';
   const notes=getFormValue('notes');
   const extraFields=getLeafFields(meta).reduce((acc,field)=>{
@@ -5190,6 +5287,7 @@ function renderIns(){
   }
   const syncLastEl=document.getElementById('syncLastTime');
   if(syncLastEl) syncLastEl.textContent=formatSyncTime(getLastSyncedAt());
+  updateBackupInfo();
   const syncEnabledToggle=document.getElementById('syncEnabledToggle');
   if(syncEnabledToggle) syncEnabledToggle.checked=isSyncEnabled();
   const appLockToggle=document.getElementById('appLockToggle');
@@ -5207,10 +5305,10 @@ function openFirebaseConsole(){
   window.open(window.MoneyNestFirebase.getConsoleUrl(), '_blank');
 }
 
-function exportBackupJson(){
-  const snapshot={
+function buildBackupSnapshot(timestamp=new Date()){
+  return {
     app:'MoneyNest',
-    exportedAt:new Date().toISOString(),
+    exportedAt:timestamp.toISOString(),
     version:serverVersion||0,
     purchases,
     expenses,
@@ -5221,26 +5319,23 @@ function exportBackupJson(){
     deletedIds:uniq(deletedIds),
     categoryLabels
   };
+}
+function downloadBackupFile({timestamp=new Date(),silent=false,reason='manual'}={}){
+  const snapshot=buildBackupSnapshot(timestamp);
   const blob=new Blob([JSON.stringify(snapshot,null,2)],{type:'application/json;charset=utf-8'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-const now = new Date();
-const stamp =
-  now.getFullYear().toString() +
-  String(now.getMonth() + 1).padStart(2, '0') +
-  String(now.getDate()).padStart(2, '0') +
-  'T' +
-  String(now.getHours()).padStart(2, '0') +
-  String(now.getMinutes()).padStart(2, '0') +
-  String(now.getSeconds()).padStart(2, '0');
-
-a.download = `moneynest-backup-${stamp}.json`;
+  a.download=`moneynest-backup-${getBackupStamp(timestamp)}.json`;
   a.click();
-  const backupInfoEl=document.getElementById('backupInfo');
-  if(backupInfoEl){
-    backupInfoEl.textContent=`Backup exported on ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})} at ${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true})}`;
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  setLastBackupAt(timestamp.getTime());
+  updateBackupInfo();
+  if(!silent){
+    toast('Backup completed');
   }
-  toast('Backup exported');
+}
+function exportBackupJson(){
+  downloadBackupFile({timestamp:new Date(),reason:'manual'});
 }
 
 function triggerRestoreBackup(){
@@ -5683,7 +5778,7 @@ function openSett(){return window.MoneyNestUI.openSett();}
 function closeSett(){return window.MoneyNestUI.closeSett();}
 function resetApp(){
   if(!confirm('Clear this device session? Your cloud data will stay safe in Firebase.'))return;
-  ['gt_code','gt_dkey','gt_p','gt_e','gt_i','gt_t','gt_b','gt_cb','gt_bm','gt_cbm','gt_del','gt_cl',LAST_SYNC_AT_KEY,PENDING_SYNC_COUNT_KEY,SYNC_CODE_KEY,SYNC_ENABLED_KEY,SYNC_PENDING_KEY,ONBOARDED_KEY].forEach(k=>localStorage.removeItem(k));
+  ['gt_code','gt_dkey','gt_p','gt_e','gt_i','gt_t','gt_b','gt_cb','gt_bm','gt_cbm','gt_del','gt_cl',LAST_SYNC_AT_KEY,LAST_BACKUP_AT_KEY,PENDING_SYNC_COUNT_KEY,SYNC_CODE_KEY,SYNC_ENABLED_KEY,SYNC_PENDING_KEY,ONBOARDED_KEY].forEach(k=>localStorage.removeItem(k));
   location.reload();
 }
 
@@ -5765,4 +5860,5 @@ setDot(navigator.onLine===false?"off":"on");
 </script>
 </body>
 </html>
+
 
