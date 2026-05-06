@@ -2,7 +2,7 @@
   "id": "./",
   "name": "MoneyNest Smart Grocery and Budget Tracker",
   "short_name": "MoneyNest",
-  "description": "Track grocery spending, expenses, and category budgets with shared Firebase sync.",
+  "description": "Track grocery spending, expenses, transfers, and budgets fully offline on your device.",
   "lang": "en",
   "dir": "ltr",
   "start_url": "./moneynest-app.html",

@@ -1,12 +1,10 @@
-const VERSION = "moneynest-v2";
+const VERSION = "moneynest-v2.1.0-offline";
 const STATIC_CACHE = `${VERSION}-static`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const APP_SHELL = [
   "./",
   "./index.html",
   "./moneynest-app.html",
-  "./app-config.js",
-  "./firebase-sync.js",
   "./local-store.js",
   "./ui-shell.js",
   "./manifest.json",

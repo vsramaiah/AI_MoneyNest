@@ -1,6 +1,6 @@
-# 🪺 MoneyNest — Smart Grocery & Budget Tracker
+﻿# 🪺 MoneyNest — Smart Grocery & Budget Tracker
 
-> **Track every rupee on your daily run.** MoneyNest is a free Progressive Web App (PWA) that helps Indian families log grocery purchases, track household expenses, manage shopping lists, and stay within monthly budgets — all synced in real time via Firebase.
+> **Track every rupee on your daily run.** MoneyNest is a free Progressive Web App (PWA) that helps Indian families log grocery purchases, track household expenses, manage shopping lists, and stay within monthly budgets fully offline on one device.
 
 ---
 
@@ -26,7 +26,7 @@ https://<your-github-username>.github.io/AI_MoneyNest/
 | Past Sessions | Review transactions grouped by date |
 | Calendar View | Browse month-wise entries and delete all entries for a day or whole month |
 | Analysis | Category spend, payment breakdown, trends, and price tracking |
-| Firebase Sync | Shared real-time data using the same sync code |
+| Local-Only Storage | Everything stays on this device unless you export a backup |
 | Offline Support | App shell cached with a service worker |
 | PWA Installable | Installable on Android, iPhone, Windows, and Mac |
 | CSV Export | Export purchases, expenses, incomes, and transfers |
@@ -93,27 +93,7 @@ git clone https://github.com/<your-username>/AI_MoneyNest.git
 cd AI_MoneyNest
 ```
 
-### 2 — Firebase Setup (already configured)
-
-The Firebase project **moneynest-10** is already wired up. No additional setup required unless you want your own Firebase project.
-
-To use your own Firebase:
-1. Go to [console.firebase.google.com](https://console.firebase.google.com) and create a project.
-2. Enable **Cloud Firestore** in test mode.
-3. Replace the `FIREBASE_CONFIG` object in `moneynest-app.html`:
-
-```javascript
-const FIREBASE_CONFIG = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.firebasestorage.app",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
-```
-
-### 3 — Run Locally
+### 2 — Run Locally
 
 **Option A — PowerShell (Windows)**
 ```powershell
@@ -166,11 +146,9 @@ https://<your-github-username>.github.io/<your-repo-name>/
 ## 📲 First Launch
 
 1. Open the app — a **Setup screen** appears once.
-2. Enter a **Sync Code** (e.g. `family-home`) — use the *same code* on every device in your household.
-3. Leave blank for personal/private use.
-4. Tap **Start Tracking**.
-
-> The sync code becomes the Firestore document key. Anyone with the same code shares the same data.
+2. Choose **Start Fresh** to begin locally on this device.
+3. Or choose **Restore Backup** to import an earlier JSON backup.
+4. Start tracking right away in full offline mode.
 
 ---
 
@@ -194,20 +172,12 @@ AI_MoneyNest/
 
 ---
 
-## 🔄 Sync Architecture
-
-```
-Device A  ──┐
-Device B  ──┼──► Firebase Firestore (moneynest-d10) ──► All devices sync in < 1 second
-Device C  ──┘
-```
-
 ## 🛠️ Tech Stack
 
 | Layer | Technology |
 |---|---|
 | Frontend | Vanilla HTML · CSS · JavaScript (no framework) |
-| Database | Firebase Firestore (free Spark plan) |
+| Storage | Browser local storage via helper wrappers |
 | Offline | Service Worker + Cache API |
 | PWA | Web App Manifest + Install prompt |
 | Icons | SVG + PNG (192 / 512 / maskable / apple-touch) |
@@ -219,7 +189,7 @@ Device C  ──┘
 After the GitHub Pages URL is live:
 
 1. Open the live MoneyNest URL.
-2. Confirm the app loads and Firebase sync works.
+2. Confirm the app loads and works offline after refresh.
 3. Go to [PWABuilder](https://www.pwabuilder.com/).
 4. Paste the live URL.
 5. Review the PWA checks.
@@ -237,7 +207,7 @@ Notes:
 ## 🔒 Privacy
 
 - No login / no account required.
-- Data lives entirely in **your own Firebase project**.
+- Data lives entirely on **this device** unless you export a backup file.
 - No analytics, no ads, no third-party tracking.
 
 ---
@@ -251,4 +221,4 @@ Personal / family use. Not for redistribution.
 ## 🙏 Credits
 
 Built with ❤️ by VISIRA.
-App Version: 1.1.0
+App Version: 2.1.0
