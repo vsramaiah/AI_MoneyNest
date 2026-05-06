@@ -5,7 +5,7 @@
 <link rel="manifest" href="manifest.json">
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <meta name="theme-color" content="#2E7D32"/>
-<meta name="description" content="MoneyNest helps you track grocery spending, expenses, and budgets with shared Firebase sync."/>
+<meta name="description" content="MoneyNest helps you track expenses, transfers, budgets, and backups fully offline on your device."/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
@@ -882,8 +882,8 @@ body{
 .dash-wave path{fill:none;stroke:rgba(255,255,255,.5);stroke-width:1.2}
 .dash-hero-top,.dash-hero-bottom,.home-actions,.home-mini-grid,.trend-metrics{display:flex}
 .dash-hero-top,.dash-hero-bottom{justify-content:space-between;align-items:center;gap:12px;position:relative;z-index:1}
-.dash-hero-top{align-items:flex-start;min-height:154px}
-.dash-hero-summary{position:relative;z-index:1;max-width:58%}
+.dash-hero-top{display:grid;grid-template-columns:minmax(0,1fr) 158px;align-items:flex-start;min-height:154px}
+.dash-hero-summary{position:relative;z-index:1;max-width:none;min-width:0}
 .dash-month-switch{
   display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:8px 10px;backdrop-filter:blur(10px);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.08)
@@ -915,7 +915,7 @@ body{
 .hero-metric-card .value{font-size:22px;font-weight:900;margin-top:4px}
 .hero-metric-card .sub{display:none}
 .hero-ring{
-  position:absolute;top:14px;right:10px;width:158px;height:148px;border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.02));display:block;flex-shrink:0;
+  position:relative;top:auto;right:auto;width:158px;height:148px;border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.02));display:block;flex-shrink:0;justify-self:end;
   border:1px solid rgba(255,255,255,.10);backdrop-filter:blur(4px)
 }
 .hero-ring::before{
@@ -934,7 +934,7 @@ body{
   height:1px;
   background:linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
 }
-.wallet-illustration{position:absolute;right:2px;top:-4px;width:156px;height:152px}
+.wallet-illustration{position:absolute;right:2px;top:-4px;width:156px;height:152px;transform-origin:top right}
 .wallet-shell{
   position:absolute;right:20px;bottom:18px;width:88px;height:76px;border-radius:22px;
   background:linear-gradient(145deg,#2d6c32 0%,#4b963f 52%,#6abb4b 100%);
@@ -1417,10 +1417,11 @@ body{
     padding:16px 14px 14px;
   }
   .dash-hero-top{
+    grid-template-columns:minmax(0,1fr) 114px;
     min-height:128px;
   }
   .dash-hero-summary{
-    max-width:60%;
+    max-width:none;
   }
   .dash-balance-label{
     margin-top:6px;
@@ -1461,8 +1462,8 @@ body{
   .hero-ring{
     width:114px;
     height:110px;
-    right:0;
-    top:12px;
+    right:auto;
+    top:auto;
   }
   .wallet-illustration{
     width:112px;
@@ -1653,9 +1654,10 @@ body{
   .hello-subline{font-size:11px}
   .dash-hero{padding:14px 12px 12px}
   .dash-hero-top{min-height:124px}
-  .dash-hero-summary{max-width:100%}
+  .dash-hero-top{grid-template-columns:minmax(0,1fr) 92px}
+  .dash-hero-summary{max-width:none}
   .dash-balance-value{font-size:28px}
-  .hero-ring{width:92px;height:88px;right:0;top:18px}
+  .hero-ring{width:92px;height:88px;right:auto;top:auto}
   .wallet-illustration{width:88px;height:88px;right:0;top:12px}
   .wallet-shell{width:56px;height:48px}
   .wallet-note{width:34px;height:40px;right:24px}
@@ -1714,7 +1716,7 @@ body{
     <div class="welcome-brandline">Personal Money Hub</div>
     <h2 class="welcome-wordmark">Money<span>Nest</span></h2>
   </div>
-  <p class="welcome-subcopy">Start clean, restore a backup, or connect with a sync code. One focused place for expenses, transfers, and insights.</p>
+  <p class="welcome-subcopy">Start clean or restore a backup. One focused offline place for expenses, transfers, and insights.</p>
 
   <div class="welcome-features">
     <div class="welcome-feature">
@@ -1735,7 +1737,7 @@ body{
           <path d="m9 17 3-3 3 3"></path>
         </svg>
       </div>
-      <strong>Sync &<br/>Backup</strong>
+      <strong>Local &<br/>Backup</strong>
     </div>
     <div class="welcome-feature">
       <div class="welcome-feature-icon">
@@ -1788,54 +1790,6 @@ body{
       </span>
       <span class="welcome-action-arrow">›</span>
     </button>
-    <button type="button" id="welcomeSyncBtn" class="welcome-action secondary" onclick="showSyncSetup()">
-      <span class="welcome-action-icon">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M20 16.5A4.5 4.5 0 0 0 17.5 8H16A6 6 0 1 0 5 14.5"></path>
-          <path d="M12 19V11"></path>
-          <path d="m8.5 14.5 3.5-3.5 3.5 3.5"></path>
-        </svg>
-      </span>
-      <span class="welcome-action-copy">
-        <span class="welcome-action-title">Sync with Code</span>
-        <span class="welcome-action-desc">Use sync code to access your data</span>
-      </span>
-      <span class="welcome-action-arrow">›</span>
-    </button>
-  </div>
-
-  <div class="sbox hidden" id="syncSetupBox">
-    <label>Sync Code</label>
-    <div class="welcome-inline">
-      <input type="text" id="sCode" placeholder="e.g. family-home" autocapitalize="none" spellcheck="false"/>
-      <div class="snote">Use the same code on every device to share one MoneyNest space in Firebase.</div>
-      <button type="button" id="welcomeConnectBtn" class="welcome-action primary" style="padding:16px 18px" onclick="startAppWithSyncCode()">
-        <span class="welcome-action-icon">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M20 16.5A4.5 4.5 0 0 0 17.5 8H16A6 6 0 1 0 5 14.5"></path>
-            <path d="M12 19V11"></path>
-            <path d="m8.5 14.5 3.5-3.5 3.5 3.5"></path>
-          </svg>
-        </span>
-        <span class="welcome-action-copy">
-          <span class="welcome-action-title">Connect & Continue</span>
-          <span class="welcome-action-desc">Open your cloud data with this sync code</span>
-        </span>
-        <span class="welcome-action-arrow">›</span>
-      </button>
-      <button type="button" id="welcomeBackBtn" class="welcome-action secondary" style="padding:16px 18px" onclick="hideSyncSetup()">
-        <span class="welcome-action-icon">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="m15 18-6-6 6-6"></path>
-          </svg>
-        </span>
-        <span class="welcome-action-copy">
-          <span class="welcome-action-title">Back</span>
-          <span class="welcome-action-desc">Return to the welcome options</span>
-        </span>
-        <span class="welcome-action-arrow">‹</span>
-      </button>
-    </div>
   </div>
 
   <p class="welcome-footnote"><strong>🔒</strong> Your data is always private and secure.</p>
@@ -2214,7 +2168,7 @@ body{
       <svg id="schart" width="100%" height="110" viewBox="0 0 320 110"></svg>
       <div class="trend-metrics">
         <div class="trend-chip"><div class="l">Selected Range</div><div class="v" id="dmMirror">₹0</div><div class="s">Current month spending total</div></div>
-        <div class="trend-chip"><div class="l">Activity</div><div class="v" id="hsubMirror">Offline</div><div class="s">Current app sync status</div></div>
+        <div class="trend-chip"><div class="l">Activity</div><div class="v" id="hsubMirror">Offline</div><div class="s">Current app local status</div></div>
       </div>
     </div>
 
@@ -2264,37 +2218,6 @@ body{
             <button class="sbtn" onclick="triggerRestoreBackup()">Restore</button>
           </div>
           <div class="info-surface" id="backupInfo">No backup exported yet.</div>
-        </div>
-      </div>
-
-      <div class="more-panel">
-        <div class="more-section-title">Sync</div>
-        <div class="more-list">
-          <div class="more-item">
-            <div class="more-item-main">
-              <strong>Sync Enabled</strong>
-              <span id="syncStatusText">Sync is off on this device.</span>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" id="syncEnabledToggle" onchange="toggleSyncEnabled(this)"/>
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="more-item">
-            <div class="more-item-main">
-              <strong>Sync Code</strong>
-              <span id="sSC">default</span>
-            </div>
-            <button class="obtn" onclick="changeSyncCode()">Change</button>
-          </div>
-          <div class="more-item">
-            <div class="more-item-main">
-              <strong>Last Synced</strong>
-              <span id="syncLastTime">Never</span>
-            </div>
-            <button class="sbtn" onclick="runSyncNow()">Sync Now</button>
-          </div>
-          <div class="info-surface" id="sURL"></div>
         </div>
       </div>
 
@@ -2391,7 +2314,7 @@ body{
 <div class="overlay" id="settMod" onclick="if(event.target===this)closeSett()">
   <div class="sheet">
     <h3>Settings</h3>
-    <button class="rbtn" style="width:100%;padding:11px;font-size:13px;margin-bottom:7px" onclick="resetApp()">Change Sync Code</button>
+    <button class="rbtn" style="width:100%;padding:11px;font-size:13px;margin-bottom:7px" onclick="resetApp()">Clear Local Data</button>
     <button class="sbtn" style="width:100%;padding:11px;font-size:13px" onclick="closeSett()">Close</button>
   </div>
 </div>
@@ -2431,32 +2354,10 @@ body{
   </div>
 </div>
 
-<div class="overlay" id="syncConflictMod" onclick="if(event.target===this)resolveSyncConflict('cancel')">
-  <div class="sheet">
-    <h3>Cloud Data Found</h3>
-    <p style="font-size:12px;color:#86939c;margin-bottom:14px;line-height:1.7">This sync code already has Firebase data. Choose how MoneyNest should continue on this device.</p>
-    <div style="display:grid;gap:10px;margin-bottom:14px">
-      <button class="obtn" style="width:100%;padding:14px 16px;text-align:left" onclick="resolveSyncConflict('download')">
-        <div style="font-size:14px;font-weight:800">Download Cloud Data</div>
-        <div style="font-size:11px;color:var(--text-secondary);margin-top:4px;line-height:1.5">Use the data already saved in Firebase and replace this device's current local data.</div>
-      </button>
-      <button class="gbtn" style="width:100%;padding:14px 16px;text-align:left" onclick="resolveSyncConflict('merge')">
-        <div style="font-size:14px;font-weight:800">Merge Both</div>
-        <div style="font-size:11px;color:rgba(255,255,255,.85);margin-top:4px;line-height:1.5">Combine this device's data with Firebase data, then sync the merged result back to the cloud.</div>
-      </button>
-    </div>
-    <button class="sbtn" style="width:100%;padding:11px" onclick="resolveSyncConflict('cancel')">Cancel</button>
-  </div>
-</div>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-<script src="backend-config.js"></script>
-<script src="app-config.js"></script>
-<script src="firebase-sync.js"></script>
 <script src="local-store.js"></script>
 <script src="ui-shell.js"></script>
 <script>
+const APP_VERSION='2.1.0';
 const STORES=['Dmart','RelianceMart','Local Shop','Other'];
 const CATS=['Vegetables','Fruits','Pulses','Dairy','Meat & Fish','Snacks','Beverages','Frozen','Bakery','Spices','Oils','Rice & Flour','Ready Mixes','Dry Fruits','Household','Cleaning Supplies','Personal','Baby','Other'];
 const PAYS=['Cash','UPI','Debit Card','Credit Card','Rupay Credit UPI'];
@@ -2574,7 +2475,6 @@ const EXPENSE_TREE={
   }}
 };
 const DASH_ORDER=['week','month','year','all'];
-const APP_VERSION=window.MoneyNestConfig.APP_VERSION;
 const CATEGORY_ICONS={
   'Vegetables':'🥦','Fruits':'🍎','Pulses':'🫘','Dairy':'🥛','Meat & Fish':'🍗','Snacks':'🍪','Beverages':'🥤',
   'Frozen':'🧊','Bakery':'🥖','Spices':'🌶️','Oils':'🫗','Rice & Flour':'🌾','Ready Mixes':'🥣','Dry Fruits':'🥜',
@@ -2638,7 +2538,6 @@ let selSt=STORES[0],selPy=PAYS[1],curMd='normal',groceryEntryMode='normal';
 let iRows=[],histSF='All';
 let autoT=null,editingId=null,editingEntry=null;
 let serverVersion=0;
-let syncConflictResolver=null;
 const PROFILE_NAME_KEY='gt_profile_name';
 const LAST_SYNC_AT_KEY='gt_last_sync_at';
 const LAST_BACKUP_AT_KEY='gt_last_backup_at';
@@ -2706,12 +2605,11 @@ function toast(msg,dur=2200){
 }
 function setDot(s){
   const d=document.getElementById('dot');
-  if(d)d.className='dot'+(s==='syncing'?' syncing':s==='off'?' off':'');
-  updateHdr(s);
+  if(d)d.className='dot';
+  updateHdr();
 }
-function getConnectionLabel(state){
-  if(state==='syncing') return isSyncEnabled()?'Online':'Offline';
-  return isSyncEnabled()?'Online':'Offline';
+function getConnectionLabel(){
+  return 'Offline';
 }
 function unitPrice(price,qty,unit){
   const p=parseFloat(price)||0,q=parseFloat(qty)||1;
@@ -2877,24 +2775,6 @@ function applyCloudState(data){
   renderDash();
   renderHist();
 }
-async function cloudGet(){
-  return await window.MoneyNestFirebase.readState(
-    getSyncCode(),
-    {setDot,toast},
-    normalizeCloudState,
-    defaultCloudState
-  );
-}
-async function cloudPost(data){
-  const result=await window.MoneyNestFirebase.writeState(
-    getSyncCode(),
-    data,
-    {setDot,toast},
-    normalizeCloudState
-  );
-  if(result?.version) serverVersion=result.version;
-  return result;
-}
 function saveLocal(){
   deletedIds=window.MoneyNestLocalStore.saveLocalState({
     purchases,
@@ -2906,48 +2786,21 @@ function saveLocal(){
     deletedIds,
     categoryLabels
   },{uniq});
+  serverVersion=Math.max(0,Number(serverVersion)||0);
 }
-function cleanSyncCode(value){
-  return window.MoneyNestFirebase.cleanSyncCode(value);
-}
-function getSyncCode(){
-  return cleanSyncCode(localStorage.getItem(SYNC_CODE_KEY) || SCODE || 'default');
-}
-function setSyncCode(value){
-  const code=cleanSyncCode(value);
-  SCODE=code;
-  DKEY='gt_'+code;
-  localStorage.setItem('gt_code',SCODE);
-  localStorage.setItem('gt_dkey',DKEY);
-  localStorage.setItem(SYNC_CODE_KEY,SCODE);
-}
-function isSyncEnabled(){
-  return localStorage.getItem(SYNC_ENABLED_KEY)==='1';
-}
-function setSyncEnabled(enabled){
-  localStorage.setItem(SYNC_ENABLED_KEY,enabled?'1':'0');
-}
+function cleanSyncCode(value){return String(value||'default').trim().toLowerCase().replace(/[^a-z0-9_-]/g,'-').replace(/-{2,}/g,'-').replace(/^-+|-+$/g,'')||'default';}
+function getSyncCode(){return 'local-only';}
+function setSyncCode(value){SCODE=cleanSyncCode(value);DKEY='gt_local';}
+function isSyncEnabled(){return false;}
+function setSyncEnabled(enabled){return false;}
 function getPendingSyncState(){
-  try{
-    const parsed=JSON.parse(localStorage.getItem(SYNC_PENDING_KEY)||'{}');
-    return {
-      upserts:parsed?.upserts&&typeof parsed.upserts==='object'?parsed.upserts:{},
-      deletes:Array.isArray(parsed?.deletes)?uniq(parsed.deletes):[]
-    };
-  }catch{
-    return {upserts:{},deletes:[]};
-  }
+  return {upserts:{},deletes:[]};
 }
 function savePendingSyncState(state){
-  const next={
-    upserts:state?.upserts&&typeof state.upserts==='object'?state.upserts:{},
-    deletes:Array.isArray(state?.deletes)?uniq(state.deletes):[]
-  };
-  localStorage.setItem(SYNC_PENDING_KEY,JSON.stringify(next));
-  setPendingSyncCount(Object.keys(next.upserts).length+next.deletes.length);
+  setPendingSyncCount(0);
 }
 function getPendingSyncCount(){
-  return Math.max(0, parseInt(localStorage.getItem(PENDING_SYNC_COUNT_KEY) || '0', 10) || 0);
+  return 0;
 }
 function getProfileName(){
   return (localStorage.getItem(PROFILE_NAME_KEY) || 'Varun').trim() || 'Varun';
@@ -2972,18 +2825,16 @@ function editProfileName(){
   toast('Name updated');
 }
 function setPendingSyncCount(count){
-  localStorage.setItem(PENDING_SYNC_COUNT_KEY, String(Math.max(0, count || 0)));
+  return 0;
 }
 function getLastSyncedAt(){
-  return Number(localStorage.getItem(LAST_SYNC_AT_KEY) || '0') || 0;
+  return 0;
 }
 function setLastSyncedAt(timestamp){
-  localStorage.setItem(LAST_SYNC_AT_KEY, String(Number(timestamp) || Date.now()));
+  return 0;
 }
 function formatSyncTime(timestamp){
-  if(!timestamp) return 'Never';
-  const date=new Date(timestamp);
-  return `${date.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})} at ${date.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true})}`;
+  return 'Offline';
 }
 function getLastBackupAt(){
   return Number(localStorage.getItem(LAST_BACKUP_AT_KEY) || '0') || 0;
@@ -3050,32 +2901,20 @@ function normalizeRecordForSync(type,record){
   return {
     ...record,
     updatedAt:record?.updatedAt||stamp,
-    syncStatus:record?.syncStatus||'pending'
+    syncStatus:'synced'
   };
 }
 function queuePendingUpsert(type,record){
-  const pending=getPendingSyncState();
-  const normalized=normalizeRecordForSync(type,{...record,updatedAt:Date.now(),syncStatus:'pending'});
-  pending.upserts[normalized.id]={type,record:normalized};
-  pending.deletes=(pending.deletes||[]).filter(id=>id!==normalized.id);
-  savePendingSyncState(pending);
-  setTransactionSyncStatus([normalized.id],'pending');
-  return normalized;
+  return normalizeRecordForSync(type,{...record,updatedAt:Date.now(),syncStatus:'synced'});
 }
 function queuePendingDelete(id){
-  const pending=getPendingSyncState();
-  if(pending.upserts[id]) delete pending.upserts[id];
-  pending.deletes=uniq([...(pending.deletes||[]),id]);
-  savePendingSyncState(pending);
+  return;
 }
 function clearPendingSyncState(){
-  savePendingSyncState({upserts:{},deletes:[]});
+  return;
 }
 function persistLocalChange(pendingIncrement=0){
   saveLocal();
-  if(pendingIncrement>0){
-    setPendingSyncCount(getPendingSyncCount()+pendingIncrement);
-  }
 }
 function mergeRecordsById(localList,cloudList){
   const map=new Map();
@@ -3230,16 +3069,12 @@ function refreshAllViews(){
 }
 async function push(){
   saveLocal();
-  return await cloudPost({purchases,expenses,incomes,transfers,monthlyBudgets,catBudgetsByMonth,deletedIds:uniq(deletedIds),categoryLabels});
+  return captureLocalState();
 }
 async function pull(){
-  const d=await cloudGet();
-  if(!d) return;
-  if(!hasRemoteData(d)&&hasAnyLocalData()){
-    await push();
-    return;
-  }
-  applyCloudState(d);
+  loadLocalState();
+  _buildPriceCache();
+  refreshAllViews();
 }
 function completeSetup(){
   localStorage.setItem(ONBOARDED_KEY,'1');
@@ -3248,15 +3083,12 @@ function completeSetup(){
   initApp();
   saveLocal();
   refreshAllViews();
-  updateHdr(isSyncEnabled()?'on':'off');
+  updateHdr();
 }
 function bindWelcomeButtons(){
   const bindings=[
     ['welcomeStartFreshBtn',startFreshSetup],
-    ['welcomeRestoreBtn',triggerWelcomeRestore],
-    ['welcomeSyncBtn',showSyncSetup],
-    ['welcomeConnectBtn',startAppWithSyncCode],
-    ['welcomeBackBtn',hideSyncSetup]
+    ['welcomeRestoreBtn',triggerWelcomeRestore]
   ];
   bindings.forEach(([id,handler])=>{
     const el=document.getElementById(id);
@@ -3265,17 +3097,7 @@ function bindWelcomeButtons(){
     el.addEventListener('click',handler);
   });
 }
-function showSyncSetup(){
-  document.getElementById('welcomeChoices')?.classList.add('hidden');
-  document.getElementById('syncSetupBox')?.classList.remove('hidden');
-}
-function hideSyncSetup(){
-  document.getElementById('syncSetupBox')?.classList.add('hidden');
-  document.getElementById('welcomeChoices')?.classList.remove('hidden');
-}
 function startFreshSetup(){
-  setSyncEnabled(false);
-  setSyncCode('default');
   clearPendingSyncState();
   saveLocal();
   completeSetup();
@@ -3284,69 +3106,6 @@ function startFreshSetup(){
 function triggerWelcomeRestore(){
   localStorage.setItem(ONBOARDED_KEY,'pending_restore');
   triggerRestoreBackup();
-}
-function chooseSyncConflictAction(){
-  return new Promise((resolve)=>{
-    syncConflictResolver=resolve;
-    document.getElementById('syncConflictMod')?.classList.add('on');
-  });
-}
-function resolveSyncConflict(action){
-  document.getElementById('syncConflictMod')?.classList.remove('on');
-  const resolver=syncConflictResolver;
-  syncConflictResolver=null;
-  if(resolver) resolver(action);
-}
-async function syncOnConnect(){
-  const remote=await cloudGet();
-  const localState=captureLocalState();
-  const remoteHasData=!!remote&&hasRemoteData(remote);
-  const localHasData=hasAnyLocalData();
-  if(remoteHasData){
-    if(localHasData){
-      const action=await chooseSyncConflictAction();
-      if(action==='download'){
-        applyCloudState(remote);
-        markAllTransactionsSynced();
-        clearPendingSyncState();
-      }else if(action==='merge'){
-        const merged=mergeCloudState(localState,remote);
-        applyCloudState(merged);
-        eachTransaction((type,item)=>{
-          queuePendingUpsert(type,item);
-        });
-        await runSyncNow(true);
-      }else{
-        throw new Error('sync-conflict-cancelled');
-      }
-    }else{
-      applyCloudState(remote);
-      markAllTransactionsSynced();
-      clearPendingSyncState();
-    }
-  }else{
-    eachTransaction((type,item)=>{
-      if(item.syncStatus!=='pending') queuePendingUpsert(type,{...item,syncStatus:'pending'});
-    });
-    await runSyncNow(true);
-  }
-}
-async function startAppWithSyncCode(){
-  const raw=(document.getElementById('sCode')?.value||'').trim();
-  if(!raw){
-    toast('Enter a sync code');
-    return;
-  }
-  setSyncCode(raw);
-  setSyncEnabled(true);
-  loadLocalState();
-  try{
-    await syncOnConnect();
-  }catch(err){
-    console.warn(err);
-    toast('Could not complete first sync, but your code was saved');
-  }
-  completeSetup();
 }
 
 
@@ -3386,10 +3145,6 @@ function initApp(){
   if(document.getElementById('iCont')&&!iRows.length) addRow();
   if(document.getElementById('expDrillDown')) renderExpDrillDown();
   renderProfileName();
-  const syncSourceEl=document.getElementById('sSC');
-  const syncProjectEl=document.getElementById('sURL');
-  if(syncSourceEl) syncSourceEl.textContent=isSyncEnabled()?getSyncCode():'Sync disabled';
-  if(syncProjectEl) syncProjectEl.textContent='Firebase · '+window.MoneyNestFirebase.getProjectId();
   const versionEl=document.getElementById('appVersionText');
   if(versionEl) versionEl.textContent=APP_VERSION;
   setAddMode(addMode);
@@ -3540,7 +3295,7 @@ function renderDash(){
           :`${fmt(remaining)} left in budget. Keep an eye on daily spending.`;
   document.getElementById('dat').textContent=fmt(allExpenseTotal);
   const hsubMirror=document.getElementById('hsubMirror');
-  if(hsubMirror) hsubMirror.textContent=document.getElementById('hsub')?.dataset.summary||'Last synced Never';
+  if(hsubMirror) hsubMirror.textContent=document.getElementById('hsub')?.dataset.summary||'Saved locally on this device';
 
   const arcBarEl=document.getElementById('arcBar');
   if(arcBarEl){
@@ -3669,23 +3424,17 @@ function unitSpendHint(cat,sp){
 }
 
 function updateHdr(state){
-  const status=getConnectionLabel(state);
-  const statusLabel=status==='Online'?'Online Mode':'Offline Mode';
-  const pendingCount=getPendingSyncCount();
-  const syncSummary=pendingCount>0?`${pendingCount} pending sync`:`Last synced ${formatSyncTime(getLastSyncedAt())}`;
+  const statusLabel='Offline Mode';
   document.getElementById('hsub').textContent=statusLabel;
-  document.getElementById('hsub').dataset.summary=syncSummary;
+  document.getElementById('hsub').dataset.summary='Saved locally on this device';
   document.getElementById('lNavLbl').textContent='List';
-  const syncSourceEl=document.getElementById('sSC');
-  const syncProjectEl=document.getElementById('sURL');
-  if(syncSourceEl) syncSourceEl.textContent=isSyncEnabled()?getSyncCode():'Sync disabled';
-  if(syncProjectEl) syncProjectEl.textContent='Firebase · '+window.MoneyNestFirebase.getProjectId();
 }
 
 async function saveBudget(){
   setBudgetForMonth(budgetCursor,parseFloat(document.getElementById('binput').value)||0);
   renderDash();
-  await push();
+  persistLocalChange();
+  updateHdr();
   toast('Budget saved');
 }
 
@@ -3952,10 +3701,31 @@ function setQuickAmount(value){
 function formatDateForInput(value){
   const date=value?new Date(value):new Date();
   if(Number.isNaN(date.getTime())) return '';
-  const year=date.getFullYear();
-  const month=String(date.getMonth()+1).padStart(2,'0');
   const day=String(date.getDate()).padStart(2,'0');
-  return `${year}-${month}-${day}`;
+  const month=String(date.getMonth()+1).padStart(2,'0');
+  const year=date.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
+function normalizeDateInputValue(value){
+  const raw=String(value||'').trim();
+  if(!raw) return '';
+  const slashMatch=raw.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if(slashMatch){
+    return `${slashMatch[3]}-${slashMatch[2]}-${slashMatch[1]}`;
+  }
+  const dashMatch=raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(dashMatch){
+    return raw;
+  }
+  return '';
+}
+
+function formatDateTextInputValue(value){
+  const digits=String(value||'').replace(/\D/g,'').slice(0,8);
+  if(digits.length<=2) return digits;
+  if(digits.length<=4) return `${digits.slice(0,2)}/${digits.slice(2)}`;
+  return `${digits.slice(0,2)}/${digits.slice(2,4)}/${digits.slice(4)}`;
 }
 
 function get12HourTimeParts(value){
@@ -3976,11 +3746,11 @@ function get12HourTimeParts(value){
 function toLocalDateTimeValue(value){
   const date=value?new Date(value):new Date();
   if(Number.isNaN(date.getTime())) return '';
-  return `${formatDateForInput(date)}T${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+  return `${normalizeDateInputValue(formatDateForInput(date))}T${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
 }
 
 function parse12HourDateTime(dateValue,timeValue,ampmValue){
-  const datePart=String(dateValue||'').trim();
+  const datePart=normalizeDateInputValue(dateValue);
   const timePart=String(timeValue||'').trim();
   const ampm=String(ampmValue||'AM').toUpperCase();
   if(!datePart || !timePart) return '';
@@ -3999,8 +3769,8 @@ function buildDateTimeFieldHtml(field, value){
   const timeParts=get12HourTimeParts(value);
   return `<div class="f">
     <label>${FIELD_DEFS[field].label}</label>
-    <div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 92px;gap:8px">
-      <input type="date" id="ef_date_date" class="fi" value="${safeText(dateValue)}"/>
+    <div style="display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,.95fr) minmax(72px,.7fr);gap:8px">
+      <input type="text" id="ef_date_date" class="fi" value="${safeText(dateValue)}" placeholder="DD/MM/YYYY" inputmode="numeric" pattern="\\d{2}/\\d{2}/\\d{4}" maxlength="10" oninput="this.value=formatDateTextInputValue(this.value)"/>
       <input type="text" id="ef_date_time" class="fi" value="${safeText(timeParts.time)}" placeholder="hh:mm" inputmode="numeric" pattern="(0[1-9]|1[0-2]):[0-5][0-9]"/>
       <select id="ef_date_ampm" class="fi">
         <option value="AM"${timeParts.ampm==='AM'?' selected':''}>AM</option>
@@ -5276,8 +5046,42 @@ function renderHist(){
       </div>`).join(''):'<div class="empty">No transfer entries found.</div>';
       return;
     }
-    const sorted=[...expenseList].sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
-    expEl.innerHTML=sorted.length?sorted.map(e=>{
+    const combinedExpenseEntries=[
+      ...purchaseList.map(p=>({type:'purchase',record:p})),
+      ...expenseList.map(e=>({type:'expense',record:e}))
+    ].sort((a,b)=>new Date(b.record.datetime)-new Date(a.record.datetime));
+    expEl.innerHTML=combinedExpenseEntries.length?combinedExpenseEntries.map(entry=>{
+      if(entry.type==='purchase'){
+        const p=entry.record;
+        const purchaseIcon=getExpenseIcon(p.sourceCategory||'Essentials',p.sourceSubcategory||'Groceries',p.sourceLeaf||p.items?.[0]?.category||'Other');
+        const categoryLabel=getCategoryLabel(p.sourceCategory||'Essentials');
+        const subcategoryLabel=getCategoryLabel(p.sourceCategory||'Essentials',p.sourceSubcategory||'Groceries');
+        const leafLabel=getCategoryLabel(p.sourceCategory||'Essentials',p.sourceSubcategory||'Groceries',p.sourceLeaf||p.items?.[0]?.category||'Other');
+        return `<div class="hi" style="margin-bottom:10px">
+          <div class="row">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:20px">${purchaseIcon}</span>
+              <div>
+                <div style="font-size:14px;font-weight:800">${safeText(leafLabel)}</div>
+                <div style="font-size:11px;color:var(--text-secondary)">${safeText(categoryLabel)} › ${safeText(subcategoryLabel)}${p.notes?` · ${safeText(p.notes)}`:''}</div>
+              </div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:18px;font-weight:900">${fmt(p.total)}</div>
+              <div style="font-size:11px;color:var(--text-secondary)">${fmtS(p.datetime)}</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">
+            ${(p.items||[]).slice(0,4).map(it=>`<span style="font-size:10px;background:#F3F6F4;border:1px solid var(--border);border-radius:999px;padding:3px 8px;color:var(--text-secondary)">${safeText(it.name)} · ${safeText(it.qty)} ${safeText(it.unit||'pcs')}</span>`).join('')}
+            ${p.items.length>4?`<span style="font-size:10px;color:var(--text-secondary)">+${p.items.length-4} more</span>`:''}
+          </div>
+          <div style="margin-top:8px;text-align:right;display:flex;justify-content:flex-end;gap:6px">
+            <button class="ebtn" style="padding:5px 10px;font-size:11px" onclick="startEdit('${p.id}')">Edit</button>
+            <button class="rbtn" style="padding:5px 10px;font-size:11px" onclick="delPurch('${p.id}')">Delete</button>
+          </div>
+        </div>`;
+      }
+      const e=entry.record;
       const icon=getExpenseIcon(e.category,e.subcategory,e.leaf);
       const labels=getExpenseDisplayPath(e);
       const extra=Object.entries({liters:'L',odometer:'km',recipient:'To',warranty:'Warranty',hospital:'Hospital',medicine:'Medicine',customName:'Name'}).map(([k,lbl])=>e[k]?`<span style="font-size:10px;background:#F3F6F4;border:1px solid var(--border);border-radius:999px;padding:3px 8px;color:var(--text-secondary)">${lbl}: ${e[k]}</span>`:'').filter(Boolean).join('');
@@ -5301,7 +5105,7 @@ function renderHist(){
           <button class="rbtn" style="padding:5px 10px;font-size:11px" onclick="delExpense('${e.id}')">Delete</button>
         </div>
       </div>`;
-    }).join(''):'<div class="empty">No other expenses recorded yet.<br>Use the Add tab → 💳 Expense to log bills, fuel, dining, etc.</div>';
+    }).join(''):'<div class="empty">No expense entries recorded yet.<br>Use the Add tab → 💳 Expense to log groceries, bills, fuel, dining, and more.</div>';
   }
 }
 function togHist(id){document.getElementById('hd-'+id)?.classList.toggle('on');}
@@ -5426,22 +5230,7 @@ function loadIns(name){
     </table>`;
 }
 function renderIns(){
-  const syncSourceEl=document.getElementById('sSC');
-  const syncProjectEl=document.getElementById('sURL');
-  if(syncSourceEl) syncSourceEl.textContent=isSyncEnabled()?getSyncCode():'Sync disabled';
-  if(syncProjectEl) syncProjectEl.textContent=`Firebase · ${window.MoneyNestFirebase.getProjectId()} · ${getPendingSyncCount()} pending`;
-  const syncText=document.getElementById('syncStatusText');
-  if(syncText){
-    const pendingCount=getPendingSyncCount();
-    syncText.textContent=isSyncEnabled()
-      ?`${pendingCount} item${pendingCount!==1?'s':''} pending sync`
-      :'Sync is off on this device.';
-  }
-  const syncLastEl=document.getElementById('syncLastTime');
-  if(syncLastEl) syncLastEl.textContent=formatSyncTime(getLastSyncedAt());
   updateBackupInfo();
-  const syncEnabledToggle=document.getElementById('syncEnabledToggle');
-  if(syncEnabledToggle) syncEnabledToggle.checked=isSyncEnabled();
   const appLockToggle=document.getElementById('appLockToggle');
   const appLockText=document.getElementById('appLockText');
   const appLockEnabled=localStorage.getItem('gt_app_lock_ui')==='1';
@@ -5451,10 +5240,6 @@ function renderIns(){
       ?'UI only. App lock is marked as enabled for this device.'
       :'UI only. Turn this on to mark that app lock should be enabled on this device later.';
   }
-}
-
-function openFirebaseConsole(){
-  window.open(window.MoneyNestFirebase.getConsoleUrl(), '_blank');
 }
 
 function buildBackupSnapshot(timestamp=new Date()){
@@ -5505,17 +5290,11 @@ async function handleRestoreBackup(event){
       return;
     }
     applyCloudState(parsed);
-    if(isSyncEnabled()){
-      eachTransaction((type,item)=>{
-        queuePendingUpsert(type,item);
-      });
-    }else{
-      markAllTransactionsSynced();
-      clearPendingSyncState();
-    }
+    markAllTransactionsSynced();
+    clearPendingSyncState();
     saveLocal();
     refreshAllViews();
-    updateHdr('off');
+    updateHdr();
     if(localStorage.getItem(ONBOARDED_KEY)==='pending_restore'){
       localStorage.setItem(ONBOARDED_KEY,'1');
       completeSetup();
@@ -5530,104 +5309,23 @@ async function handleRestoreBackup(event){
 }
 
 async function runSyncNow(skipToast=false){
-  try{
-    if(!isSyncEnabled()){
-      if(!skipToast) toast('Turn on sync first');
-      return;
-    }
-    if(navigator.onLine===false){
-      throw new Error('offline');
-    }
-    setDot('syncing');
-    const syncText=document.getElementById('syncStatusText');
-    if(syncText) syncText.textContent='Syncing with Firebase…';
-    const remote=await cloudGet();
-    if(remote && hasRemoteData(remote) && !hasAnyLocalData() && getPendingSyncCount()===0){
-      applyCloudState(remote);
-      clearPendingSyncState();
-      markAllTransactionsSynced();
-      saveLocal();
-      setLastSyncedAt(Date.now());
-      updateHdr('on');
-      renderIns();
-      if(!skipToast) toast('Cloud data downloaded');
-      return;
-    }
-    const result=await window.MoneyNestFirebase.syncPending(
-      getSyncCode(),
-      getPendingSyncState(),
-      {purchases,expenses,incomes,transfers,monthlyBudgets,catBudgetsByMonth,deletedIds:uniq(deletedIds),categoryLabels},
-      {setDot,toast},
-      normalizeCloudState
-    );
-    if(!result?.ok) throw new Error('sync-failed');
-    if(result?.version) serverVersion=result.version;
-    markAllTransactionsSynced();
-    clearPendingSyncState();
-    saveLocal();
-    setLastSyncedAt(Date.now());
-    updateHdr('on');
-    renderIns();
-    if(!skipToast) toast('Sync completed successfully');
-  }catch(err){
-    console.warn(err);
-    if(!skipToast) toast(navigator.onLine===false?'You are offline. Connect to internet to sync.':'Sync failed');
-  }finally{
-    setDot('off');
-    renderIns();
-  }
+  updateHdr();
+  renderIns();
+  if(!skipToast) toast('Sync is removed. MoneyNest now works fully offline.');
 }
 async function toggleSyncEnabled(toggle){
-  const enabled=!!toggle?.checked;
-  if(enabled){
-    let code=getSyncCode();
-    if(!code || code==='default'){
-      const next=window.prompt('Enter sync code', '');
-      if(next===null){
-        toggle.checked=false;
-        return;
-      }
-      code=cleanSyncCode(next);
-      if(!code){
-        toast('Enter a valid sync code');
-        toggle.checked=false;
-        return;
-      }
-      setSyncCode(code);
-    }
-    setSyncEnabled(true);
-    await syncOnConnect();
-    updateHdr('on');
-    renderIns();
-    toast('Sync enabled');
-    return;
-  }
-  setSyncEnabled(false);
-  updateHdr('off');
+  if(toggle) toggle.checked=false;
+  updateHdr();
   renderIns();
-  toast('Sync disabled');
+  toast('Sync is removed. MoneyNest now works fully offline.');
 }
 function changeSyncCode(){
-  const next=window.prompt('Enter sync code', isSyncEnabled()?getSyncCode():'');
-  if(next===null) return;
-  const code=cleanSyncCode(next);
-  if(!code){
-    toast('Enter a valid sync code');
-    return;
-  }
-  setSyncCode(code);
-  renderIns();
-  toast('Sync code updated');
+  toast('Sync is removed. MoneyNest now works fully offline.');
 }
 
 Object.assign(window,{
   startFreshSetup,
   triggerWelcomeRestore,
-  showSyncSetup,
-  hideSyncSetup,
-  startAppWithSyncCode,
-  chooseSyncConflictAction,
-  resolveSyncConflict,
   handleRestoreBackup,
   toggleSyncEnabled,
   runSyncNow,
@@ -5931,28 +5629,26 @@ function renderCalendarView(){
 function openSett(){return window.MoneyNestUI.openSett();}
 function closeSett(){return window.MoneyNestUI.closeSett();}
 function resetApp(){
-  if(!confirm('Clear this device session? Your cloud data will stay safe in Firebase.'))return;
+  if(!confirm('Clear all local MoneyNest data on this device?'))return;
   ['gt_code','gt_dkey','gt_p','gt_e','gt_i','gt_t','gt_b','gt_cb','gt_bm','gt_cbm','gt_del','gt_cl',LAST_SYNC_AT_KEY,LAST_BACKUP_AT_KEY,PENDING_SYNC_COUNT_KEY,SYNC_CODE_KEY,SYNC_ENABLED_KEY,SYNC_PENDING_KEY,ONBOARDED_KEY].forEach(k=>localStorage.removeItem(k));
   location.reload();
 }
 
 (function(){
   bindWelcomeButtons();
-  const hasLegacySession=!!(localStorage.getItem('gt_p')||localStorage.getItem('gt_e')||localStorage.getItem('gt_i')||localStorage.getItem('gt_t')||localStorage.getItem('gt_code'));
+  const hasLegacySession=!!(localStorage.getItem('gt_p')||localStorage.getItem('gt_e')||localStorage.getItem('gt_i')||localStorage.getItem('gt_t'));
   if(hasLegacySession&&localStorage.getItem(ONBOARDED_KEY)!=='1'){
     localStorage.setItem(ONBOARDED_KEY,'1');
   }
   const onboarded=localStorage.getItem(ONBOARDED_KEY)==='1';
-  const code=localStorage.getItem(SYNC_CODE_KEY)||localStorage.getItem('gt_code');
   if(onboarded){
-    setSyncCode(code||'default');
     loadLocalState();
     _buildPriceCache();
     document.getElementById('setup').style.display='none';
     document.getElementById('wrap').style.display='block';
     initApp();
     refreshAllViews();
-    updateHdr(isSyncEnabled()?'on':'off');
+    updateHdr();
   }
 })();
 </script>
