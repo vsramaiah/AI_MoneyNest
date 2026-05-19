@@ -1,4 +1,4 @@
-const VERSION = "moneynest-v2.1.0-offline";
+﻿const VERSION = "moneynest-v2.1.0-offline-r2";
 const STATIC_CACHE = `${VERSION}-static`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const APP_SHELL = [
@@ -98,3 +98,4 @@ self.addEventListener("fetch", (event) => {
 
   event.respondWith(staleWhileRevalidate(request));
 });
+
