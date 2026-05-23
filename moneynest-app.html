@@ -3810,18 +3810,13 @@ function parsePickerDateTime(dateValue,timeValue){
 }
 
 function syncDateTimePickerDisplay(){
-  const dateInput=document.getElementById('ef_date_date');
   const timeInput=document.getElementById('ef_date_time');
-  const ampmInput=document.getElementById('ef_date_ampm');
-  const dateText=document.getElementById('ef_date_date_text');
-  const timeText=document.getElementById('ef_date_time_text');
-  if(!dateInput || !timeInput) return;
-  const combined=parsePickerDateTime(dateInput.value,timeInput.value);
-  const safeValue=combined||toLocalDateTimeValue(new Date());
-  const parts=get12HourTimeParts(safeValue);
-  if(ampmInput) ampmInput.value=parts.ampm;
-  if(dateText) dateText.textContent=formatDateDisplayLong(safeValue);
-  if(timeText) timeText.textContent=formatTimeDisplayLong(safeValue);
+  if(!timeInput) return;
+  const match=String(timeInput.value||'').replace(/[^\d:]/g,'').match(/^(\d{1,2})(?::?(\d{0,2}))?$/);
+  if(!match) return;
+  const hour=match[1].slice(0,2);
+  const minute=(match[2]||'').slice(0,2);
+  timeInput.value=minute!==''?`${hour}:${minute}`:hour;
 }
 
 function openNativeDatePicker(){
@@ -3840,15 +3835,18 @@ function openNativeTimePicker(){
 
 function buildDateTimeFieldHtml(field, value){
   const pickerDateValue=formatDateForPickerValue(value);
-  const pickerTimeValue=get24HourTimeValue(value);
   const displayValue=value||new Date();
+  const timeParts=get12HourTimeParts(displayValue);
   return `<div class="f">
     <label>${FIELD_DEFS[field].label}</label>
-    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.88fr);gap:10px;align-items:center">
-      <input type="date" id="ef_date_date" class="fi" value="${safeText(pickerDateValue)}" onchange="syncDateTimePickerDisplay()" style="min-height:56px"/>
-      <input type="time" id="ef_date_time" class="fi" value="${safeText(pickerTimeValue)}" onchange="syncDateTimePickerDisplay()" style="min-height:56px"/>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.78fr) 88px;gap:10px;align-items:center">
+      <input type="date" id="ef_date_date" class="fi" value="${safeText(pickerDateValue)}" style="min-height:56px"/>
+      <input type="text" id="ef_date_time" class="fi" value="${safeText(timeParts.time)}" placeholder="hh:mm" inputmode="numeric" maxlength="5" oninput="syncDateTimePickerDisplay()" style="min-height:56px"/>
+      <select id="ef_date_ampm" class="fi" style="min-height:56px">
+        <option value="AM"${timeParts.ampm==='AM'?' selected':''}>AM</option>
+        <option value="PM"${timeParts.ampm==='PM'?' selected':''}>PM</option>
+      </select>
     </div>
-    <input type="hidden" id="ef_date_ampm" value="${safeText(get12HourTimeParts(displayValue).ampm)}"/>
   </div>`;
 }
 
@@ -3919,9 +3917,10 @@ function buildFieldHtml(field, meta){
 
 function getFormValue(field){
   if(field==='date'){
-    return parsePickerDateTime(
+    return parse12HourDateTime(
       document.getElementById('ef_date_date')?.value,
-      document.getElementById('ef_date_time')?.value
+      document.getElementById('ef_date_time')?.value,
+      document.getElementById('ef_date_ampm')?.value
     );
   }
   const el=document.getElementById(`ef_${field}`);
@@ -3935,8 +3934,10 @@ function setFormValue(field, value){
     const timeInput=document.getElementById('ef_date_time');
     const ampmInput=document.getElementById('ef_date_ampm');
     if(!dateInput || !timeInput || !ampmInput) return;
+    const parts=get12HourTimeParts(value);
     dateInput.value=formatDateForPickerValue(value);
-    timeInput.value=get24HourTimeValue(value);
+    timeInput.value=parts.time;
+    ampmInput.value=parts.ampm;
     syncDateTimePickerDisplay();
     return;
   }
@@ -5791,6 +5792,7 @@ setDot(navigator.onLine===false?"off":"on");
 </script>
 </body>
 </html>
+
 
 
 
