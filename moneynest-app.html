@@ -2357,7 +2357,7 @@ body{
 <script src="local-store.js"></script>
 <script src="ui-shell.js"></script>
 <script>
-const APP_VERSION='2.1.0';\nconst INSIGHTS_MONTH_FIX='2026-05-23-r1';
+const APP_VERSION='2.1.0';
 const STORES=['Dmart','RelianceMart','Local Shop','Other'];
 const CATS=['Vegetables','Fruits','Pulses','Dairy','Meat & Fish','Snacks','Beverages','Frozen','Bakery','Spices','Oils','Rice & Flour','Ready Mixes','Dry Fruits','Household','Cleaning Supplies','Personal','Baby','Other'];
 const PAYS=['Cash','UPI','Debit Card','Credit Card','Rupay Credit UPI'];
@@ -3210,7 +3210,7 @@ function svgPie(data,size=150){
   data.filter(d=>d.value>0).forEach(d=>{
     const pct=d.value/total,slice=pct*Math.PI*2;
     if(pct>=0.9999){
-      paths+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${d.color}" stroke="#fff" stroke-width="1.5" data-insight-label="${safeText(d.label)}" data-insight-type="${safeText(d.entryType||'expense')}" style="cursor:pointer"><title>${safeText(d.label)} - ${fmt(d.value)}</title></circle>`;
+      paths+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${d.color}" stroke="#fff" stroke-width="1.5"/>`;
     }else{
       const a1=angle,a2=angle+slice;
       const x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
@@ -3218,10 +3218,10 @@ function svgPie(data,size=150){
       const ix1=cx+ir*Math.cos(a2),iy1=cy+ir*Math.sin(a2);
       const ix2=cx+ir*Math.cos(a1),iy2=cy+ir*Math.sin(a1);
       const large=slice>Math.PI?1:0;
-      paths+=`<path d="M${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${large},1 ${x2.toFixed(1)},${y2.toFixed(1)} L${ix1.toFixed(1)},${iy1.toFixed(1)} A${ir},${ir} 0 ${large},0 ${ix2.toFixed(1)},${iy2.toFixed(1)} Z" fill="${d.color}" stroke="#fff" stroke-width="1.5" data-insight-label="${safeText(d.label)}" data-insight-type="${safeText(d.entryType||'expense')}" style="cursor:pointer"><title>${safeText(d.label)} - ${fmt(d.value)}</title></path>`;
+      paths+=`<path d="M${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${large},1 ${x2.toFixed(1)},${y2.toFixed(1)} L${ix1.toFixed(1)},${iy1.toFixed(1)} A${ir},${ir} 0 ${large},0 ${ix2.toFixed(1)},${iy2.toFixed(1)} Z" fill="${d.color}" stroke="#fff" stroke-width="1.5"/>`;
       angle=a2;
     }
-    leg+=`<div class="pie-row" data-insight-label="${safeText(d.label)}" data-insight-type="${safeText(d.entryType||'expense')}" style="cursor:pointer"><div class="pie-dot" style="background:${d.color}"></div><span style="font-size:11px;flex:1;color:#44515a">${d.label}</span><span style="font-size:11px;color:#88959f;font-weight:700">${fmt(d.value)}</span></div>`;
+    leg+=`<div class="pie-row"><div class="pie-dot" style="background:${d.color}"></div><span style="font-size:11px;flex:1;color:#44515a">${d.label}</span><span style="font-size:11px;color:#88959f;font-weight:700">${fmt(d.value)}</span></div>`;
   });
   paths+=`<circle cx="${cx}" cy="${cy}" r="${ir-1}" fill="#fff"/>`;
   return `<div class="pie-wrap"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${paths}</svg><div class="pie-legend">${leg}</div></div>`;
@@ -4835,32 +4835,12 @@ function setInsightsTab(tab){
 function openInsightsCategories(){
   setInsightsTab('expense');
 }
-function openInsightCategoryTransactions(label, entryType='expense'){
-  const txSearchEl=document.getElementById('txSearch');
-  const txFilterEl=document.getElementById('txFilter');
-  sessionCursor=new Date(budgetCursor.getFullYear(),budgetCursor.getMonth(),1);
-  if(txSearchEl) txSearchEl.value=label||'';
-  if(txFilterEl) txFilterEl.value=(entryType||'expense').toLowerCase();
-  goTab('list',document.getElementById('navList'));
-  showSubTab('sess');
-  renderSessions();
-}
-function bindInsightCategoryTargets(root=document){
-  root.querySelectorAll('[data-insight-label]').forEach((el)=>{
-    if(el.dataset.boundInsightTap==='1') return;
-    el.dataset.boundInsightTap='1';
-    el.style.cursor='pointer';
-    el.onclick=()=>openInsightCategoryTransactions(el.dataset.insightLabel||'',el.dataset.insightType||'expense');
-  });
-}
-
 function formatInsightCounts(parts){
   return parts.filter(part=>part.count>0).map(part=>`${part.count} ${part.label}`).join(' · ') || 'No matching transactions';
 }
 function listCountLabel(count,label){
   return `${count} ${label}`;
 }
-
 function getInsightColor(label, fallback){
   const normalized=String(label||'').trim();
   return CCOLOR[normalized]
@@ -4871,16 +4851,13 @@ function getInsightColor(label, fallback){
 function renderHist(){
   if(!document.getElementById('hSrch')) return;
   const q=document.getElementById('hSrch').value.toLowerCase();
-  const insightMonth=budgetCursor||new Date();
-
   const purchaseFiltered=[...purchases].filter(p=>{
-    if(!inMonth(p.datetime,insightMonth)) return false;
     if(q&&!p.store.toLowerCase().includes(q)&&!p.items.some(it=>it.name.toLowerCase().includes(q))&&!(p.notes||'').toLowerCase().includes(q))return false;
     return true;
   }).sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
-  const expFiltered=expenses.filter(e=>inMonth(e.datetime,insightMonth)&&(!q||(e.category+e.subcategory+e.leaf+e.notes).toLowerCase().includes(q)));
-  const incomeFiltered=incomes.filter(i=>inMonth(i.datetime,insightMonth)&&(!q||[i.category,i.notes].join(' ').toLowerCase().includes(q)));
-  const transferFiltered=transfers.filter(t=>inMonth(t.datetime,insightMonth)&&(!q||[t.from,t.to,t.direction,t.personName,t.notes].join(' ').toLowerCase().includes(q)));
+  const expFiltered=expenses.filter(e=>!q||(e.category+e.subcategory+e.leaf+e.notes).toLowerCase().includes(q));
+  const incomeFiltered=incomes.filter(i=>!q||[i.category,i.notes].join(' ').toLowerCase().includes(q));
+  const transferFiltered=transfers.filter(t=>!q||[t.from,t.to,t.direction,t.personName,t.notes].join(' ').toLowerCase().includes(q));
   const purchaseList=histSF==='Income'||histSF==='Transfer'?[]:purchaseFiltered;
   const expenseList=histSF==='Income'||histSF==='Transfer'?[]:expFiltered;
   const incomeListFiltered=histSF==='Expense'||histSF==='Transfer'?[]:incomeFiltered;
@@ -4903,15 +4880,11 @@ function renderHist(){
               {count:transferListFiltered.length,label:'transfer'}
             ]);
 
-
+  const insightMonth=budgetCursor||new Date();
   const monthPurchases=purchases.filter(p=>inMonth(p.datetime,insightMonth));
   const monthExpenses=expenses.filter(e=>inMonth(e.datetime,insightMonth));
   const monthIncomes=incomes.filter(i=>inMonth(i.datetime,insightMonth));
   const monthTransfers=transfers.filter(t=>inMonth(t.datetime,insightMonth));
-  const monthPurchaseList=monthPurchases.filter(p=>!q||(!q||p.store.toLowerCase().includes(q)||p.items.some(it=>it.name.toLowerCase().includes(q))||(p.notes||'').toLowerCase().includes(q))).sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
-  const monthExpenseList=monthExpenses.filter(e=>!q||(e.category+e.subcategory+e.leaf+e.notes).toLowerCase().includes(q));
-  const monthIncomeListFiltered=monthIncomes.filter(i=>!q||[i.category,i.notes].join(' ').toLowerCase().includes(q));
-  const monthTransferListFiltered=monthTransfers.filter(t=>!q||[t.from,t.to,t.direction,t.personName,t.notes].join(' ').toLowerCase().includes(q));
   const monthExpenseTotal=monthPurchases.reduce((s,p)=>s+p.total,0)+monthExpenses.reduce((s,e)=>s+e.amount,0);
   const monthIncomeTotal=monthIncomes.reduce((s,i)=>s+i.amount,0);
   const monthNet=monthIncomeTotal-monthExpenseTotal;
@@ -4946,11 +4919,11 @@ function renderHist(){
   const prevTransfers=transfers.filter(t=>inMonth(t.datetime,prevMonth));
   const prevCs={};
   if(histSF==='All' || histSF==='Expense'){
-    monthPurchaseList.flatMap(p=>p.items).forEach((it)=>{
+    purchaseList.flatMap(p=>p.items).forEach((it)=>{
       const v=parseFloat(it.price||0);
       cs[it.category]=(cs[it.category]||0)+v;
     });
-    monthExpenseList.forEach(e=>{
+    expenseList.forEach(e=>{
       const key=e.subcategory||e.category;
       cs[key]=(cs[key]||0)+e.amount;
     });
@@ -4964,7 +4937,7 @@ function renderHist(){
     });
   }
   if(histSF==='Income'){
-    monthIncomeListFiltered.forEach(i=>{
+    incomeListFiltered.forEach(i=>{
       const key=i.category||'Income';
       cs[key]=(cs[key]||0)+i.amount;
     });
@@ -4974,7 +4947,7 @@ function renderHist(){
     });
   }
   if(histSF==='Transfer'){
-    monthTransferListFiltered.forEach(t=>{
+    transferListFiltered.forEach(t=>{
       const key=t.from&&t.to?`${t.from} → ${t.to}`:(t.direction||'Transfer');
       cs[key]=(cs[key]||0)+t.amount;
     });
@@ -4990,8 +4963,7 @@ function renderHist(){
     value:v,
     prevValue:prevCs[cat]||0,
     color:getInsightColor(getCategoryLabel(cat)||cat, allColors[cat]||allColors[getCategoryLabel(cat)||'']),
-    icon:getInsightCategoryIcon(getCategoryLabel(cat)||cat),
-    entryType:histSF==='Income'?'income':histSF==='Transfer'?'transfer':'expense'
+    icon:getInsightCategoryIcon(getCategoryLabel(cat)||cat)
   }));
   document.getElementById('histPie').innerHTML=pd.length?svgPie(pd):'<div class="empty" style="padding:.5rem">No data</div>';
   const histPieLegendEl=document.getElementById('histPieLegend');
@@ -5005,7 +4977,7 @@ function renderHist(){
           const changeText=changePct===null
             ?`${share}% of total spending`
             :`${changePct>=0?'↗':'↘'} ${Math.abs(changePct)}%`;
-          return `<div class="insights-donut-row" data-insight-label="${safeText(item.label)}" data-insight-type="${safeText(item.entryType||'expense')}" style="cursor:pointer">
+          return `<div class="insights-donut-row">
           <div class="insights-donut-icon">${item.icon}</div>
           <div class="insights-donut-label">
             <div class="insights-donut-title">${safeText(item.label)}</div>
@@ -5018,10 +4990,7 @@ function renderHist(){
         </div>`;
         }).join('')
       :'<div class="empty" style="padding:.5rem">Add your first entry to start tracking.</div>';
-    bindInsightCategoryTargets(histPieLegendEl);
   }
-  const histPieEl=document.getElementById('histPie');
-  if(histPieEl) bindInsightCategoryTargets(histPieEl);
 
   const topCategoryEl=document.getElementById('topCategoryCard');
   if(topCategoryEl){
@@ -5066,13 +5035,13 @@ function renderHist(){
   const pyC={};
   if(histSF==='All' || histSF==='Expense'){
     purchaseList.forEach(p=>{pyC[p.payMode]=(pyC[p.payMode]||0)+1;});
-    monthExpenseList.forEach(e=>{pyC[e.payMode]=(pyC[e.payMode]||0)+1;});
+    expenseList.forEach(e=>{pyC[e.payMode]=(pyC[e.payMode]||0)+1;});
   }
   if(histSF==='Income'){
-    monthIncomeListFiltered.forEach(i=>{pyC[i.category]=(pyC[i.category]||0)+1;});
+    incomeListFiltered.forEach(i=>{pyC[i.category]=(pyC[i.category]||0)+1;});
   }
   if(histSF==='Transfer'){
-    monthTransferListFiltered.forEach(t=>{pyC[t.from||t.direction||'Transfer']=(pyC[t.from||t.direction||'Transfer']||0)+1;});
+    transferListFiltered.forEach(t=>{pyC[t.from||t.direction||'Transfer']=(pyC[t.from||t.direction||'Transfer']||0)+1;});
   }
   const paymentCount=Object.values(pyC).reduce((sum,count)=>sum+count,0);
   const paymentKeys=histSF==='Income'
@@ -5435,8 +5404,7 @@ Object.assign(window,{
   handleRestoreBackup,
   toggleSyncEnabled,
   runSyncNow,
-  changeSyncCode,
-  openInsightCategoryTransactions
+  changeSyncCode
 });
 
 function toggleAppLockUi(toggle){
@@ -5817,18 +5785,6 @@ setDot(navigator.onLine===false?"off":"on");
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
