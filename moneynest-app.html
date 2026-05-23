@@ -1027,6 +1027,9 @@ body{
 .insights-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
 .insights-card-title{font-size:18px;font-weight:800}
 .insights-card-meta{font-size:12px;color:var(--text-secondary);font-weight:700}
+.insights-month-switch{display:inline-flex;align-items:center;gap:10px;font-size:12px;font-weight:800;color:#31404a}
+.insights-month-switch button{border:none;background:none;padding:0;line-height:1;font-size:18px;font-weight:900;color:#31404a;cursor:pointer}
+.insights-month-switch span{min-width:88px;text-align:center}
 .insights-overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 12px}
 .insights-stat .label{font-size:12px;color:var(--text-secondary);margin-bottom:4px}
 .insights-stat .value{font-size:16px;font-weight:900}
@@ -2100,6 +2103,7 @@ body{
         <h2>Insights</h2>
         <button onclick="expCSV()">Export CSV</button>
       </div>
+
       <div class="insights-tabbar">
         <button class="insights-tabchip active" data-insights-tab="overview" onclick="setInsightsTab('overview')">Overview</button>
         <button class="insights-tabchip" data-insights-tab="expense" onclick="setInsightsTab('expense')">Expense</button>
@@ -2113,7 +2117,11 @@ body{
     <div class="insights-card" id="insightsOverviewSection">
       <div class="insights-card-head">
         <div class="insights-card-title">This Month Overview</div>
-        <div class="insights-card-meta" id="insightMonthLabel">May 2026</div>
+        <div class="insights-month-switch" aria-label="Insights month switch">
+          <button onclick="shiftBudgetMonth(-1)" aria-label="Previous month">‹</button>
+          <span id="insightMonthLabel">May 2026</span>
+          <button onclick="shiftBudgetMonth(1)" aria-label="Next month">›</button>
+        </div>
       </div>
       <div class="insights-overview-grid">
         <div class="insights-stat">
@@ -3174,6 +3182,7 @@ function showSubTab(id){
 function shiftBudgetMonth(delta){
   budgetCursor=new Date(budgetCursor.getFullYear(),budgetCursor.getMonth()+delta,1);
   renderDash();
+  renderHist();
 }
 function shiftSessionMonth(delta){
   sessionCursor=new Date(sessionCursor.getFullYear(),sessionCursor.getMonth()+delta,1);
@@ -3833,22 +3842,12 @@ function buildDateTimeFieldHtml(field, value){
   const pickerDateValue=formatDateForPickerValue(value);
   const pickerTimeValue=get24HourTimeValue(value);
   const displayValue=value||new Date();
-  const iconStyle='width:18px;height:18px;stroke:#607684;stroke-width:2;fill:none;flex-shrink:0';
-  const hiddenStyle='position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;left:-9999px;top:auto';
   return `<div class="f">
     <label>${FIELD_DEFS[field].label}</label>
     <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.88fr);gap:10px;align-items:center">
-      <button type="button" class="obtn" onclick="openNativeDatePicker()" style="display:flex;align-items:center;gap:12px;justify-content:flex-start;padding:10px 12px;border-radius:16px;background:#fff;border:1px solid #dfe6df;color:#24323b;font-size:13px;font-weight:600;box-shadow:none;min-height:56px">
-        <svg viewBox="0 0 24 24" aria-hidden="true" style="${iconStyle}"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M8 2v4"></path><path d="M16 2v4"></path><path d="M3 9h18"></path><path d="M8 13h.01"></path><path d="M12 13h.01"></path><path d="M16 13h.01"></path></svg>
-        <span id="ef_date_date_text">${safeText(formatDateDisplayLong(displayValue))}</span>
-      </button>
-      <button type="button" class="obtn" onclick="openNativeTimePicker()" style="display:flex;align-items:center;gap:12px;justify-content:flex-start;padding:10px 12px;border-radius:16px;background:#fff;border:1px solid #dfe6df;color:#24323b;font-size:13px;font-weight:600;box-shadow:none;min-height:56px">
-        <svg viewBox="0 0 24 24" aria-hidden="true" style="${iconStyle}"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6l4 2"></path></svg>
-        <span id="ef_date_time_text">${safeText(formatTimeDisplayLong(displayValue))}</span>
-      </button>
+      <input type="date" id="ef_date_date" class="fi" value="${safeText(pickerDateValue)}" onchange="syncDateTimePickerDisplay()" style="min-height:56px"/>
+      <input type="time" id="ef_date_time" class="fi" value="${safeText(pickerTimeValue)}" onchange="syncDateTimePickerDisplay()" style="min-height:56px"/>
     </div>
-    <input type="date" id="ef_date_date" value="${safeText(pickerDateValue)}" onchange="syncDateTimePickerDisplay()" style="${hiddenStyle}"/>
-    <input type="time" id="ef_date_time" value="${safeText(pickerTimeValue)}" onchange="syncDateTimePickerDisplay()" style="${hiddenStyle}"/>
     <input type="hidden" id="ef_date_ampm" value="${safeText(get12HourTimeParts(displayValue).ampm)}"/>
   </div>`;
 }
@@ -4014,9 +4013,10 @@ function showExpForm(){
       ?'Transfer'
       :meta.path.map((part,index)=>getCategoryLabel(...meta.path.slice(0,index+1))).join(' › ');
   const fields=getLeafFields(meta);
+  const dateFieldHtml=!meta.isGrocery&&fields.includes('date')?buildFieldHtml('date',meta):'';
   const baseFields=meta.isGrocery
     ?fields.filter(field=>field==='date')
-    :fields.filter(field=>STANDARD_ENTRY_FIELDS.includes(field)&&field!=='notes'&&field!=='payMode');
+    :fields.filter(field=>STANDARD_ENTRY_FIELDS.includes(field)&&field!=='date'&&field!=='notes'&&field!=='payMode');
   const notesField=fields.includes('notes')?['notes']:[];
   const groceryExtraFields=getGroceryExtraFields(meta);
   const groceryModeBlock=meta.isGrocery?`
@@ -4078,6 +4078,7 @@ function showExpForm(){
       <strong>Selected:</strong> ${safeText(selectedPath)}
     </div>`:nonExpenseIntro}
     ${meta.isGrocery?groceryHeaderBlock:''}
+    ${dateFieldHtml}
     ${groceryModeBlock}
     ${meta.isGrocery?'':baseFields.map(field=>buildFieldHtml(field,meta)).join('')}
     ${(!meta.isGrocery&&meta.type==='expense')?buildFieldHtml('payMode',meta):''}
@@ -4851,13 +4852,18 @@ function getInsightColor(label, fallback){
 function renderHist(){
   if(!document.getElementById('hSrch')) return;
   const q=document.getElementById('hSrch').value.toLowerCase();
-  const purchaseFiltered=[...purchases].filter(p=>{
+  const insightMonth=budgetCursor||new Date();
+  const basePurchaseFiltered=[...purchases].filter(p=>{
     if(q&&!p.store.toLowerCase().includes(q)&&!p.items.some(it=>it.name.toLowerCase().includes(q))&&!(p.notes||'').toLowerCase().includes(q))return false;
     return true;
   }).sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
-  const expFiltered=expenses.filter(e=>!q||(e.category+e.subcategory+e.leaf+e.notes).toLowerCase().includes(q));
-  const incomeFiltered=incomes.filter(i=>!q||[i.category,i.notes].join(' ').toLowerCase().includes(q));
-  const transferFiltered=transfers.filter(t=>!q||[t.from,t.to,t.direction,t.personName,t.notes].join(' ').toLowerCase().includes(q));
+  const baseExpFiltered=expenses.filter(e=>!q||(e.category+e.subcategory+e.leaf+e.notes).toLowerCase().includes(q));
+  const baseIncomeFiltered=incomes.filter(i=>!q||[i.category,i.notes].join(' ').toLowerCase().includes(q));
+  const baseTransferFiltered=transfers.filter(t=>!q||[t.from,t.to,t.direction,t.personName,t.notes].join(' ').toLowerCase().includes(q));
+  const purchaseFiltered=basePurchaseFiltered.filter(p=>inMonth(p.datetime,insightMonth));
+  const expFiltered=baseExpFiltered.filter(e=>inMonth(e.datetime,insightMonth));
+  const incomeFiltered=baseIncomeFiltered.filter(i=>inMonth(i.datetime,insightMonth));
+  const transferFiltered=baseTransferFiltered.filter(t=>inMonth(t.datetime,insightMonth));
   const purchaseList=histSF==='Income'||histSF==='Transfer'?[]:purchaseFiltered;
   const expenseList=histSF==='Income'||histSF==='Transfer'?[]:expFiltered;
   const incomeListFiltered=histSF==='Expense'||histSF==='Transfer'?[]:incomeFiltered;
@@ -4880,7 +4886,6 @@ function renderHist(){
               {count:transferListFiltered.length,label:'transfer'}
             ]);
 
-  const insightMonth=budgetCursor||new Date();
   const monthPurchases=purchases.filter(p=>inMonth(p.datetime,insightMonth));
   const monthExpenses=expenses.filter(e=>inMonth(e.datetime,insightMonth));
   const monthIncomes=incomes.filter(i=>inMonth(i.datetime,insightMonth));
@@ -4894,7 +4899,8 @@ function renderHist(){
   const insIncomeEl=document.getElementById('insIncome');
   const insExpenseEl=document.getElementById('insExpense');
   const insNetEl=document.getElementById('insNet');
-  if(insightMonthLabelEl) insightMonthLabelEl.textContent=insightMonth.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+  const insightMonthText=insightMonth.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+  if(insightMonthLabelEl) insightMonthLabelEl.textContent=insightMonthText;
   if(insTotalSpentEl) insTotalSpentEl.textContent=fmt(monthExpenseTotal);
   if(insIncomeEl) insIncomeEl.textContent=fmt(monthIncomeTotal);
   if(insExpenseEl) insExpenseEl.textContent=fmt(monthExpenseTotal);
@@ -5785,6 +5791,12 @@ setDot(navigator.onLine===false?"off":"on");
 </script>
 </body>
 </html>
+
+
+
+
+
+
 
 
 
