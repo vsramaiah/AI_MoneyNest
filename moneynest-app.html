@@ -621,6 +621,15 @@ body{
   font-family:inherit;background:#fff;color:var(--text-primary);outline:none
 }
 .f input:focus,.f select:focus,input.fi:focus,select.fi:focus,.f textarea:focus{border-color:var(--primary)}
+.dt-field{margin-bottom:14px}
+.dt-shell{background:linear-gradient(180deg,#ffffff 0%,#f8fbf8 100%);border:1px solid #dfe8df;border-radius:20px;padding:12px;box-shadow:0 10px 24px rgba(27,27,27,.05)}
+.dt-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:10px;align-items:end}
+.dt-cell small{display:block;font-size:10px;color:#7b8790;font-weight:800;letter-spacing:.45px;text-transform:uppercase;margin:0 0 6px 2px}
+.dt-cell input,.dt-cell select{min-height:56px;border-radius:16px;background:#fff}
+.dt-time-group{display:grid;grid-template-columns:1fr 20px 1fr 1fr;gap:8px;align-items:center;padding:0 10px;border:1px solid var(--border);border-radius:16px;background:#fff;min-height:56px}
+.dt-time-group span{font-size:18px;font-weight:800;color:#74818a;text-align:center}
+.dt-time-group select{border:none;background:transparent;min-height:auto;height:40px;padding:0 4px;border-radius:10px;box-shadow:none}
+.dt-time-group select:focus{border:none;outline:none}
 .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
 .chip{
   border:1px solid var(--border);border-radius:999px;padding:8px 14px;font-size:12px;font-weight:700;background:#fff;cursor:pointer;color:var(--text-secondary)
@@ -2182,7 +2191,8 @@ body{
 
     <div class="insights-card insights-hidden" id="insightsExpenseSection">
       <div class="insights-card-head" style="margin-bottom:12px">
-        <div class="insights-card-title">Expense Details</div>
+        <div class="insights-card-title" id="insightsExpenseTitle">Expense Details</div>
+        <div class="insights-card-meta" id="insightsExpenseFilterMeta" style="display:none"></div>
       </div>
       <div id="expenseList"></div>
     </div>
@@ -2365,7 +2375,7 @@ body{
 <script src="local-store.js"></script>
 <script src="ui-shell.js"></script>
 <script>
-const APP_VERSION='2.1.0';
+const APP_VERSION='2.1.1';
 const STORES=['Dmart','RelianceMart','Local Shop','Other'];
 const CATS=['Vegetables','Fruits','Pulses','Dairy','Meat & Fish','Snacks','Beverages','Frozen','Bakery','Spices','Oils','Rice & Flour','Ready Mixes','Dry Fruits','Household','Cleaning Supplies','Personal','Baby','Other'];
 const PAYS=['Cash','UPI','Debit Card','Credit Card','Rupay Credit UPI'];
@@ -2543,7 +2553,7 @@ let purchases=[],expenses=[],incomes=[],transfers=[],monthlyBudgets={},catBudget
 let addMode='expense',expPath=[],expState={l1:null,l2:null,l3:null};
 // Reference arrays for defaults so changes to STORES/PAYS propagate automatically
 let selSt=STORES[0],selPy=PAYS[1],curMd='normal',groceryEntryMode='normal';
-let iRows=[],histSF='All';
+let iRows=[],histSF='All',insightCategoryFilter=null;
 let autoT=null,editingId=null,editingEntry=null;
 let serverVersion=0;
 const PROFILE_NAME_KEY='gt_profile_name';
@@ -3740,14 +3750,16 @@ function formatDateTextInputValue(value){
 function get12HourTimeParts(value){
   const date=value?new Date(value):new Date();
   if(Number.isNaN(date.getTime())){
-    return {time:'',ampm:'AM'};
+    return {time:'',hour:'12',minute:'00',ampm:'AM'};
   }
   const hours=date.getHours();
-  const minutes=String(date.getMinutes()).padStart(2,'0');
+  const minute=String(date.getMinutes()).padStart(2,'0');
   const ampm=hours>=12?'PM':'AM';
-  const hour12=hours%12||12;
+  const hour12=String(hours%12||12).padStart(2,'0');
   return {
-    time:`${String(hour12).padStart(2,'0')}:${minutes}`,
+    time:`${hour12}:${minute}`,
+    hour:hour12,
+    minute,
     ampm
   };
 }
@@ -3837,15 +3849,29 @@ function buildDateTimeFieldHtml(field, value){
   const pickerDateValue=formatDateForPickerValue(value);
   const displayValue=value||new Date();
   const timeParts=get12HourTimeParts(displayValue);
-  return `<div class="f">
+  const hourOptions=Array.from({length:12},(_,index)=>String(index+1).padStart(2,'0')).map(hour=>`<option value="${hour}"${hour===timeParts.hour?' selected':''}>${hour}</option>`).join('');
+  const minuteOptions=Array.from({length:60},(_,index)=>String(index).padStart(2,'0')).map(minute=>`<option value="${minute}"${minute===timeParts.minute?' selected':''}>${minute}</option>`).join('');
+  return `<div class="f dt-field">
     <label>${FIELD_DEFS[field].label}</label>
-    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.78fr) 88px;gap:10px;align-items:center">
-      <input type="date" id="ef_date_date" class="fi" value="${safeText(pickerDateValue)}" style="min-height:56px"/>
-      <input type="text" id="ef_date_time" class="fi" value="${safeText(timeParts.time)}" placeholder="hh:mm" inputmode="numeric" maxlength="5" oninput="syncDateTimePickerDisplay()" style="min-height:56px"/>
-      <select id="ef_date_ampm" class="fi" style="min-height:56px">
-        <option value="AM"${timeParts.ampm==='AM'?' selected':''}>AM</option>
-        <option value="PM"${timeParts.ampm==='PM'?' selected':''}>PM</option>
-      </select>
+    <div class="dt-shell">
+      <div class="dt-grid">
+        <div class="dt-cell">
+          <small>Date</small>
+          <input type="date" id="ef_date_date" class="fi" value="${safeText(pickerDateValue)}"/>
+        </div>
+        <div class="dt-cell">
+          <small>Time</small>
+          <div class="dt-time-group">
+            <select id="ef_date_hour" class="fi">${hourOptions}</select>
+            <span>:</span>
+            <select id="ef_date_minute" class="fi">${minuteOptions}</select>
+            <select id="ef_date_ampm" class="fi">
+              <option value="AM"${timeParts.ampm==='AM'?' selected':''}>AM</option>
+              <option value="PM"${timeParts.ampm==='PM'?' selected':''}>PM</option>
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
   </div>`;
 }
@@ -3917,9 +3943,11 @@ function buildFieldHtml(field, meta){
 
 function getFormValue(field){
   if(field==='date'){
+    const hour=document.getElementById('ef_date_hour')?.value || '12';
+    const minute=document.getElementById('ef_date_minute')?.value || '00';
     return parse12HourDateTime(
       document.getElementById('ef_date_date')?.value,
-      document.getElementById('ef_date_time')?.value,
+      `${hour}:${minute}`,
       document.getElementById('ef_date_ampm')?.value
     );
   }
@@ -3931,14 +3959,15 @@ function getFormValue(field){
 function setFormValue(field, value){
   if(field==='date'){
     const dateInput=document.getElementById('ef_date_date');
-    const timeInput=document.getElementById('ef_date_time');
+    const hourInput=document.getElementById('ef_date_hour');
+    const minuteInput=document.getElementById('ef_date_minute');
     const ampmInput=document.getElementById('ef_date_ampm');
-    if(!dateInput || !timeInput || !ampmInput) return;
+    if(!dateInput || !hourInput || !minuteInput || !ampmInput) return;
     const parts=get12HourTimeParts(value);
     dateInput.value=formatDateForPickerValue(value);
-    timeInput.value=parts.time;
+    hourInput.value=parts.hour;
+    minuteInput.value=parts.minute;
     ampmInput.value=parts.ampm;
-    syncDateTimePickerDisplay();
     return;
   }
   const el=document.getElementById(`ef_${field}`);
@@ -4813,7 +4842,7 @@ function setHSF(s){
   renderHSF();
   renderHist();
 }
-function setInsightsTab(tab){
+function setInsightsTab(tab,preserveDetailFilter=false){
   document.querySelectorAll('[data-insights-tab]').forEach((button)=>{
     button.classList.toggle('active', button.dataset.insightsTab===tab);
   });
@@ -4824,6 +4853,7 @@ function setInsightsTab(tab){
     transfer:'Transfer'
   };
   histSF=tabToFilter[tab]||'All';
+  if(!preserveDetailFilter) insightCategoryFilter=null;
   renderHist();
   const expenseSection=document.getElementById('insightsExpenseSection');
   if(expenseSection){
@@ -4833,6 +4863,25 @@ function setInsightsTab(tab){
   if(target){
     target.scrollIntoView({behavior:'smooth', block:'start'});
   }
+}
+function openInsightCategory(encodedKey, encodedLabel, mode='Expense'){
+  const key=decodeURIComponent(encodedKey||'');
+  const label=decodeURIComponent(encodedLabel||'');
+  const listFilter=mode==='Income'?'income':mode==='Transfer'?'transfer':'expense';
+  const searchValue=mode==='Transfer'
+    ?String(key||label||'').replace(/\\s*→\\s*/g,' ')
+    :String(label||key||'');
+  sessionCursor=new Date(budgetCursor.getFullYear(),budgetCursor.getMonth(),1);
+  openListSessions();
+  const filterEl=document.getElementById('txFilter');
+  const searchEl=document.getElementById('txSearch');
+  if(filterEl) filterEl.value=listFilter;
+  if(searchEl) searchEl.value=searchValue;
+  renderSessions();
+}
+function clearInsightCategoryFilter(){
+  insightCategoryFilter=null;
+  renderHist();
 }
 function openInsightsCategories(){
   setInsightsTab('expense');
@@ -4966,6 +5015,7 @@ function renderHist(){
   const EXP_COLORS={Rent:'#8B5CF6',Bills:'#EC4899','Mobile Recharge':'#F59E0B',Electricity:'#F97316',Water:'#3B82F6',WiFi:'#6366F1',DTH:'#8B5CF6',Gas:'#EF4444',Fuel:'#F59E0B',Travel:'#14B8A6',Restaurant:'#F97316',Shopping:'#D946EF',Electronics:'#3B82F6','Personal Care':'#F472B6',Entertainment:'#8B5CF6',Gifts:'#EC4899',Medical:'#EF4444',Misc:'#9CA3AF',Custom:'#6B7280'};
   const allColors={...CCOLOR,...EXP_COLORS};
   const pd=Object.entries(cs).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).map(([cat,v])=>({
+    key:cat,
     label:getCategoryLabel(cat)||cat,
     value:v,
     prevValue:prevCs[cat]||0,
@@ -4976,6 +5026,7 @@ function renderHist(){
   const histPieLegendEl=document.getElementById('histPieLegend');
   if(histPieLegendEl){
     const pieTotal=pd.reduce((sum,item)=>sum+item.value,0);
+    const detailMode=histSF==='Income'?'Income':histSF==='Transfer'?'Transfer':'Expense';
     histPieLegendEl.innerHTML=pd.length
       ?pd.map(item=>{
           const share=pieTotal?Math.round((item.value/pieTotal)*100):0;
@@ -4984,7 +5035,7 @@ function renderHist(){
           const changeText=changePct===null
             ?`${share}% of total spending`
             :`${changePct>=0?'↗':'↘'} ${Math.abs(changePct)}%`;
-          return `<div class="insights-donut-row">
+          return `<div class="insights-donut-row" style="cursor:pointer" onclick="openInsightCategory('${encodeURIComponent(item.key)}','${encodeURIComponent(item.label)}','${detailMode}')">
           <div class="insights-donut-icon">${item.icon}</div>
           <div class="insights-donut-label">
             <div class="insights-donut-title">${safeText(item.label)}</div>
@@ -5090,8 +5141,22 @@ function renderHist(){
   // Render non-grocery expenses
   const expEl=document.getElementById('expenseList');
   if(expEl){
+    const expenseTitleEl=document.getElementById('insightsExpenseTitle');
+    const expenseMetaEl=document.getElementById('insightsExpenseFilterMeta');
+    const activeDetailMode=histSF==='Income'?'Income':histSF==='Transfer'?'Transfer':'Expense';
+    const activeCategoryFilter=insightCategoryFilter&&insightCategoryFilter.mode===activeDetailMode?insightCategoryFilter:null;
+    if(expenseTitleEl) expenseTitleEl.textContent=histSF==='Income'?'Income Details':histSF==='Transfer'?'Transfer Details':'Expense Details';
+    if(expenseMetaEl){
+      if(activeCategoryFilter){
+        expenseMetaEl.style.display='block';
+        expenseMetaEl.innerHTML=`Filtered by <strong>${safeText(activeCategoryFilter.label)}</strong> <button type="button" class="sbtn" style="padding:4px 8px;font-size:11px;margin-left:8px" onclick="clearInsightCategoryFilter()">Clear</button>`;
+      }else{
+        expenseMetaEl.style.display='none';
+        expenseMetaEl.innerHTML='';
+      }
+    }
     if(histSF==='Income'){
-      const sorted=[...incomeListFiltered].sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
+      const sorted=[...incomeListFiltered].filter(i=>!activeCategoryFilter||i.category===activeCategoryFilter.key).sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
       expEl.innerHTML=sorted.length?sorted.map(i=>`<div class="hi" style="margin-bottom:10px">
         <div class="row">
           <div style="display:flex;align-items:center;gap:8px">
@@ -5110,7 +5175,7 @@ function renderHist(){
       return;
     }
     if(histSF==='Transfer'){
-      const sorted=[...transferListFiltered].sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
+      const sorted=[...transferListFiltered].filter(t=>!activeCategoryFilter||((t.from&&t.to?`${t.from} → ${t.to}`:(t.direction||'Transfer'))===activeCategoryFilter.key)).sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
       expEl.innerHTML=sorted.length?sorted.map(t=>`<div class="hi" style="margin-bottom:10px">
         <div class="row">
           <div style="display:flex;align-items:center;gap:8px">
@@ -5131,7 +5196,11 @@ function renderHist(){
     const combinedExpenseEntries=[
       ...purchaseList.map(p=>({type:'purchase',record:p})),
       ...expenseList.map(e=>({type:'expense',record:e}))
-    ].sort((a,b)=>new Date(b.record.datetime)-new Date(a.record.datetime));
+    ].filter(entry=>{
+      if(!activeCategoryFilter) return true;
+      if(entry.type==='purchase') return (entry.record.items||[]).some(it=>it.category===activeCategoryFilter.key);
+      return (entry.record.subcategory||entry.record.category)===activeCategoryFilter.key;
+    }).sort((a,b)=>new Date(b.record.datetime)-new Date(a.record.datetime));
     expEl.innerHTML=combinedExpenseEntries.length?combinedExpenseEntries.map(entry=>{
       if(entry.type==='purchase'){
         const p=entry.record;
@@ -5792,6 +5861,12 @@ setDot(navigator.onLine===false?"off":"on");
 </script>
 </body>
 </html>
+
+
+
+
+
+
 
 
 
