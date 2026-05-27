@@ -624,12 +624,17 @@ body{
 .dt-field{margin-bottom:14px}
 .dt-shell{background:linear-gradient(180deg,#ffffff 0%,#f8fbf8 100%);border:1px solid #dfe8df;border-radius:20px;padding:12px;box-shadow:0 10px 24px rgba(27,27,27,.05)}
 .dt-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:10px;align-items:end}
+.dt-cell{min-width:0}
 .dt-cell small{display:block;font-size:10px;color:#7b8790;font-weight:800;letter-spacing:.45px;text-transform:uppercase;margin:0 0 6px 2px}
 .dt-cell input,.dt-cell select{min-height:56px;border-radius:16px;background:#fff}
-.dt-time-group{display:grid;grid-template-columns:1fr 20px 1fr 1fr;gap:8px;align-items:center;padding:0 10px;border:1px solid var(--border);border-radius:16px;background:#fff;min-height:56px}
+.dt-time-group{display:grid;grid-template-columns:minmax(0,1fr) 16px minmax(0,1fr) minmax(0,.95fr);gap:8px;align-items:center;padding:0 10px;border:1px solid var(--border);border-radius:16px;background:#fff;min-height:56px}
 .dt-time-group span{font-size:18px;font-weight:800;color:#74818a;text-align:center}
-.dt-time-group select{border:none;background:transparent;min-height:auto;height:40px;padding:0 4px;border-radius:10px;box-shadow:none}
+.dt-time-group select{width:100%;min-width:0;border:none;background:transparent;min-height:auto;height:40px;padding:0 2px;border-radius:10px;box-shadow:none}
 .dt-time-group select:focus{border:none;outline:none}
+@media (max-width:430px){
+  .dt-grid{grid-template-columns:1fr}
+  .dt-time-group{grid-template-columns:minmax(0,1fr) 14px minmax(0,1fr) 78px}
+}
 .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
 .chip{
   border:1px solid var(--border);border-radius:999px;padding:8px 14px;font-size:12px;font-weight:700;background:#fff;cursor:pointer;color:var(--text-secondary)
