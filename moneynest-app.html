@@ -2401,14 +2401,11 @@ const EXPENSE_TREE={
     }},
     "Groceries":{icon:"🛒",_grocery:true,sub:{
       "Vegetables":{icon:"🥦",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-      "Fruits":{icon:"🍎",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
       "Dairy":{icon:"🥛",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
       "Pulses":{icon:"🫘",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
       "Meat & Fish":{icon:"🍗",_grocery:true},
       "Snacks":{icon:"🍪",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-      "Beverages":{icon:"🥤",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
       "Frozen":{icon:"🧊",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-      "Bakery":{icon:"🥖",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
       "Spices":{icon:"🌶️",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
       "Oils":{icon:"🫗",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
       "Rice & Flour":{icon:"🌾",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
@@ -2429,6 +2426,9 @@ const EXPENSE_TREE={
     "Street Food":{icon:"🌮",fields:["amount","date","notes"]},
     "Tiffin Center":{icon:"🥣",fields:["amount","date","notes"]},
     "Curry Point":{icon:"🍛",fields:["amount","date","notes"]},
+    "Fruits":{icon:"🍎",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Beverages":{icon:"🥤",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Bakery":{icon:"🥖",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
   }},
   "Lifestyle":{icon:"🛍️",sub:{
     "Shopping":{icon:"🛍️",fields:["amount","date","notes"]},
@@ -2558,7 +2558,7 @@ let purchases=[],expenses=[],incomes=[],transfers=[],monthlyBudgets={},catBudget
 let addMode='expense',expPath=[],expState={l1:null,l2:null,l3:null};
 // Reference arrays for defaults so changes to STORES/PAYS propagate automatically
 let selSt=STORES[0],selPy=PAYS[1],curMd='normal',groceryEntryMode='normal';
-let iRows=[],histSF='All',insightCategoryFilter=null;
+let iRows=[],histSF='All',insightCategoryFilter=null,sessionCategoryFilter=null;
 let autoT=null,editingId=null,editingEntry=null;
 let serverVersion=0;
 const PROFILE_NAME_KEY='gt_profile_name';
@@ -2680,9 +2680,14 @@ function getExpenseDisplayPath(entry){
 function getValidStoreName(value){
   return STORES.includes(value)?value:'Other';
 }
+function isGroceryPurchaseEntry(entry){
+  const category=entry?.sourceCategory;
+  const subcategory=entry?.sourceSubcategory;
+  return !!(category&&subcategory&&EXPENSE_TREE[category]?.sub?.[subcategory]?._grocery);
+}
 function normalizePurchaseStores(){
   purchases=purchases.map(p=>{
-    if(!p?.sourceSubcategory||p.sourceSubcategory!=='Groceries') return p;
+    if(!isGroceryPurchaseEntry(p)) return p;
     return {...p,store:getValidStoreName(p.store)};
   });
 }
@@ -3162,7 +3167,7 @@ function initApp(){
       pc.appendChild(c);
     });
   }
-  if(document.getElementById('aDt')&&!document.getElementById('aDt').value) document.getElementById('aDt').value=new Date().toISOString().slice(0,16);
+  if(document.getElementById('aDt')&&!document.getElementById('aDt').value) document.getElementById('aDt').value=toLocalDateTimeValue(new Date());
   const activeBudget=getBudgetForMonth(budgetCursor);
   document.getElementById('binput').value=activeBudget>0?activeBudget:'';
   if(document.getElementById('iCont')&&!iRows.length) addRow();
@@ -4388,14 +4393,18 @@ function dupeLast(){
   selSt=l.store;
   selPy=l.payMode||PAYS[1];
   // Navigate to grocery drill-down pre-set to last store's first item category
-  const firstCat=l.items?.[0]?.category||'Vegetables';
-  expState={l1:'Essentials',l2:'Groceries',l3:firstCat};
+  const firstCat=l.items?.[0]?.category||l.sourceLeaf||'Vegetables';
+  expState={
+    l1:l.sourceCategory||'Essentials',
+    l2:l.sourceSubcategory||'Groceries',
+    l3:l.sourceLeaf||firstCat
+  };
   groceryEntryMode=l.items&&l.items.length>1?'bulk':'normal';
   goTab('add',document.getElementById('navAdd'));
   renderExpDrillDown();
   // After form renders, fill values
   setTimeout(()=>{
-    setFormValue('date',new Date().toISOString().slice(0,16));
+    setFormValue('date',toLocalDateTimeValue(new Date()));
     setFormValue('payMode',selPy);
     if(groceryEntryMode==='bulk'){
       const bulkText=(l.items||[]).map(it=>`${it.name}, ${it.qty||1}, ${it.unit||'pcs'}, ${it.price||0}`).join('\n');
@@ -4433,7 +4442,7 @@ async function savePurchase(){
   items=items.filter(it=>it.name&&it.price);
   if(!items.length){toast('Add at least one item with name and price');return;}
   const total=items.reduce((s,it)=>s+parseFloat(it.price||0),0);
-  const dt=document.getElementById('aDt').value||new Date().toISOString();
+  const dt=document.getElementById('aDt').value||toLocalDateTimeValue(new Date());
   const notes=document.getElementById('aNotes').value;
 
   if(editingId){
@@ -4453,7 +4462,7 @@ async function savePurchase(){
   addRow();
   document.getElementById('aNotes').value='';
   document.getElementById('bText').value='';
-  document.getElementById('aDt').value=new Date().toISOString().slice(0,16);
+  document.getElementById('aDt').value=toLocalDateTimeValue(new Date());
   calcT();
   const btn=document.getElementById('saveBtn');
   btn.textContent='Saved';
@@ -4490,7 +4499,7 @@ function startEdit(id,type='purchase'){
     };
     groceryEntryMode=record.items&&record.items.length>1?'bulk':'normal';
     renderExpDrillDown();
-    setFormValue('date',record.datetime?.slice(0,16)||new Date().toISOString().slice(0,16));
+    setFormValue('date',record.datetime||toLocalDateTimeValue(new Date()));
     setFormValue('payMode',record.payMode||PAYS[1]||'Cash');
     setFormValue('notes',record.notes||'');
     if(groceryEntryMode==='bulk'){
@@ -4513,7 +4522,7 @@ function startEdit(id,type='purchase'){
       l3:record.leaf&&record.leaf!==record.subcategory?record.leaf:null
     };
     renderExpDrillDown();
-    setFormValue('date',record.datetime?.slice(0,16)||new Date().toISOString().slice(0,16));
+    setFormValue('date',record.datetime||toLocalDateTimeValue(new Date()));
     setFormValue('payMode',record.payMode||PAYS[1]||'Cash');
     setFormValue('notes',record.notes||'');
     setFormValue('amount',record.amount||'');
@@ -4522,7 +4531,7 @@ function startEdit(id,type='purchase'){
     showEditBanner('Editing expense entry');
   }else if(type==='income'){
     renderExpDrillDown();
-    setFormValue('date',record.datetime?.slice(0,16)||new Date().toISOString().slice(0,16));
+    setFormValue('date',record.datetime||toLocalDateTimeValue(new Date()));
     setFormValue('amount',record.amount||'');
     setFormValue('incomeCategory',record.category||INCOME_CATEGORIES[0]);
     setFormValue('notes',record.notes||'');
@@ -4530,7 +4539,7 @@ function startEdit(id,type='purchase'){
     showEditBanner('Editing income entry');
   }else if(type==='transfer'){
     renderExpDrillDown();
-    setFormValue('date',record.datetime?.slice(0,16)||new Date().toISOString().slice(0,16));
+    setFormValue('date',record.datetime||toLocalDateTimeValue(new Date()));
     setFormValue('amount',record.amount||'');
     setFormValue('transferFrom',record.from||TRANSFER_CHANNELS[0]);
     setFormValue('transferTo',record.to||TRANSFER_CHANNELS[1]||TRANSFER_CHANNELS[0]);
@@ -4658,13 +4667,45 @@ function initSwipeCards(scope){
   });
 }
 
+function getSessionCategoryFilterType(mode='Expense'){
+  return mode==='Income'?'income':mode==='Transfer'?'transfer':'expense';
+}
+function entryMatchesSessionCategoryFilter(entry, categoryFilter){
+  const key=String(categoryFilter?.key||'').trim();
+  const label=String(categoryFilter?.label||key).trim();
+  const candidates=[key,label].filter(Boolean);
+  if(!candidates.length) return true;
+  const matchesValue=value=>candidates.includes(String(value||'').trim());
+  if(entry.type==='purchase'){
+    const p=entry.record||{};
+    return matchesValue(p.sourceLeaf)
+      || matchesValue(p.sourceSubcategory)
+      || matchesValue(p.sourceCategory)
+      || (p.items||[]).some(it=>matchesValue(it.category));
+  }
+  if(entry.type==='expense'){
+    const e=entry.record||{};
+    return matchesValue(e.leaf)||matchesValue(e.subcategory)||matchesValue(e.category);
+  }
+  if(entry.type==='income') return matchesValue(entry.record?.category);
+  const t=entry.record||{};
+  return matchesValue(`${t.from||''} → ${t.to||''}`.trim()) || matchesValue(t.direction);
+}
 function renderSessions(){
   const c=document.getElementById('sessContainer');
   const raw=getCombinedEntriesForMonth(sessionCursor);
   const q=(document.getElementById('txSearch')?.value||'').trim().toLowerCase();
   const filter=(document.getElementById('txFilter')?.value||'all').toLowerCase();
+  const categoryFilterType=sessionCategoryFilter?getSessionCategoryFilterType(sessionCategoryFilter.mode):'';
+  if(sessionCategoryFilter && (filter==='all' || (categoryFilterType && filter!==categoryFilterType))){
+    sessionCategoryFilter=null;
+  }
+  const activeCategoryFilter=sessionCategoryFilter&&getSessionCategoryFilterType(sessionCategoryFilter.mode)===filter
+    ?sessionCategoryFilter
+    :null;
   const filtered=raw.filter(entry=>{
     if(filter!=='all'&&getUiEntryType(entry.type)!==filter) return false;
+    if(activeCategoryFilter&&!entryMatchesSessionCategoryFilter(entry,activeCategoryFilter)) return false;
     if(!q) return true;
     if(entry.type==='purchase'){
       const p=entry.record;
@@ -4692,12 +4733,14 @@ function renderSessions(){
     const t=entry.record;
     return [t.direction,t.personName,t.from,t.to,t.notes].join(' ').toLowerCase().includes(q);
   });
+  const categoryLabel=activeCategoryFilter?.label||activeCategoryFilter?.key||'';
+  const countSuffix=categoryLabel?` · ${categoryLabel}`:'';
   const countEl=document.getElementById('sessCount');
-  if(countEl) countEl.textContent=`${filtered.length} transaction${filtered.length!==1?'s':''}`;
+  if(countEl) countEl.textContent=`${filtered.length} transaction${filtered.length!==1?'s':''}${countSuffix}`;
   const titleEl=document.getElementById('sessionMonthTitle');
   const countTopEl=document.getElementById('sessionMonthCount');
   if(titleEl) titleEl.textContent=sessionCursor.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
-  if(countTopEl) countTopEl.textContent=`${filtered.length} transaction${filtered.length!==1?'s':''}`;
+  if(countTopEl) countTopEl.textContent=`${filtered.length} transaction${filtered.length!==1?'s':''}${countSuffix}`;
   const txIncome=filtered.filter(entry=>entry.type==='income').reduce((sum,entry)=>sum+(entry.record.amount||0),0);
   const txExpense=
     filtered.filter(entry=>entry.type==='purchase').reduce((sum,entry)=>sum+(entry.record.total||0),0)+
@@ -4872,16 +4915,14 @@ function setInsightsTab(tab,preserveDetailFilter=false){
 function openInsightCategory(encodedKey, encodedLabel, mode='Expense'){
   const key=decodeURIComponent(encodedKey||'');
   const label=decodeURIComponent(encodedLabel||'');
-  const listFilter=mode==='Income'?'income':mode==='Transfer'?'transfer':'expense';
-  const searchValue=mode==='Transfer'
-    ?String(key||label||'').replace(/\\s*→\\s*/g,' ')
-    :String(label||key||'');
+  const listFilter=getSessionCategoryFilterType(mode);
+  sessionCategoryFilter={key,label,mode};
   sessionCursor=new Date(budgetCursor.getFullYear(),budgetCursor.getMonth(),1);
   openListSessions();
   const filterEl=document.getElementById('txFilter');
   const searchEl=document.getElementById('txSearch');
   if(filterEl) filterEl.value=listFilter;
-  if(searchEl) searchEl.value=searchValue;
+  if(searchEl) searchEl.value='';
   renderSessions();
 }
 function clearInsightCategoryFilter(){
@@ -5866,6 +5907,8 @@ setDot(navigator.onLine===false?"off":"on");
 </script>
 </body>
 </html>
+
+
 
 
 
