@@ -1,4 +1,4 @@
-﻿const VERSION = "moneynest-v2.1.1-offline-r4";
+﻿const VERSION = "moneynest-v2.1.1-offline-r5";
 const STATIC_CACHE = `${VERSION}-static`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const APP_SHELL = [
@@ -48,6 +48,12 @@ self.addEventListener("activate", (event) => {
     )
   );
   self.clients.claim();
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
 
 async function networkFirst(request, fallbackKey) {

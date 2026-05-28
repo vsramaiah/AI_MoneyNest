@@ -380,10 +380,11 @@ body{
 .icon-btn.gold{background:#E8F5E9}
 .icon-btn svg{width:21px;height:21px;stroke:#1f2937}
 .hello-title{font-size:24px;font-weight:900;letter-spacing:-.5px;line-height:1.05;color:var(--text-primary)}
-.hello-title-row{display:flex;align-items:center;gap:8px}
+.hello-title-row{display:flex;align-items:flex-start;gap:6px}
 .hello-edit-btn{
   width:28px;height:28px;border:none;border-radius:50%;background:#eef5ef;color:var(--primary);
-  display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;flex-shrink:0
+  display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;flex-shrink:0;
+  margin-top:1px;line-height:1
 }
 .hello-subline{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px;color:#42515c;font-size:13px;font-weight:700}
 .hello-subline .status-inline{display:inline-flex;align-items:center;gap:8px}
@@ -583,7 +584,7 @@ body{
 }
 .chip-filter.on{background:var(--primary);color:#fff}
 .pie-shell{padding:8px 0}
-.pie-wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.pie-wrap{display:flex;align-items:center;justify-content:center}
 .pie-legend{flex:1;min-width:140px}
 .pie-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
 .pie-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
@@ -782,6 +783,16 @@ body{
   position:fixed;top:72px;left:50%;transform:translateX(-50%);background:#1c262d;color:#fff;padding:10px 17px;border-radius:999px;font-size:12px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:90%;text-align:center
 }
 #toast.on{opacity:1}
+.update-banner{
+  position:fixed;left:16px;right:16px;bottom:92px;z-index:9998;display:none;
+  align-items:center;justify-content:space-between;gap:12px;
+  max-width:520px;margin:0 auto;padding:12px 14px;border-radius:18px;
+  background:#1c262d;color:#fff;box-shadow:0 18px 44px rgba(28,38,45,.24)
+}
+.update-banner.on{display:flex}
+.update-banner strong{font-size:13px}
+.update-banner span{display:block;font-size:11px;color:rgba(255,255,255,.72);margin-top:2px}
+.update-banner button{border:none;border-radius:999px;padding:9px 13px;background:#fff;color:#1f6d29;font-size:12px;font-weight:900;white-space:nowrap}
 .subtabs{
   display:flex;gap:6px;margin-bottom:13px;background:#F3F6F4;padding:5px;border-radius:16px;border:1px solid var(--border)
 }
@@ -1066,7 +1077,8 @@ body{
   background:#f5f7f8;border:1px solid #edf1f4;font-size:18px
 }
 .insights-donut-label{display:flex;flex-direction:column;gap:3px;min-width:0}
-.insights-donut-title{font-size:14px;font-weight:800;color:#26313a}
+.insights-donut-title{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;color:#26313a}
+.insights-donut-title::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--cat-color,#94A3B8);flex-shrink:0}
 .insights-donut-sub{font-size:11px;color:var(--text-secondary)}
 .insights-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .insights-breakdown-footer{margin-top:14px;padding-top:14px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:700;color:#39464f}
@@ -1100,6 +1112,8 @@ body{
 .add-edit-banner{
   display:none;background:#ebf4ff;border:1px solid #cddff6;border-radius:18px;padding:12px 14px;font-size:13px;color:#2f66a5;align-items:center;justify-content:space-between;gap:10px
 }
+.add-edit-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.add-edit-change{display:none}
 .add-mode-note{
   background:#fff;border:1px solid #eef0ea;border-radius:18px;padding:12px 14px;color:#7f8b94;line-height:1.5
 }
@@ -1142,6 +1156,7 @@ body{
 .info-surface{
   background:#F3F6F4;border:1px solid var(--border);border-radius:18px;padding:12px 14px
 }
+.info-surface.warn{background:#FFF4D8;border-color:#F5D38F;color:#886321}
 .more-section-title{
   font-size:12px;
   font-weight:800;
@@ -1428,6 +1443,12 @@ body{
     font-size:11px;
     gap:8px;
     margin-top:6px;
+  }
+  .hello-edit-btn{
+    width:26px;
+    height:26px;
+    font-size:12px;
+    margin-top:0;
   }
   .dash-hero{
     border-radius:28px;
@@ -1988,7 +2009,10 @@ body{
     <div class="add-shell">
       <div id="editBanner" class="add-edit-banner">
         <span>Editing purchase</span>
-        <button class="sbtn" onclick="cancelEdit()" style="font-size:11px;padding:6px 10px">Cancel</button>
+        <div class="add-edit-actions">
+          <button type="button" id="editChangeCategoryBtn" class="sbtn add-edit-change" onclick="changeEntryCategory()" style="font-size:11px;padding:6px 10px">Change Category</button>
+          <button type="button" class="sbtn" onclick="cancelEdit()" style="font-size:11px;padding:6px 10px">Cancel</button>
+        </div>
       </div>
 
       <div class="add-panel">
@@ -2332,6 +2356,13 @@ body{
 </div>
 
 <div id="toast"></div>
+<div id="updateBanner" class="update-banner">
+  <div>
+    <strong>New version available</strong>
+    <span>Refresh to use the latest MoneyNest.</span>
+  </div>
+  <button type="button" id="updateReloadBtn">Refresh</button>
+</div>
 <input type="file" id="restoreBackupInput" accept=".json,.bk" style="display:none" onchange="handleRestoreBackup(event)"/>
 
 <div class="overlay" id="settMod" onclick="if(event.target===this)closeSett()">
@@ -2580,9 +2611,9 @@ let selectedCalendarDate=null;
 let _priceCache={};
 function _buildPriceCache(){
   _priceCache={};
-  purchases.flatMap(p=>p.items.map(it=>({...it,datetime:p.datetime,store:p.store})))
+  purchases.flatMap(p=>(p.items||[]).map(it=>({...it,datetime:p.datetime,store:p.store})))
     .sort((a,b)=>new Date(b.datetime)-new Date(a.datetime))
-    .forEach(it=>{const k=it.name.toLowerCase();if(!_priceCache[k])_priceCache[k]=it;});
+    .forEach(it=>{const k=String(it.name||'').toLowerCase();if(k&&!_priceCache[k])_priceCache[k]=it;});
 }
 
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2);
@@ -2888,9 +2919,21 @@ function updateBackupInfo(){
   const backupInfoEl=document.getElementById('backupInfo');
   if(!backupInfoEl) return;
   const lastBackupAt=getLastBackupAt();
-  backupInfoEl.textContent=lastBackupAt
-    ?`Last backup: ${formatBackupTime(lastBackupAt)}`
-    :'Last backup: Never';
+  backupInfoEl.classList.remove('warn');
+  if(!lastBackupAt){
+    backupInfoEl.classList.add('warn');
+    backupInfoEl.textContent=hasAnyLocalData()
+      ?'Backup reminder: No backup exported yet. Download one now to protect your data.'
+      :'Last backup: Never';
+    return;
+  }
+  const ageDays=Math.floor((Date.now()-lastBackupAt)/(24*60*60*1000));
+  if(ageDays>=7){
+    backupInfoEl.classList.add('warn');
+    backupInfoEl.textContent=`Backup reminder: Last backup was ${ageDays} days ago. Export a fresh backup.`;
+    return;
+  }
+  backupInfoEl.textContent=`Last backup: ${formatBackupTime(lastBackupAt)}`;
 }
 function hasAnyLocalData(){
   return !!(
@@ -3241,7 +3284,7 @@ function svgPie(data,size=150){
   const total=data.reduce((s,d)=>s+d.value,0);
   if(!total) return '<div class="empty" style="padding:.5rem">No data</div>';
   const cx=size/2,cy=size/2,r=size/2-10,ir=r*0.55;
-  let angle=-Math.PI/2,paths='',leg='';
+  let angle=-Math.PI/2,paths='';
   data.filter(d=>d.value>0).forEach(d=>{
     const pct=d.value/total,slice=pct*Math.PI*2;
     if(pct>=0.9999){
@@ -3256,10 +3299,9 @@ function svgPie(data,size=150){
       paths+=`<path d="M${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${large},1 ${x2.toFixed(1)},${y2.toFixed(1)} L${ix1.toFixed(1)},${iy1.toFixed(1)} A${ir},${ir} 0 ${large},0 ${ix2.toFixed(1)},${iy2.toFixed(1)} Z" fill="${d.color}" stroke="#fff" stroke-width="1.5"/>`;
       angle=a2;
     }
-    leg+=`<div class="pie-row"><div class="pie-dot" style="background:${d.color}"></div><span style="font-size:11px;flex:1;color:#44515a">${d.label}</span><span style="font-size:11px;color:#88959f;font-weight:700">${fmt(d.value)}</span></div>`;
   });
   paths+=`<circle cx="${cx}" cy="${cy}" r="${ir-1}" fill="#fff"/>`;
-  return `<div class="pie-wrap"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${paths}</svg><div class="pie-legend">${leg}</div></div>`;
+  return `<div class="pie-wrap"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${paths}</svg></div>`;
 }
 
 function getCatSpend(rangeOrMonth){
@@ -3267,7 +3309,7 @@ function getCatSpend(rangeOrMonth){
   if(!rangeOrMonth) ps=purchases;
   else if(['week','month','year','all'].includes(rangeOrMonth)) ps=rangePurchases(rangeOrMonth);
   else ps=purchases.filter(p=>mKey(p.datetime)===rangeOrMonth);
-  return ps.flatMap(p=>p.items).reduce((a,it)=>{
+  return ps.flatMap(p=>p.items||[]).reduce((a,it)=>{
     const v=parseFloat(it.price||0);
     a[it.category]=(a[it.category]||0)+v;
     return a;
@@ -3393,10 +3435,10 @@ function renderDash(){
     return `<rect x="${x}" y="${y}" width="${bW}" height="${bh}" rx="8" fill="${d.cur?'#21313a':'#a8d5b0'}"/><text x="${x+bW/2}" y="102" text-anchor="middle" font-size="9" fill="#98a4ac" font-family="inherit">${d.label}</text>${d.val>0?`<text x="${x+bW/2}" y="${y-4}" text-anchor="middle" font-size="8" fill="${d.cur?'#21313a':'#7e8a93'}" font-family="inherit">${d.val>=1000?(d.val/1000).toFixed(1)+'k':Math.round(d.val)}</text>`:''}`;
   }).join('');
 
-  const iC=list.flatMap(p=>p.items).reduce((a,it)=>{a[it.name]=(a[it.name]||0)+1;return a;},{});
+  const iC=list.flatMap(p=>p.items||[]).reduce((a,it)=>{a[it.name]=(a[it.name]||0)+1;return a;},{});
   const tI=Object.entries(iC).sort((a,b)=>b[1]-a[1]).slice(0,5);
   document.getElementById('tItems').innerHTML=tI.length?tI.map(([n,c])=>{
-    const cat=purchases.flatMap(p=>p.items).find(it=>it.name===n)?.category||'Other';
+    const cat=purchases.flatMap(p=>p.items||[]).find(it=>it.name===n)?.category||'Other';
     const lp=lastPrice(n);
     return `<div class="row" style="padding:7px 0;border-bottom:1px solid var(--border)">
       <div style="display:flex;align-items:center;gap:8px">${tag(cat,cat.slice(0,3))}<span style="font-size:13px">${n}</span>${lp?`<span style="font-size:10px;color:var(--text-secondary)">${fmt(parseFloat(lp.price))}</span>`:''}</div>
@@ -4027,6 +4069,8 @@ function showEditBanner(label){
   if(!banner) return;
   const textEl=banner.querySelector('span');
   if(textEl) textEl.textContent=label;
+  const changeBtn=document.getElementById('editChangeCategoryBtn');
+  if(changeBtn) changeBtn.style.display=editingEntry&&addMode==='expense'?'inline-flex':'none';
   banner.style.display='flex';
   const saveBtn=document.getElementById('expSaveBtn');
   if(saveBtn) saveBtn.textContent='Update Entry';
@@ -4161,10 +4205,7 @@ function showExpForm(){
         </div>`
   ):'';
   fieldsEl.innerHTML=`
-    ${meta.type==='expense'?`<div class="alert" style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:10px">
-      <span><strong>Selected:</strong> ${safeText(selectedPath)}</span>
-      ${editingEntry?'<button type="button" class="sbtn" style="padding:8px 12px;white-space:nowrap" onclick="changeEntryCategory()">Change</button>':''}
-    </div>`:nonExpenseIntro}
+    ${nonExpenseIntro}
     ${meta.isGrocery?groceryHeaderBlock:''}
     ${dateFieldHtml}
     ${groceryModeBlock}
@@ -4630,7 +4671,7 @@ function rAC(id){
 function iAC(){
   const q=document.getElementById('iSrch').value.toLowerCase();
   // Fix #24: build names set from current purchases instead of rebuilding every keystroke
-  const names=[...new Set(purchases.flatMap(p=>p.items.map(it=>it.name)))];
+  const names=[...new Set(purchases.flatMap(p=>(p.items||[]).map(it=>it.name)))];
   const hits=q?names.filter(x=>x.toLowerCase().includes(q)).slice(0,6):[];
   const l=document.getElementById('iACl');
   if(!hits.length){l.style.display='none';return;}
@@ -5060,7 +5101,7 @@ function renderHist(){
   const q=document.getElementById('hSrch').value.toLowerCase();
   const insightMonth=budgetCursor||new Date();
   const basePurchaseFiltered=[...purchases].filter(p=>{
-    if(q&&!p.store.toLowerCase().includes(q)&&!p.items.some(it=>it.name.toLowerCase().includes(q))&&!(p.notes||'').toLowerCase().includes(q))return false;
+    if(q&&!(p.store||'').toLowerCase().includes(q)&&!(p.items||[]).some(it=>(it.name||'').toLowerCase().includes(q))&&!(p.notes||'').toLowerCase().includes(q))return false;
     return true;
   }).sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
   const baseExpFiltered=expenses.filter(e=>!q||(e.category+e.subcategory+e.leaf+e.notes).toLowerCase().includes(q));
@@ -5131,7 +5172,7 @@ function renderHist(){
   const prevTransfers=transfers.filter(t=>inMonth(t.datetime,prevMonth));
   const prevCs={};
   if(histSF==='All' || histSF==='Expense'){
-    purchaseList.flatMap(p=>p.items).forEach((it)=>{
+    purchaseList.flatMap(p=>p.items||[]).forEach((it)=>{
       const v=parseFloat(it.price||0);
       cs[it.category]=(cs[it.category]||0)+v;
     });
@@ -5139,7 +5180,7 @@ function renderHist(){
       const key=e.subcategory||e.category;
       cs[key]=(cs[key]||0)+e.amount;
     });
-    prevPurchases.flatMap(p=>p.items).forEach((it)=>{
+    prevPurchases.flatMap(p=>p.items||[]).forEach((it)=>{
       const v=parseFloat(it.price||0);
       prevCs[it.category]=(prevCs[it.category]||0)+v;
     });
@@ -5187,9 +5228,9 @@ function renderHist(){
           const changePct=item.prevValue>0?Math.round(((item.value-item.prevValue)/item.prevValue)*100):null;
           const changeClass=changePct===null?'':(changePct>=0?'up':'down');
           const changeText=changePct===null
-            ?`${share}% of total spending`
+            ?'New'
             :`${changePct>=0?'↗':'↘'} ${Math.abs(changePct)}%`;
-          return `<div class="insights-donut-row" style="cursor:pointer" onclick="openInsightCategory('${encodeURIComponent(item.key)}','${encodeURIComponent(item.label)}','${detailMode}')">
+          return `<div class="insights-donut-row" style="--cat-color:${item.color};cursor:pointer" onclick="openInsightCategory('${encodeURIComponent(item.key)}','${encodeURIComponent(item.label)}','${detailMode}')">
           <div class="insights-donut-icon">${item.icon}</div>
           <div class="insights-donut-label">
             <div class="insights-donut-title">${safeText(item.label)}</div>
@@ -5222,7 +5263,7 @@ function renderHist(){
       :'<div class="empty">Add your first entry to start tracking.</div>';
   }
 
-  const allI=purchaseList.flatMap(p=>p.items.map(it=>({...it,datetime:p.datetime,store:p.store})));
+  const allI=purchaseList.flatMap(p=>(p.items||[]).map(it=>({...it,datetime:p.datetime,store:p.store})));
   const tN=Object.entries(allI.reduce((a,it)=>{a[it.name]=(a[it.name]||0)+1;return a;},{})).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([n])=>n);
   const sAvg=(name,store)=>{
     const e=allI.filter(it=>it.name===name&&it.store===store&&it.price&&parseFloat(it.qty)>0);
@@ -5496,7 +5537,7 @@ function expCSV(){
 function loadIns(name){
   document.getElementById('iSrch').value=name;
   document.getElementById('iACl').style.display='none';
-  const allI=purchases.flatMap(p=>p.items.map(it=>({...it,datetime:p.datetime,store:p.store})));
+  const allI=purchases.flatMap(p=>(p.items||[]).map(it=>({...it,datetime:p.datetime,store:p.store})));
   const items=allI.filter(it=>it.name.toLowerCase()===name.toLowerCase()).sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
   if(!items.length){
     document.getElementById('iRes').innerHTML='<div class="empty" style="padding:.5rem">No data found.</div>';
