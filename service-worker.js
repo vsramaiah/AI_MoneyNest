@@ -1,4 +1,4 @@
-﻿const VERSION = "moneynest-v2.1.1-offline-r3";
+﻿const VERSION = "moneynest-v2.1.1-offline-r4";
 const STATIC_CACHE = `${VERSION}-static`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const APP_SHELL = [
@@ -13,7 +13,8 @@ const APP_SHELL = [
   "./icon-maskable.svg",
   "./apple-touch-icon.png",
   "./icon-192.png",
-  "./icon-512.png"
+  "./icon-512.png",
+  "./icon-maskable.png"
 ];
 
 const NETWORK_FIRST_PATTERNS = [

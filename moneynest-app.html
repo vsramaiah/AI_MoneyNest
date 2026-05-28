@@ -2404,8 +2404,6 @@ const EXPENSE_TREE={
       "Dairy":{icon:"🥛",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
       "Pulses":{icon:"🫘",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
       "Meat & Fish":{icon:"🍗",_grocery:true},
-      "Snacks":{icon:"🍪",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-      "Frozen":{icon:"🧊",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
       "Spices":{icon:"🌶️",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
       "Oils":{icon:"🫗",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
       "Rice & Flour":{icon:"🌾",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
@@ -2421,12 +2419,14 @@ const EXPENSE_TREE={
   "Transport":{icon:"🚂",sub:{
     "Travel":{icon:"🧳",fields:["amount","date","notes"]}
   }},
-  "Food & Dining":{icon:"🍔",sub:{
+  "Food & Drinks":{icon:"🍔",sub:{
     "Restaurant":{icon:"🍽️",fields:["amount","date","notes"]},
     "Street Food":{icon:"🌮",fields:["amount","date","notes"]},
     "Tiffin Center":{icon:"🥣",fields:["amount","date","notes"]},
     "Curry Point":{icon:"🍛",fields:["amount","date","notes"]},
     "Fruits":{icon:"🍎",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Snacks":{icon:"🍪",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Frozen":{icon:"🧊",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
     "Beverages":{icon:"🥤",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
     "Bakery":{icon:"🥖",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
   }},
@@ -2559,7 +2559,7 @@ let addMode='expense',expPath=[],expState={l1:null,l2:null,l3:null};
 // Reference arrays for defaults so changes to STORES/PAYS propagate automatically
 let selSt=STORES[0],selPy=PAYS[1],curMd='normal',groceryEntryMode='normal';
 let iRows=[],histSF='All',insightCategoryFilter=null,sessionCategoryFilter=null;
-let autoT=null,editingId=null,editingEntry=null;
+let autoT=null,editingId=null,editingEntry=null,editingDraft=null;
 let serverVersion=0;
 const PROFILE_NAME_KEY='gt_profile_name';
 const LAST_SYNC_AT_KEY='gt_last_sync_at';
@@ -2659,29 +2659,35 @@ function tag(cat,txt){
 function pathKey(parts){
   return parts.filter(Boolean).join('>');
 }
+function normalizeCategoryName(name){
+  return name==='Food & Dining'?'Food & Drinks':name;
+}
 function getCategoryLabel(...parts){
-  const key=pathKey(parts);
-  const fallback=parts.filter(Boolean).slice(-1)[0]||'';
+  const normalizedParts=parts.map(normalizeCategoryName);
+  const key=pathKey(normalizedParts);
+  const fallback=normalizedParts.filter(Boolean).slice(-1)[0]||'';
   return categoryLabels[key]||fallback;
 }
 function getExpenseIcon(category,subcategory,leaf){
+  category=normalizeCategoryName(category);
   return EXPENSE_TREE[category]?.sub?.[subcategory]?.sub?.[leaf]?.icon
     ||EXPENSE_TREE[category]?.sub?.[subcategory]?.icon
     ||EXPENSE_TREE[category]?.icon
     ||'💳';
 }
 function getExpenseDisplayPath(entry){
+  const category=normalizeCategoryName(entry.category);
   return {
-    category:getCategoryLabel(entry.category),
-    subcategory:getCategoryLabel(entry.category,entry.subcategory),
-    leaf:getCategoryLabel(entry.category,entry.subcategory,entry.leaf)
+    category:getCategoryLabel(category),
+    subcategory:getCategoryLabel(category,entry.subcategory),
+    leaf:getCategoryLabel(category,entry.subcategory,entry.leaf)
   };
 }
 function getValidStoreName(value){
   return STORES.includes(value)?value:'Other';
 }
 function isGroceryPurchaseEntry(entry){
-  const category=entry?.sourceCategory;
+  const category=normalizeCategoryName(entry?.sourceCategory);
   const subcategory=entry?.sourceSubcategory;
   return !!(category&&subcategory&&EXPENSE_TREE[category]?.sub?.[subcategory]?._grocery);
 }
@@ -3518,6 +3524,7 @@ function resetExpPath(){
   expState={l1:null,l2:null,l3:null};
   groceryEntryMode='normal';
   editingEntry=null;
+  editingDraft=null;
   document.getElementById('expForm').style.display='none';
   document.getElementById('expResetBtn').style.display='none';
   document.getElementById('expTotal').textContent='₹0';
@@ -3683,12 +3690,22 @@ function getEditingRecord(){
 
 function getFieldInitialValue(field){
   const nowValue=toLocalDateTimeValue(new Date());
+  if(editingDraft&&editingDraft[field]!==undefined) return editingDraft[field];
   const record=getEditingRecord();
   if(record){
     if(field==='date') return toLocalDateTimeValue(record.datetime)||nowValue;
     if(field==='notes') return record.notes||'';
     if(field==='amount') return record.total??record.amount??'';
     if(field==='payMode') return record.payMode||selPy;
+    if(record.entryDetails&&record.entryDetails[field]!==undefined) return record.entryDetails[field];
+    if(editingEntry?.type==='purchase'){
+      const item=record.items?.[0]||{};
+      if(field==='itemName') return item.name||record.sourceLeaf||'';
+      if(field==='qty') return item.qty||'1';
+      if(field==='unit') return item.unit||'pcs';
+      if(field==='price') return item.price||record.total||'';
+      if(field==='store') return getValidStoreName(record.store);
+    }
     if(field==='incomeCategory') return record.category||INCOME_CATEGORIES[0];
     if(field==='transferFrom') return record.from||TRANSFER_CHANNELS[0];
     if(field==='transferTo') return record.to||TRANSFER_CHANNELS[1]||TRANSFER_CHANNELS[0];
@@ -4016,8 +4033,34 @@ function showEditBanner(label){
 }
 
 function setGroceryEntryMode(mode){
+  captureEditingDraft();
   groceryEntryMode=mode;
   showExpForm();
+}
+
+function captureEditingDraft(){
+  if(!editingEntry) return;
+  const draft={...(editingDraft||{})};
+  const fields=['date','amount','payMode','notes','store','itemName','qty','unit','price','bulkItems','incomeCategory','transferFrom','transferTo','direction','personName','liters','odometer','recipient','warranty','hospital','medicine','customName'];
+  fields.forEach(field=>{
+    const fieldExists=field==='date'
+      ?!!document.getElementById('ef_date_date')
+      :!!document.getElementById(`ef_${field}`);
+    if(!fieldExists) return;
+    const value=getFormValue(field);
+    draft[field]=value;
+  });
+  editingDraft=draft;
+}
+
+function changeEntryCategory(){
+  if(!editingEntry || addMode!=='expense') return;
+  captureEditingDraft();
+  expState={l1:null,l2:null,l3:null};
+  document.getElementById('expForm').style.display='none';
+  document.getElementById('expTotal').textContent='₹'+(parseFloat(editingDraft?.price||editingDraft?.amount)||0).toLocaleString('en-IN');
+  renderExpDrillDown();
+  toast('Choose the new category');
 }
 
 function parseBulkGroceryItems(text, category){
@@ -4067,14 +4110,18 @@ function showExpForm(){
         <div class="chip md${groceryEntryMode==='bulk'?' on':''}" onclick="setGroceryEntryMode('bulk')">Bulk Entry</div>
       </div>
     </div>`:'';
-  const groceryStore=editingEntry?.type==='purchase'
+  const groceryStore=editingDraft?.store||(
+    editingEntry?.type==='purchase'
     ?getValidStoreName(purchases.find(p=>p.id===editingEntry.id)?.store)
-    :selSt;
-  const groceryPayment=editingEntry
+    :selSt
+  );
+  const groceryPayment=editingDraft?.payMode||(
+    editingEntry
     ?(editingEntry.type==='purchase'
       ?(purchases.find(p=>p.id===editingEntry.id)?.payMode||selPy)
       :(expenses.find(e=>e.id===editingEntry.id)?.payMode||selPy))
-    :selPy;
+    :selPy
+  );
   const groceryHeaderBlock=meta.isGrocery?`
     <div class="f">
       <label>Store</label>
@@ -4083,7 +4130,7 @@ function showExpForm(){
         ${STORES.map(store=>`<button type="button" class="chip sub g-store-chip entry-chip${store===groceryStore?' on':''}" data-field="store" data-group=".g-store-chip" data-value="${safeText(store)}">${safeText(store)}</button>`).join('')}
       </div>
     </div>
-    ${buildDateTimeFieldHtml('date', editingEntry?.type==='purchase' ? purchases.find(p=>p.id===editingEntry.id)?.datetime : new Date())}
+    ${buildDateTimeFieldHtml('date', editingDraft?.date || (editingEntry?.type==='purchase' ? purchases.find(p=>p.id===editingEntry.id)?.datetime : new Date()))}
     <div class="f">
       <label>Payment</label>
       <input type="hidden" id="ef_payMode" value="${safeText(groceryPayment)}"/>
@@ -4100,7 +4147,7 @@ function showExpForm(){
           <label>Items</label>
           <div style="background:#FFFFFF;border:1px solid var(--border);border-radius:22px;padding:14px">
           <label>Bulk Items</label>
-          <textarea id="ef_bulkItems" class="fi" rows="6" placeholder="Tomatoes, 1, kg, 40&#10;Onions, 2, kg, 70" oninput="updateGroceryBulkAmount()"></textarea>
+          <textarea id="ef_bulkItems" class="fi" rows="6" placeholder="Tomatoes, 1, kg, 40&#10;Onions, 2, kg, 70" oninput="updateGroceryBulkAmount()">${safeText(editingDraft?.bulkItems||'')}</textarea>
           <div class="snote">Format: Item name, Qty, Unit, Price</div>
           ${(SUGG[meta.groceryCategory]||[]).length?`<div class="autofill-hint">Suggestions: ${safeText((SUGG[meta.groceryCategory]||[]).slice(0,8).join(', '))}</div>`:''}
           </div>
@@ -4114,8 +4161,9 @@ function showExpForm(){
         </div>`
   ):'';
   fieldsEl.innerHTML=`
-    ${meta.type==='expense'?`<div class="alert" style="margin-bottom:12px">
-      <strong>Selected:</strong> ${safeText(selectedPath)}
+    ${meta.type==='expense'?`<div class="alert" style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <span><strong>Selected:</strong> ${safeText(selectedPath)}</span>
+      ${editingEntry?'<button type="button" class="sbtn" style="padding:8px 12px;white-space:nowrap" onclick="changeEntryCategory()">Change</button>':''}
     </div>`:nonExpenseIntro}
     ${meta.isGrocery?groceryHeaderBlock:''}
     ${dateFieldHtml}
@@ -4132,6 +4180,9 @@ function showExpForm(){
     setFormValue('transferFrom',TRANSFER_CHANNELS[0]);
     setFormValue('transferTo',TRANSFER_CHANNELS[1]||TRANSFER_CHANNELS[0]);
     setFormValue('direction','Sent');
+  }
+  if(editingDraft){
+    Object.entries(editingDraft).forEach(([field,value])=>setFormValue(field,value));
   }
   const saveBtn=document.getElementById('expSaveBtn');
   if(saveBtn && !editingEntry){
@@ -4219,7 +4270,7 @@ async function saveUnifiedEntry(){
     }
     if(!amount){toast('Enter a price');return;}
     const purchaseRecord=queuePendingUpsert('purchase',{
-      id:editingEntry?.type==='purchase'?editingEntry.id:uid(),
+      id:(editingEntry&&(editingEntry.type==='purchase'||editingEntry.type==='expense'))?editingEntry.id:uid(),
       datetime:date,
       store:getValidStoreName(getFormValue('store')||selSt),
       payMode,
@@ -4233,13 +4284,16 @@ async function saveUnifiedEntry(){
     });
     if(editingEntry?.type==='purchase'){
       purchases=purchases.map(p=>p.id===editingEntry.id?purchaseRecord:p);
+    }else if(editingEntry?.type==='expense'){
+      expenses=expenses.filter(e=>e.id!==editingEntry.id);
+      purchases.push(purchaseRecord);
     }else{
       purchases.push(purchaseRecord);
     }
   }else{
     if(!amount){toast('Enter an amount');return;}
     const expenseRecord=queuePendingUpsert('expense',{
-      id:editingEntry?.type==='expense'?editingEntry.id:uid(),
+      id:(editingEntry&&(editingEntry.type==='expense'||editingEntry.type==='purchase'))?editingEntry.id:uid(),
       datetime:date,
       category:meta.l1||'Others',
       subcategory:meta.l2||'Misc',
@@ -4251,12 +4305,16 @@ async function saveUnifiedEntry(){
     });
     if(editingEntry?.type==='expense'){
       expenses=expenses.map(e=>e.id===editingEntry.id?expenseRecord:e);
+    }else if(editingEntry?.type==='purchase'){
+      purchases=purchases.filter(p=>p.id!==editingEntry.id);
+      expenses.push(expenseRecord);
     }else{
       expenses.push(expenseRecord);
     }
   }
 
   const actionLabel=editingEntry?'Entry updated':'Entry saved';
+  editingDraft=null;
   resetExpPath();
   document.getElementById('expTotal').textContent='₹0';
   persistLocalChange();
@@ -4395,7 +4453,7 @@ function dupeLast(){
   // Navigate to grocery drill-down pre-set to last store's first item category
   const firstCat=l.items?.[0]?.category||l.sourceLeaf||'Vegetables';
   expState={
-    l1:l.sourceCategory||'Essentials',
+    l1:normalizeCategoryName(l.sourceCategory)||'Essentials',
     l2:l.sourceSubcategory||'Groceries',
     l3:l.sourceLeaf||firstCat
   };
@@ -4479,6 +4537,7 @@ function cancelEdit(){
   toast('Edit cancelled');
 }
 function startEdit(id,type='purchase'){
+  editingDraft=null;
   const record=type==='expense'
     ?expenses.find(x=>x.id===id)
     :type==='income'
@@ -4493,7 +4552,7 @@ function startEdit(id,type='purchase'){
   if(type==='purchase'){
     const itemCategory=record.items?.[0]?.category||record.store||'Other';
     expState={
-      l1:record.sourceCategory||'Essentials',
+      l1:normalizeCategoryName(record.sourceCategory)||'Essentials',
       l2:record.sourceSubcategory||'Groceries',
       l3:record.sourceLeaf||itemCategory
     };
@@ -4517,7 +4576,7 @@ function startEdit(id,type='purchase'){
     showEditBanner('Editing expense entry');
   }else if(type==='expense'){
     expState={
-      l1:record.category||'Others',
+      l1:normalizeCategoryName(record.category)||'Others',
       l2:record.subcategory||record.leaf||'Misc',
       l3:record.leaf&&record.leaf!==record.subcategory?record.leaf:null
     };
@@ -4784,8 +4843,8 @@ function renderSessions(){
         <div style="font-size:14px;font-weight:800;color:var(--text);margin-top:8px">${safeText(leafLabel)}</div>
         <div style="font-size:12px;color:var(--text-secondary);margin-top:3px">${safeText(categoryLabel)} › ${safeText(subcategoryLabel)}${p.notes?` · ${safeText(p.notes)}`:''}</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:9px">
-          ${p.items.slice(0,5).map(it=>`<span style="font-size:11px;background:#F3F6F4;border:1px solid var(--border);border-radius:999px;padding:5px 9px;color:var(--text-secondary);font-weight:700">${safeText(it.name)} · ${safeText(it.qty)} ${safeText(it.unit)} · ${fmt(parseFloat(it.price||0))}</span>`).join('')}
-          ${p.items.length>5?`<span style="font-size:10px;color:var(--text-secondary)">+${p.items.length-5} more</span>`:''}
+          ${(p.items||[]).slice(0,5).map(it=>`<span style="font-size:11px;background:#F3F6F4;border:1px solid var(--border);border-radius:999px;padding:5px 9px;color:var(--text-secondary);font-weight:700">${safeText(it.name)} · ${safeText(it.qty)} ${safeText(it.unit)} · ${fmt(parseFloat(it.price||0))}</span>`).join('')}
+          ${(p.items||[]).length>5?`<span style="font-size:10px;color:var(--text-secondary)">+${(p.items||[]).length-5} more</span>`:''}
         </div>
         <div class="row" style="margin-top:10px">
           <button class="sbtn" style="padding:7px 11px;font-size:11px" onclick="event.stopPropagation();togHist('sess-${p.id}')">Details</button>
@@ -4794,13 +4853,13 @@ function renderSessions(){
         <div class="hd" id="hd-sess-${p.id}">
           <table style="width:100%;font-size:12px;border-collapse:collapse">
             <tr>${['Item','Cat','Qty','Unit','Price','Total'].map(h=>`<th style="text-align:${h==='Item'||h==='Cat'?'left':'right'};padding:4px 0;color:var(--text-secondary);font-weight:700;border-bottom:1px solid var(--border)">${h}</th>`).join('')}</tr>
-            ${p.items.map(it=>`<tr>
+            ${(p.items||[]).map(it=>`<tr>
               <td style="padding:5px 0;padding-right:5px">${safeText(it.name)}</td>
               <td>${tag(it.category,(it.category||'').slice(0,3))}</td>
               <td style="text-align:right">${safeText(it.qty)}</td>
               <td style="text-align:right;color:var(--text-secondary)">${safeText(it.unit||'pcs')}</td>
               <td style="text-align:right">${fmt(parseFloat(it.price||0))}</td>
-              <td style="text-align:right;font-weight:800;color:var(--expense)">${fmt(parseFloat(it.price||0)*parseFloat(it.qty||1))}</td>
+              <td style="text-align:right;font-weight:800;color:var(--expense)">${fmt(parseFloat(it.price||0))}</td>
             </tr>`).join('')}
           </table>
         </div>
@@ -4938,12 +4997,63 @@ function formatInsightCounts(parts){
 function listCountLabel(count,label){
   return `${count} ${label}`;
 }
-function getInsightColor(label, fallback){
+const INSIGHT_COLOR_PALETTE=[
+  '#7C3AED','#F59E0B','#EA580C','#EC4899','#14B8A6','#2563EB',
+  '#16A34A','#DC2626','#0891B2','#9333EA','#CA8A04','#DB2777',
+  '#0D9488','#4F46E5','#65A30D','#C2410C','#0284C7','#BE123C',
+  '#059669','#A855F7','#D97706','#0F766E','#B91C1C','#1D4ED8'
+];
+const INSIGHT_COLORS={
+  Rent:'#7C3AED',
+  Bills:'#EC4899',
+  'Mobile Recharge':'#0EA5E9',
+  Electricity:'#F97316',
+  Water:'#2563EB',
+  WiFi:'#4F46E5',
+  DTH:'#9333EA',
+  Gas:'#DC2626',
+  Fuel:'#F59E0B',
+  Travel:'#14B8A6',
+  Restaurant:'#EA580C',
+  'Street Food':'#22C55E',
+  'Tiffin Center':'#CA8A04',
+  'Curry Point':'#64748B',
+  Fruits:'#E11D48',
+  Snacks:'#F97316',
+  Frozen:'#38BDF8',
+  Beverages:'#10B981',
+  Bakery:'#B45309',
+  Shopping:'#D946EF',
+  Electronics:'#2563EB',
+  'Personal Care':'#F472B6',
+  Gifts:'#DB2777',
+  Entertainment:'#8B5CF6',
+  Medical:'#EF4444',
+  Insurance:'#0F766E',
+  Service:'#64748B',
+  Repairs:'#B91C1C',
+  Parking:'#475569',
+  Toll:'#0369A1',
+  Washing:'#06B6D4',
+  Furniture:'#92400E',
+  Appliances:'#1D4ED8',
+  Maintenance:'#65A30D',
+  'Cleaning Help':'#059669',
+  Decor:'#A855F7',
+  EMI:'#BE123C',
+  Investments:'#16A34A',
+  Savings:'#15803D',
+  'Bank Charges':'#475569',
+  Misc:'#64748B',
+  Custom:'#0F172A'
+};
+function getInsightColor(label, fallback, index=0){
   const normalized=String(label||'').trim();
-  return CCOLOR[normalized]
+  return INSIGHT_COLORS[normalized]
+    || CCOLOR[normalized]
     || CCOLOR[getCategoryLabel(normalized)||'']
     || fallback
-    || '#94A3B8';
+    || INSIGHT_COLOR_PALETTE[index%INSIGHT_COLOR_PALETTE.length];
 }
 function renderHist(){
   if(!document.getElementById('hSrch')) return;
@@ -5058,14 +5168,12 @@ function renderHist(){
       prevCs[key]=(prevCs[key]||0)+t.amount;
     });
   }
-  const EXP_COLORS={Rent:'#8B5CF6',Bills:'#EC4899','Mobile Recharge':'#F59E0B',Electricity:'#F97316',Water:'#3B82F6',WiFi:'#6366F1',DTH:'#8B5CF6',Gas:'#EF4444',Fuel:'#F59E0B',Travel:'#14B8A6',Restaurant:'#F97316',Shopping:'#D946EF',Electronics:'#3B82F6','Personal Care':'#F472B6',Entertainment:'#8B5CF6',Gifts:'#EC4899',Medical:'#EF4444',Misc:'#9CA3AF',Custom:'#6B7280'};
-  const allColors={...CCOLOR,...EXP_COLORS};
-  const pd=Object.entries(cs).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).map(([cat,v])=>({
+  const pd=Object.entries(cs).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).map(([cat,v],index)=>({
     key:cat,
     label:getCategoryLabel(cat)||cat,
     value:v,
     prevValue:prevCs[cat]||0,
-    color:getInsightColor(getCategoryLabel(cat)||cat, allColors[cat]||allColors[getCategoryLabel(cat)||'']),
+    color:getInsightColor(getCategoryLabel(cat)||cat, null, index),
     icon:getInsightCategoryIcon(getCategoryLabel(cat)||cat)
   }));
   document.getElementById('histPie').innerHTML=pd.length?svgPie(pd):'<div class="empty" style="padding:.5rem">No data</div>';
@@ -5270,7 +5378,7 @@ function renderHist(){
           </div>
           <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">
             ${(p.items||[]).slice(0,4).map(it=>`<span style="font-size:10px;background:#F3F6F4;border:1px solid var(--border);border-radius:999px;padding:3px 8px;color:var(--text-secondary)">${safeText(it.name)} · ${safeText(it.qty)} ${safeText(it.unit||'pcs')}</span>`).join('')}
-            ${p.items.length>4?`<span style="font-size:10px;color:var(--text-secondary)">+${p.items.length-4} more</span>`:''}
+            ${(p.items||[]).length>4?`<span style="font-size:10px;color:var(--text-secondary)">+${(p.items||[]).length-4} more</span>`:''}
           </div>
           <div style="margin-top:8px;text-align:right;display:flex;justify-content:flex-end;gap:6px">
             <button class="ebtn" style="padding:5px 10px;font-size:11px" onclick="startEdit('${p.id}')">Edit</button>
@@ -5288,7 +5396,7 @@ function renderHist(){
             <span style="font-size:20px">${icon}</span>
             <div>
               <div style="font-size:14px;font-weight:800">${safeText(labels.leaf||labels.subcategory||labels.category)}</div>
-              <div style="font-size:11px;color:var(--text-secondary)">${safeText(labels.category)} › ${safeText(labels.subcategory)}${e.notes?' · '+e.notes:''}</div>
+              <div style="font-size:11px;color:var(--text-secondary)">${safeText(labels.category)} › ${safeText(labels.subcategory)}${e.notes?' · '+safeText(e.notes):''}</div>
             </div>
           </div>
           <div style="text-align:right">
@@ -5322,25 +5430,25 @@ async function delPurch(id){
 function expCSV(){
   const esc=v=>`"${String(v??'').replace(/"/g,'""')}"`;
   const rows=[['Type','Date','Category','Subcategory / Label','Store / From','To','Payment','Item','Qty','Unit','Amount','Notes']];
-  purchases.forEach(p=>p.items.forEach(it=>rows.push([
+  purchases.forEach(p=>(p.items||[]).forEach(it=>rows.push([
     'Expense',
     fmtS(p.datetime),
-    p.sourceCategory||'Essentials',
-    p.sourceLeaf||it.category,
+    getCategoryLabel(p.sourceCategory||'Essentials'),
+    getCategoryLabel(p.sourceCategory||'Essentials',p.sourceSubcategory||'Groceries',p.sourceLeaf||it.category),
     p.store,
     '',
     p.payMode,
     it.name,
     it.qty,
     it.unit||'pcs',
-    (parseFloat(it.price||0)*parseFloat(it.qty||1)).toFixed(2),
+    (parseFloat(it.price||0)||0).toFixed(2),
     p.notes||''
   ])));
   expenses.forEach(e=>rows.push([
     'Expense',
     fmtS(e.datetime),
-    e.category,
-    e.leaf||e.subcategory,
+    getCategoryLabel(e.category),
+    getCategoryLabel(e.category,e.subcategory,e.leaf||e.subcategory),
     '',
     '',
     e.payMode||'',
@@ -5721,9 +5829,9 @@ function renderCalendarDayTransactions(){
           </div>
           <div style="font-size:17px;font-weight:900;color:var(--expense)">${fmt(p.total)}</div>
         </div>
-        <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">${p.items.length} items${p.notes?` · ${safeText(p.notes)}`:''}</div>
+        <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">${(p.items||[]).length} items${p.notes?` · ${safeText(p.notes)}`:''}</div>
         <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">
-          ${p.items.map(it=>`<span style="font-size:10px;background:#F3F6F4;border:1px solid var(--border);border-radius:999px;padding:4px 8px;color:var(--text-secondary)">${safeText(it.name)} ${safeText(it.qty)}${safeText(it.unit||'pcs')}</span>`).join('')}
+          ${(p.items||[]).map(it=>`<span style="font-size:10px;background:#F3F6F4;border:1px solid var(--border);border-radius:999px;padding:4px 8px;color:var(--text-secondary)">${safeText(it.name)} ${safeText(it.qty)}${safeText(it.unit||'pcs')}</span>`).join('')}
         </div>
       </div>`;
     }
