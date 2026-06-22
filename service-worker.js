@@ -1,4 +1,4 @@
-﻿const VERSION = "moneynest-v2.1.1-offline-r5";
+﻿const VERSION = "moneynest-v2.1.1-offline-r6";
 const STATIC_CACHE = `${VERSION}-static`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const APP_SHELL = [

@@ -2455,7 +2455,7 @@ const EXPENSE_TREE={
       "Vegetables":{icon:"🥦",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
       "Dairy":{icon:"🥛",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
       "Pulses":{icon:"🫘",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-      "Meat & Fish":{icon:"🍗",_grocery:true},
+      "Meat & Fish":{icon:"🍗",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
       "Spices":{icon:"🌶️",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
       "Oils":{icon:"🫗",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
       "Rice & Flour":{icon:"🌾",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
@@ -3728,7 +3728,9 @@ function selectExpLevel(level, name){
 
 function getLeafFields(meta){
   if(meta?.type==='income' || meta?.type==='transfer') return meta.fields||[];
-  const leafFields=Array.isArray(meta?.node?.fields)?meta.node.fields:[];
+  const leafFields=Array.isArray(meta?.node?.fields)
+    ?meta.node.fields
+    :(meta?.isGrocery?['itemName','qty','unit','price','date','notes']:[]);
   const seen=new Set();
   const ordered=['date','amount','payMode',...leafFields.filter(field=>field!=='notes'),'notes'];
   return ordered.filter(field=>{
