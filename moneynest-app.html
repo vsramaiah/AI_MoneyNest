@@ -652,6 +652,24 @@ body{
   border:1px solid var(--border);border-radius:999px;padding:8px 14px;font-size:12px;font-weight:700;background:#fff;cursor:pointer;color:var(--text-secondary)
 }
 .chip.st.on,.chip.md.on,.chip.py.on,.chip.sub.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+.bulk-grocery-card{background:#fff;border:1px solid var(--border);border-radius:22px;padding:12px;box-shadow:0 10px 24px rgba(27,27,27,.04)}
+.bulk-grocery-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.bulk-grocery-title{font-size:12px;font-weight:900;color:var(--text-primary)}
+.bulk-grocery-total{font-size:12px;font-weight:900;color:var(--primary);background:#eef8ef;border-radius:999px;padding:7px 10px}
+.bulk-grocery-rows{display:grid;gap:8px}
+.bulk-grocery-row{display:grid;grid-template-columns:minmax(110px,1fr) 58px 72px 82px 34px;gap:7px;align-items:center;background:#F8FAF9;border:1px solid #e4ebe5;border-radius:16px;padding:7px}
+.bulk-grocery-row input,.bulk-grocery-row select{width:100%;border:1px solid var(--border);border-radius:12px;padding:9px 8px;font-size:13px;background:#fff;color:var(--text-primary);outline:none}
+.bulk-grocery-row input:focus,.bulk-grocery-row select:focus{border-color:var(--primary)}
+.bulk-row-remove{width:34px;height:34px;border:none;border-radius:12px;background:#fff1f1;color:#c43b3b;font-size:18px;font-weight:900;cursor:pointer}
+.bulk-add-row{margin-top:10px;width:100%;border:1px dashed rgba(46,125,50,.45);border-radius:16px;background:#f7fff7;color:var(--primary);padding:11px;font-weight:900;cursor:pointer}
+.bulk-grocery-helper{font-size:11px;color:#7a858d;margin-top:8px}
+@media (max-width:520px){
+  .bulk-grocery-row{grid-template-columns:1fr 76px 34px}
+  .bulk-grocery-row .bulk-qty{grid-column:1/2}
+  .bulk-grocery-row .bulk-unit{grid-column:2/3}
+  .bulk-grocery-row .bulk-price{grid-column:1/3}
+  .bulk-row-remove{grid-column:3/4;grid-row:1/3;height:100%}
+}
 .add-option-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:4px}
 .add-option-card{
   border:1px solid var(--border);border-radius:16px;background:#fff;padding:10px 6px;
@@ -4143,13 +4161,81 @@ function parseBulkGroceryItems(text, category){
   }).filter(item=>item.name&&item.price>0);
 }
 
+function getBulkGroceryDraftItems(meta){
+  const source=editingDraft?.bulkItems||'';
+  const parsed=parseBulkGroceryItems(source,meta?.groceryCategory||'Other');
+  return parsed.length?parsed:[{name:'',qty:'1',unit:'pcs',price:0,category:meta?.groceryCategory||'Other'}];
+}
+
+function buildBulkGroceryRow(item={}){
+  const units=['pcs','kg','g','ltr','ml','pack','box','dozen'];
+  const activeUnit=String(item.unit||'pcs');
+  return `
+    <div class="bulk-grocery-row" data-bulk-row>
+      <input class="bulk-name" type="text" placeholder="Item name" value="${safeText(item.name||'')}" list="bulkGrocerySuggestions" oninput="updateGroceryBulkAmount()"/>
+      <input class="bulk-qty" type="number" min="0" step="0.01" placeholder="Qty" value="${safeText(item.qty||'1')}" oninput="updateGroceryBulkAmount()"/>
+      <select class="bulk-unit" onchange="updateGroceryBulkAmount()">
+        ${units.map(unit=>`<option value="${unit}"${activeUnit===unit?' selected':''}>${unit}</option>`).join('')}
+      </select>
+      <input class="bulk-price" type="number" min="0" step="0.01" placeholder="₹ Price" value="${safeText(item.price||'')}" oninput="updateGroceryBulkAmount()"/>
+      <button type="button" class="bulk-row-remove" onclick="removeBulkGroceryRow(this)" aria-label="Remove item">×</button>
+    </div>`;
+}
+
+function buildBulkGroceryRows(meta){
+  return getBulkGroceryDraftItems(meta).map(item=>buildBulkGroceryRow(item)).join('');
+}
+
+function readBulkGroceryRows(){
+  return [...document.querySelectorAll('[data-bulk-row]')].map(row=>({
+    name:row.querySelector('.bulk-name')?.value.trim()||'',
+    qty:row.querySelector('.bulk-qty')?.value||'1',
+    unit:row.querySelector('.bulk-unit')?.value||'pcs',
+    price:parseFloat(row.querySelector('.bulk-price')?.value||0)||0
+  })).filter(item=>item.name||item.price>0);
+}
+
+function syncBulkGroceryTextarea(){
+  const hidden=document.getElementById('ef_bulkItems');
+  if(!hidden) return [];
+  const items=readBulkGroceryRows();
+  hidden.value=items.map(item=>`${item.name}, ${item.qty||'1'}, ${item.unit||'pcs'}, ${item.price||0}`).join('\n');
+  return items;
+}
+
+function addBulkGroceryRow(){
+  const rows=document.getElementById('bulkGroceryRows');
+  if(!rows) return;
+  syncBulkGroceryTextarea();
+  rows.insertAdjacentHTML('beforeend',buildBulkGroceryRow({name:'',qty:'1',unit:'pcs',price:''}));
+  updateGroceryBulkAmount();
+  rows.querySelector('[data-bulk-row]:last-child .bulk-name')?.focus();
+}
+
+function removeBulkGroceryRow(btn){
+  const rows=document.getElementById('bulkGroceryRows');
+  const row=btn?.closest('[data-bulk-row]');
+  if(!rows||!row) return;
+  if(rows.querySelectorAll('[data-bulk-row]').length===1){
+    row.querySelectorAll('input').forEach(input=>input.value=input.classList.contains('bulk-qty')?'1':'');
+  }else{
+    row.remove();
+  }
+  updateGroceryBulkAmount();
+}
+
 function updateGroceryBulkAmount(){
   const meta=getEntryMeta();
   if(!meta) return;
+  const rowItems=syncBulkGroceryTextarea();
   const text=document.getElementById('ef_bulkItems')?.value||'';
-  const items=parseBulkGroceryItems(text,meta.groceryCategory);
+  const items=rowItems.length?rowItems.filter(item=>item.name&&item.price>0):parseBulkGroceryItems(text,meta.groceryCategory);
   const total=items.reduce((sum,item)=>sum+item.price,0);
   document.getElementById('expTotal').textContent='₹'+total.toLocaleString('en-IN');
+  const totalEl=document.getElementById('bulkGroceryTotal');
+  if(totalEl) totalEl.textContent='₹'+total.toLocaleString('en-IN');
+  const countEl=document.getElementById('bulkGroceryCount');
+  if(countEl) countEl.textContent=`${items.length} item${items.length===1?'':'s'}`;
 }
 
 function showExpForm(){
@@ -4212,11 +4298,21 @@ function showExpForm(){
       ?`
         <div class="f">
           <label>Items</label>
-          <div style="background:#FFFFFF;border:1px solid var(--border);border-radius:22px;padding:14px">
-          <label>Bulk Items</label>
-          <textarea id="ef_bulkItems" class="fi" rows="6" placeholder="Tomatoes, 1, kg, 40&#10;Onions, 2, kg, 70" oninput="updateGroceryBulkAmount()">${safeText(editingDraft?.bulkItems||'')}</textarea>
-          <div class="snote">Format: Item name, Qty, Unit, Price</div>
-          ${(SUGG[meta.groceryCategory]||[]).length?`<div class="autofill-hint">Suggestions: ${safeText((SUGG[meta.groceryCategory]||[]).slice(0,8).join(', '))}</div>`:''}
+          <div class="bulk-grocery-card">
+            <div class="bulk-grocery-head">
+              <div>
+                <div class="bulk-grocery-title">Quick bill entry</div>
+                <div class="bulk-grocery-helper" id="bulkGroceryCount">0 items</div>
+              </div>
+              <div class="bulk-grocery-total" id="bulkGroceryTotal">₹0</div>
+            </div>
+            <div class="bulk-grocery-rows" id="bulkGroceryRows">
+              ${buildBulkGroceryRows(meta)}
+            </div>
+            <button type="button" class="bulk-add-row" onclick="addBulkGroceryRow()">+ Add Item</button>
+            <textarea id="ef_bulkItems" style="display:none">${safeText(editingDraft?.bulkItems||'')}</textarea>
+            ${(SUGG[meta.groceryCategory]||[]).length?`<datalist id="bulkGrocerySuggestions">${(SUGG[meta.groceryCategory]||[]).map(item=>`<option value="${safeText(item)}"></option>`).join('')}</datalist>`:''}
+            <div class="bulk-grocery-helper">Enter item name, quantity, unit and price. Total updates automatically.</div>
           </div>
         </div>`
       :`

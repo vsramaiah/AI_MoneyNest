@@ -38,7 +38,7 @@ https://<your-github-username>.github.io/AI_MoneyNest/
 ```text
 Essentials       -> Rent · Bills (Electricity, WiFi, DTH, Gas, Mobile, Water) · Groceries (Vegetables, Fruits, Pulses, Dairy, Meat & Fish, Snacks, Beverages, Frozen, Bakery, Spices, Oils, Rice & Flour, Ready Mixes, Dry Fruits, Household, Cleaning Supplies, Personal, Baby, Other)
 Transport        -> Travel
-Food & Dining    -> Restaurant · Street Food · Tiffin Center · Curry Point
+Food & Drinks    -> Restaurant · Street Food · Tiffin Center · Curry Point · Fruits · Snacks · Frozen · Beverages · Bakery
 Lifestyle        -> Shopping · Electronics · Personal Care · Gifts
 Leisure          -> Entertainment · Snacks
 Health           -> Medical · Insurance (Health, Life)
