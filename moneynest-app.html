@@ -2447,6 +2447,12 @@ body{
   </div>
 </div>
 
+<div class="overlay" id="txDetailMod" onclick="if(event.target===this)closeTransactionDetails()">
+  <div class="sheet">
+    <div id="txDetailContent"></div>
+  </div>
+</div>
+
 <script src="local-store.js"></script>
 <script src="ui-shell.js"></script>
 <script>
@@ -2816,6 +2822,106 @@ function entryMetaPills(...items){
   return `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:7px">${
     items.filter(item=>item&&item.text).map(item=>tag(item.type,item.text)).join('')
   }</div>`;
+}
+function transactionSummary(type,record){
+  if(type==='purchase'){
+    const count=(record.items||[]).length;
+    return `${count} item${count===1?'':'s'}${record.store?` · ${getValidStoreName(record.store)}`:''}`;
+  }
+  if(type==='expense') return record.notes||record.customName||record.recipient||record.hospital||record.medicine||'Expense entry';
+  if(type==='income') return record.notes||'Income entry';
+  if(type==='transfer') return [record.from,record.to].filter(Boolean).join(' → ')||record.notes||'Transfer entry';
+  return '';
+}
+function detailRow(label,value){
+  if(value===undefined||value===null||value==='') return '';
+  return `<div class="mlbl">${safeText(label)}</div><div class="mval">${safeText(value)}</div>`;
+}
+function closeTransactionDetails(){
+  document.getElementById('txDetailMod')?.classList.remove('on');
+}
+function openTransactionDetails(type,id){
+  const record=type==='purchase'
+    ?purchases.find(p=>p.id===id)
+    :type==='expense'
+      ?expenses.find(e=>e.id===id)
+      :type==='income'
+        ?incomes.find(i=>i.id===id)
+        :transfers.find(t=>t.id===id);
+  if(!record) return;
+  const content=document.getElementById('txDetailContent');
+  if(!content) return;
+  let title='',icon='💳',amount=0,path='',meta='',body='',editAction='',deleteAction='';
+  if(type==='purchase'){
+    const purchasePath=getPurchasePath(record,record.items?.[0]?.category);
+    icon=getExpenseIcon(purchasePath.category,purchasePath.subcategory,purchasePath.leaf);
+    title=getCategoryLabel(purchasePath.category,purchasePath.subcategory,purchasePath.leaf);
+    amount=record.total;
+    path=formatEntryPath(getCategoryLabel(purchasePath.category),getCategoryLabel(purchasePath.category,purchasePath.subcategory));
+    meta=entryMetaPills({type:'pay',text:record.payMode||'NA'},{type:'store',text:getValidStoreName(record.store)});
+    body=`
+      ${detailRow('Notes',record.notes)}
+      <div class="mlbl">Items</div>
+      <div style="display:grid;gap:8px;margin-bottom:12px">
+        ${(record.items||[]).map(it=>`<div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:#F3F6F4;border-radius:14px;padding:10px 12px">
+          <div>
+            <div style="font-size:13px;font-weight:900;color:var(--text)">${safeText(it.name)}</div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${safeText(it.qty||'1')} ${safeText(it.unit||'pcs')} · ${safeText(it.category||'')}</div>
+          </div>
+          <div style="font-size:14px;font-weight:900;color:var(--expense)">${fmt(parseFloat(it.price||0))}</div>
+        </div>`).join('')||'<div class="mval">No items</div>'}
+      </div>`;
+    editAction=`startEdit('${record.id}')`;
+    deleteAction=`delPurch('${record.id}')`;
+  }else if(type==='expense'){
+    const labels=getExpenseDisplayPath(record);
+    icon=getExpenseIcon(record.category,record.subcategory,record.leaf);
+    title=labels.leaf||labels.subcategory||labels.category;
+    amount=record.amount;
+    path=formatEntryPath(labels.category,labels.subcategory);
+    meta=entryMetaPills({type:'pay',text:record.payMode||'NA'});
+    const extras={liters:'Liters',odometer:'Odometer',recipient:'Recipient',warranty:'Warranty',hospital:'Hospital',medicine:'Medicine',customName:'Name'};
+    body=detailRow('Notes',record.notes)+Object.entries(extras).map(([key,label])=>detailRow(label,record[key])).join('');
+    editAction=`startEdit('${record.id}','expense')`;
+    deleteAction=`delExpense('${record.id}')`;
+  }else if(type==='income'){
+    icon=INCOME_ICONS[record.category]||'💰';
+    title=record.category||'Income';
+    amount=record.amount;
+    path='Income';
+    body=detailRow('Notes',record.notes);
+    editAction=`startEdit('${record.id}','income')`;
+    deleteAction=`delIncome('${record.id}')`;
+  }else{
+    icon='🔁';
+    title=`${record.direction||'Transfer'} ${record.personName||''}`.trim();
+    amount=record.amount;
+    path='Transfer';
+    body=detailRow('From',record.from)+detailRow('To',record.to)+detailRow('Person',record.personName)+detailRow('Notes',record.notes);
+    editAction=`startEdit('${record.id}','transfer')`;
+    deleteAction=`delTransfer('${record.id}')`;
+  }
+  content.innerHTML=`
+    <div class="row" style="align-items:flex-start;margin-bottom:14px">
+      <div style="display:flex;gap:12px;align-items:center;min-width:0">
+        <span style="width:44px;height:44px;border-radius:16px;background:#F3F6F4;display:inline-flex;align-items:center;justify-content:center;font-size:24px;flex:0 0 auto">${icon}</span>
+        <div style="min-width:0">
+          <h3 style="margin:0 0 3px">${safeText(title)}</h3>
+          <div style="font-size:12px;color:var(--text-secondary)">${safeText(fmtS(record.datetime))}</div>
+        </div>
+      </div>
+      <div style="font-size:22px;font-weight:900;color:${type==='income'?'var(--income)':type==='transfer'?'var(--text-secondary)':'var(--expense)'}">${type==='income'?'+':''}${fmt(amount)}</div>
+    </div>
+    ${detailRow('Category',path)}
+    ${meta}
+    <div style="height:10px"></div>
+    ${body}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+      <button class="ebtn" style="padding:11px" onclick="closeTransactionDetails();${editAction}">Edit</button>
+      <button class="rbtn" style="padding:11px" onclick="closeTransactionDetails();${deleteAction}">Delete</button>
+    </div>
+    <button class="sbtn" style="width:100%;padding:11px;margin-top:8px" onclick="closeTransactionDetails()">Close</button>`;
+  document.getElementById('txDetailMod')?.classList.add('on');
 }
 function normalizePurchaseStores(){
   purchases=purchases.map(p=>{
@@ -5067,94 +5173,73 @@ function renderSessions(){
       const subcategoryLabel=getCategoryLabel(purchasePath.category,purchasePath.subcategory);
       const leafLabel=getCategoryLabel(purchasePath.category,purchasePath.subcategory,purchasePath.leaf);
       const storeLabel=getValidStoreName(p.store);
-      const itemCount=(p.items||[]).length;
-      const previewItems=(p.items||[]).slice(0,3).map(it=>entryChip(`${it.name||'Item'} ${fmt(parseFloat(it.price||0))}`)).join('');
-      const moreItems=itemCount>3?entryChip(`+${itemCount-3}`):'';
       return wrapSwipeCard(`sess-${p.id}`,`startEdit('${p.id}')`,`delPurch('${p.id}')`,`<div class="hi" style="padding:12px 14px;border-radius:18px">
-        <div class="row" style="cursor:pointer" onclick="togHist('sess-${p.id}')">
+        <div class="row" style="cursor:pointer" onclick="openTransactionDetails('purchase','${p.id}')">
           <div style="display:flex;align-items:center;gap:10px;min-width:0">
             <span style="width:36px;height:36px;border-radius:14px;background:#F3F6F4;display:inline-flex;align-items:center;justify-content:center;font-size:20px;flex:0 0 auto">${purchaseIcon}</span>
             <div style="min-width:0">
               <div style="font-size:14px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(leafLabel)}</div>
-              <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${fmtT(p.datetime)}</div>
+              <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(transactionSummary('purchase',p))}</div>
             </div>
           </div>
-          <div style="font-size:18px;font-weight:900;color:var(--expense);white-space:nowrap">${fmt(p.total)}</div>
-        </div>
-        <div style="font-size:12px;color:var(--text-secondary);margin-top:9px">${safeText(formatEntryPath(categoryLabel,subcategoryLabel))}</div>
-        ${entryMetaPills({type:'pay',text:p.payMode||'NA'},{type:'store',text:storeLabel})}
-        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:9px">
-          ${previewItems}${moreItems}
-        </div>
-        <div style="margin-top:10px">
-          <button class="sbtn" style="padding:6px 0;font-size:11px;background:transparent;border:none;color:var(--accent)" onclick="event.stopPropagation();togHist('sess-${p.id}')">View details →</button>
-        </div>
-        <div class="hd" id="hd-sess-${p.id}">
-          <table style="width:100%;font-size:12px;border-collapse:collapse">
-            <tr>${['Item','Cat','Qty','Unit','Price','Total'].map(h=>`<th style="text-align:${h==='Item'||h==='Cat'?'left':'right'};padding:4px 0;color:var(--text-secondary);font-weight:700;border-bottom:1px solid var(--border)">${h}</th>`).join('')}</tr>
-            ${(p.items||[]).map(it=>`<tr>
-              <td style="padding:5px 0;padding-right:5px">${safeText(it.name)}</td>
-              <td>${tag(it.category,(it.category||'').slice(0,3))}</td>
-              <td style="text-align:right">${safeText(it.qty)}</td>
-              <td style="text-align:right;color:var(--text-secondary)">${safeText(it.unit||'pcs')}</td>
-              <td style="text-align:right">${fmt(parseFloat(it.price||0))}</td>
-              <td style="text-align:right;font-weight:800;color:var(--expense)">${fmt(parseFloat(it.price||0))}</td>
-            </tr>`).join('')}
-          </table>
+          <div style="text-align:right;flex:0 0 auto">
+            <div style="font-size:18px;font-weight:900;color:var(--expense);white-space:nowrap">${fmt(p.total)}</div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${fmtT(p.datetime)}</div>
+          </div>
         </div>
       </div>`);
     })():entry.type==='expense'?(()=>{
       const e=entry.record;
       const labels=getExpenseDisplayPath(e);
       const icon=getExpenseIcon(e.category,e.subcategory,e.leaf);
-      const extra=Object.entries({liters:'L',odometer:'km',recipient:'To',warranty:'Warranty',hospital:'Hospital',medicine:'Medicine',customName:'Name'}).map(([k,lbl])=>e[k]?`<span style="font-size:10px;background:#F3F6F4;border:1px solid var(--border);border-radius:999px;padding:4px 8px;color:var(--text-secondary)">${lbl}: ${safeText(e[k])}</span>`:'').filter(Boolean).join('');
       const titleLabel=labels.leaf||labels.subcategory||labels.category;
       return wrapSwipeCard(`sess-${e.id}`,`startEdit('${e.id}','expense')`,`delExpense('${e.id}')`,`<div class="hi" style="padding:12px 14px;border-radius:18px">
-        <div class="row">
+        <div class="row" style="cursor:pointer" onclick="openTransactionDetails('expense','${e.id}')">
           <div style="display:flex;align-items:center;gap:10px;min-width:0">
             <span style="width:36px;height:36px;border-radius:14px;background:#F3F6F4;display:inline-flex;align-items:center;justify-content:center;font-size:20px;flex:0 0 auto">${icon}</span>
             <div style="min-width:0">
               <div style="font-size:14px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(titleLabel)}</div>
-              <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${fmtT(e.datetime)}</div>
+              <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(transactionSummary('expense',e))}</div>
             </div>
           </div>
-          <div style="font-size:18px;font-weight:900;color:var(--expense);white-space:nowrap">${fmt(e.amount)}</div>
+          <div style="text-align:right;flex:0 0 auto">
+            <div style="font-size:18px;font-weight:900;color:var(--expense);white-space:nowrap">${fmt(e.amount)}</div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${fmtT(e.datetime)}</div>
+          </div>
         </div>
-        <div style="font-size:12px;color:var(--text-secondary);margin-top:9px">${safeText(formatEntryPath(labels.category,labels.subcategory))}</div>
-        ${entryMetaPills({type:'pay',text:e.payMode||'NA'})}
-        ${e.notes?`<div style="font-size:12px;color:var(--text-secondary);margin-top:5px">${safeText(e.notes)}</div>`:''}
-        ${extra?`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:9px">${extra}</div>`:''}
       </div>`);
     })():entry.type==='income'?(()=>{
       const i=entry.record;
       return wrapSwipeCard(`sess-${i.id}`,`startEdit('${i.id}','income')`,`delIncome('${i.id}')`,`<div class="hi" style="padding:12px 14px;border-radius:18px">
-        <div class="row">
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-            <span style="font-size:18px">${INCOME_ICONS[i.category]||'💰'}</span>
-            <span style="font-size:11px;color:var(--text-secondary)">${fmtT(i.datetime)}</span>
+        <div class="row" style="cursor:pointer" onclick="openTransactionDetails('income','${i.id}')">
+          <div style="display:flex;align-items:center;gap:10px;min-width:0">
+            <span style="width:36px;height:36px;border-radius:14px;background:#F3F6F4;display:inline-flex;align-items:center;justify-content:center;font-size:20px;flex:0 0 auto">${INCOME_ICONS[i.category]||'💰'}</span>
+            <div style="min-width:0">
+              <div style="font-size:14px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(i.category)}</div>
+              <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(transactionSummary('income',i))}</div>
+            </div>
           </div>
-          <div style="font-size:17px;font-weight:900;color:var(--income)">+${fmt(i.amount)}</div>
-        </div>
-        <div style="font-size:14px;font-weight:800;color:var(--text);margin-top:8px">${safeText(i.category)}</div>
-        <div style="font-size:12px;color:var(--text-secondary);margin-top:3px">Income${i.notes?` · ${safeText(i.notes)}`:''}</div>
-        <div class="row" style="margin-top:10px">
-          <div></div>
+          <div style="text-align:right;flex:0 0 auto">
+            <div style="font-size:18px;font-weight:900;color:var(--income);white-space:nowrap">+${fmt(i.amount)}</div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${fmtT(i.datetime)}</div>
+          </div>
         </div>
       </div>`);
     })():(()=>{
       const t=entry.record;
       return wrapSwipeCard(`sess-${t.id}`,`startEdit('${t.id}','transfer')`,`delTransfer('${t.id}')`,`<div class="hi" style="padding:12px 14px;border-radius:18px">
-        <div class="row">
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-            <span style="font-size:18px">🔁</span>
-            <span style="font-size:11px;color:var(--text-secondary)">${fmtT(t.datetime)}</span>
+        <div class="row" style="cursor:pointer" onclick="openTransactionDetails('transfer','${t.id}')">
+          <div style="display:flex;align-items:center;gap:10px;min-width:0">
+            <span style="width:36px;height:36px;border-radius:14px;background:#F3F6F4;display:inline-flex;align-items:center;justify-content:center;font-size:20px;flex:0 0 auto">🔁</span>
+            <div style="min-width:0">
+              <div style="font-size:14px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(t.direction)} ${safeText(t.personName||'Transfer')}</div>
+              <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(transactionSummary('transfer',t))}</div>
+            </div>
           </div>
-          <div style="font-size:17px;font-weight:900;color:var(--text-secondary)">${fmt(t.amount)}</div>
-        </div>
-        <div style="font-size:14px;font-weight:800;color:var(--text);margin-top:8px">${safeText(t.direction)} ${safeText(t.personName||'Transfer')}</div>
-        <div style="font-size:12px;color:var(--text-secondary);margin-top:3px">${safeText(t.from)} → ${safeText(t.to)}${t.notes?` · ${safeText(t.notes)}`:''}</div>
-        <div class="row" style="margin-top:10px">
-          <div></div>
+          <div style="text-align:right;flex:0 0 auto">
+            <div style="font-size:18px;font-weight:900;color:var(--text-secondary);white-space:nowrap">${fmt(t.amount)}</div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${fmtT(t.datetime)}</div>
+          </div>
         </div>
       </div>`);
     })()).join('')}
@@ -5600,58 +5685,39 @@ function renderHist(){
         const categoryLabel=getCategoryLabel(purchasePath.category);
         const subcategoryLabel=getCategoryLabel(purchasePath.category,purchasePath.subcategory);
         const leafLabel=getCategoryLabel(purchasePath.category,purchasePath.subcategory,purchasePath.leaf);
-        const storeLabel=getValidStoreName(p.store);
-        const previewItems=(p.items||[]).slice(0,3).map(it=>entryChip(`${it.name||'Item'} ${fmt(parseFloat(it.price||0))}`)).join('');
-        const moreItems=(p.items||[]).length>3?entryChip(`+${(p.items||[]).length-3}`):'';
-        return `<div class="hi" style="margin-bottom:10px">
+        return `<div class="hi" style="margin-bottom:10px;cursor:pointer" onclick="openTransactionDetails('purchase','${p.id}')">
           <div class="row">
             <div style="display:flex;align-items:center;gap:10px;min-width:0">
               <span style="width:36px;height:36px;border-radius:14px;background:#F3F6F4;display:inline-flex;align-items:center;justify-content:center;font-size:20px;flex:0 0 auto">${purchaseIcon}</span>
               <div style="min-width:0">
                 <div style="font-size:14px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(leafLabel)}</div>
-                <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${fmtT(p.datetime)}</div>
+                <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(transactionSummary('purchase',p))}</div>
               </div>
             </div>
             <div style="text-align:right">
               <div style="font-size:18px;font-weight:900;color:var(--expense)">${fmt(p.total)}</div>
+              <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${fmtT(p.datetime)}</div>
             </div>
-          </div>
-          <div style="font-size:12px;color:var(--text-secondary);margin-top:9px">${safeText(formatEntryPath(categoryLabel,subcategoryLabel))}</div>
-          ${entryMetaPills({type:'pay',text:p.payMode||'NA'},{type:'store',text:storeLabel})}
-          <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">
-            ${previewItems}${moreItems}
-          </div>
-          <div style="margin-top:8px;text-align:right;display:flex;justify-content:flex-end;gap:6px">
-            <button class="ebtn" style="padding:5px 10px;font-size:11px" onclick="startEdit('${p.id}')">Edit</button>
-            <button class="rbtn" style="padding:5px 10px;font-size:11px" onclick="delPurch('${p.id}')">Delete</button>
           </div>
         </div>`;
       }
       const e=entry.record;
       const icon=getExpenseIcon(e.category,e.subcategory,e.leaf);
       const labels=getExpenseDisplayPath(e);
-      const extra=Object.entries({liters:'L',odometer:'km',recipient:'To',warranty:'Warranty',hospital:'Hospital',medicine:'Medicine',customName:'Name'}).map(([k,lbl])=>e[k]?`<span style="font-size:10px;background:#F3F6F4;border:1px solid var(--border);border-radius:999px;padding:3px 8px;color:var(--text-secondary)">${lbl}: ${e[k]}</span>`:'').filter(Boolean).join('');
       const titleLabel=labels.leaf||labels.subcategory||labels.category;
-      return `<div class="hi" style="margin-bottom:10px">
+      return `<div class="hi" style="margin-bottom:10px;cursor:pointer" onclick="openTransactionDetails('expense','${e.id}')">
         <div class="row">
           <div style="display:flex;align-items:center;gap:10px;min-width:0">
             <span style="width:36px;height:36px;border-radius:14px;background:#F3F6F4;display:inline-flex;align-items:center;justify-content:center;font-size:20px;flex:0 0 auto">${icon}</span>
             <div style="min-width:0">
               <div style="font-size:14px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(titleLabel)}</div>
-              <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${fmtT(e.datetime)}</div>
+              <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(transactionSummary('expense',e))}</div>
             </div>
           </div>
           <div style="text-align:right">
             <div style="font-size:18px;font-weight:900;color:var(--expense)">${fmt(e.amount)}</div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${fmtT(e.datetime)}</div>
           </div>
-        </div>
-        <div style="font-size:12px;color:var(--text-secondary);margin-top:9px">${safeText(formatEntryPath(labels.category,labels.subcategory))}</div>
-        ${entryMetaPills({type:'pay',text:e.payMode||'NA'})}
-        ${e.notes?`<div style="font-size:12px;color:var(--text-secondary);margin-top:5px">${safeText(e.notes)}</div>`:''}
-        ${extra?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">${extra}</div>`:''}
-        <div style="margin-top:8px;text-align:right;display:flex;justify-content:flex-end;gap:6px">
-          <button class="ebtn" style="padding:5px 10px;font-size:11px" onclick="startEdit('${e.id}','expense')">Edit</button>
-          <button class="rbtn" style="padding:5px 10px;font-size:11px" onclick="delExpense('${e.id}')">Delete</button>
         </div>
       </div>`;
     }).join(''):'<div class="empty">No expense entries recorded yet.<br>Use the Add tab → 💳 Expense to log groceries, bills, fuel, dining, and more.</div>';
