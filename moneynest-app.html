@@ -2452,88 +2452,28 @@ body{
 <script>
 const APP_VERSION='2.1.1';
 const STORES=['Dmart','RelianceMart','Local Shop','Other'];
-const CATS=['Vegetables','Fruits','Pulses','Dairy','Meat & Fish','Snacks','Beverages','Frozen','Bakery','Spices','Oils','Rice & Flour','Ready Mixes','Dry Fruits','Household','Toiletries','Baby','Other'];
+const CATS=['Baby','Bakery','Beverages','Dairy','Dry Fruits','Frozen','Fruits','Household','Meat & Fish','Oils','Other','Pulses','Ready Mixes','Rice & Flour','Snacks','Spices','Toiletries','Vegetables'];
 const PAYS=['Cash','UPI','Debit Card','Credit Card','Rupay Credit UPI'];
 const TRANSFER_CHANNELS=['Account','Cash','UPI','Credit Card','Rupay Credit UPI'];
 const INCOME_CATEGORIES=['Salary','Business','Interest','Dividends','Gifts','Refunds','Rewards','Coupons'];
 const UNITS=['pcs','g','kg','ml','L','packet','dozen'];
 
 const EXPENSE_TREE={
-  "Essentials":{icon:"🏠",sub:{
-    "Rent":{icon:"🏠",fields:["amount","date","notes"]},
-    "Bills":{icon:"💡",sub:{
-      "Mobile Recharge":{icon:"📱",fields:["amount","date","notes"]},
-      "Electricity":{icon:"💡",fields:["amount","date","notes"]},
-      "Water":{icon:"🚿",fields:["amount","date","notes"]},
-      "WiFi":{icon:"🌐",fields:["amount","date","notes"]},
-      "DTH":{icon:"📺",fields:["amount","date","notes"]},
-      "Gas":{icon:"🔥",fields:["amount","date","notes"]}
-    }},
-    "Groceries":{icon:"🛒",_grocery:true,sub:{
-      "Vegetables":{icon:"🥦",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-      "Dairy":{icon:"🥛",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-      "Pulses":{icon:"🫘",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-      "Meat & Fish":{icon:"🍗",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-      "Spices":{icon:"🌶️",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-      "Oils":{icon:"🫗",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-      "Rice & Flour":{icon:"🌾",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-      "Ready Mixes":{icon:"🥣",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-      "Dry Fruits":{icon:"🥜",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-      "Household":{icon:"🧹",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-      "Toiletries":{icon:"🧴",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-      "Baby":{icon:"🍼",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-      "Other":{icon:"📦",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]}
-    }}
-  }},
-  "Transport":{icon:"🚂",sub:{
-    "Travel":{icon:"🧳",fields:["amount","date","notes"]}
-  }},
-  "Food & Drinks":{icon:"🍔",sub:{
-    "Restaurant":{icon:"🍽️",fields:["amount","date","notes"]},
-    "Street Food":{icon:"🌮",fields:["amount","date","notes"]},
-    "Tiffin Center":{icon:"🥣",fields:["amount","date","notes"]},
-    "Curry Point":{icon:"🍛",fields:["amount","date","notes"]},
-    "Fruits":{icon:"🍎",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-    "Snacks":{icon:"🍪",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-    "Frozen":{icon:"🧊",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-    "Beverages":{icon:"🥤",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-    "Bakery":{icon:"🥖",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-  }},
-  "Lifestyle":{icon:"🛍️",sub:{
-    "Shopping":{icon:"🛍️",fields:["amount","date","notes"]},
-    "Electronics":{icon:"📱",fields:["amount","warranty","date","notes"]},
-    "Personal Care":{icon:"🧴",fields:["amount","date","notes"]},
-    "Gifts":{icon:"🎁",fields:["amount","recipient","date","notes"]}
-  }},
-  "Leisure":{icon:"🎬",sub:{
-    "Entertainment":{icon:"🎥",fields:["amount","date","notes"]},
-    "Snacks":{icon:"🍟",fields:["amount","date","notes"]}
-  }},
-  "Health":{icon:"🏥",sub:{
-    "Medical":{icon:"🏥",fields:["amount","hospital","medicine","date","notes"]},
-    "Insurance":{icon:"🛡️",sub:{
-      "Health":{icon:"🩺",fields:["amount","date","notes"]},
-      "Life":{icon:"🫶",fields:["amount","date","notes"]}
-    }}
-  }},
-  "Vehicle":{icon:"🛵",sub:{
-    "Fuel":{icon:"⛽",fields:["amount","liters","odometer","date","notes"]},
-    "Service":{icon:"🔧",fields:["amount","odometer","date","notes"]},
-    "Repairs":{icon:"🛠️",fields:["amount","odometer","date","notes"]},
-    "Insurance":{icon:"🛡️",fields:["amount","date","notes"]},
-    "Parking":{icon:"🅿️",fields:["amount","date","notes"]},
-    "Toll":{icon:"🛣️",fields:["amount","date","notes"]},
-    "Washing":{icon:"🧼",fields:["amount","date","notes"]}
-  }},
-  "Home":{icon:"🏡",sub:{
-    "Furniture":{icon:"🛋️",fields:["amount","date","notes"]},
-    "Appliances":{icon:"📺",fields:["amount","warranty","date","notes"]},
-    "Repairs":{icon:"🪛",fields:["amount","date","notes"]},
-    "Maintenance":{icon:"🧰",fields:["amount","date","notes"]},
-    "Cleaning Help":{icon:"🧹",fields:["amount","date","notes"]},
-    "Decor":{icon:"🖼️",fields:["amount","date","notes"]}
+  "Bills":{icon:"🧾",sub:{
+    "DTH":{icon:"📺",fields:["amount","date","notes"]},
+    "Electricity":{icon:"💡",fields:["amount","date","notes"]},
+    "Gas":{icon:"🔥",fields:["amount","date","notes"]},
+    "Mobile Recharge":{icon:"📱",fields:["amount","date","notes"]},
+    "Water":{icon:"🚿",fields:["amount","date","notes"]},
+    "WiFi":{icon:"🌐",fields:["amount","date","notes"]}
   }},
   "Finance":{icon:"💰",sub:{
+    "Bank Charges":{icon:"🏧",sub:{
+      "Account Fees":{icon:"📒",fields:["amount","date","notes"]},
+      "ATM Charges":{icon:"🏧",fields:["amount","date","notes"]},
+      "Penalties":{icon:"⚠️",fields:["amount","date","notes"]},
+      "SMS Charges":{icon:"📩",fields:["amount","date","notes"]}
+    }},
     "EMI":{icon:"💸",sub:{
       "Credit Card EMI":{icon:"💳",fields:["amount","date","notes"]},
       "Home Loan":{icon:"🏠",fields:["amount","date","notes"]},
@@ -2541,29 +2481,87 @@ const EXPENSE_TREE={
       "Vehicle Loan":{icon:"🛵",fields:["amount","date","notes"]}
     }},
     "Investments":{icon:"📈",sub:{
-      "Stocks":{icon:"📊",fields:["amount","date","notes"]},
-      "Mutual Funds":{icon:"🧾",fields:["amount","date","notes"]},
-      "PPF":{icon:"🏦",fields:["amount","date","notes"]},
+      "Bonds":{icon:"📜",fields:["amount","date","notes"]},
+      "Crypto":{icon:"₿",fields:["amount","date","notes"]},
       "EPF":{icon:"🪙",fields:["amount","date","notes"]},
       "Fixed Deposits (FD)":{icon:"💼",fields:["amount","date","notes"]},
-      "Bonds":{icon:"📜",fields:["amount","date","notes"]},
       "Gold":{icon:"🥇",fields:["amount","date","notes"]},
-      "Crypto":{icon:"₿",fields:["amount","date","notes"]}
+      "Mutual Funds":{icon:"🧾",fields:["amount","date","notes"]},
+      "PPF":{icon:"🏦",fields:["amount","date","notes"]},
+      "Stocks":{icon:"📊",fields:["amount","date","notes"]}
     }},
     "Savings":{icon:"🐖",sub:{
-      "General Savings":{icon:"💵",fields:["amount","date","notes"]},
-      "Emergency Fund":{icon:"🆘",fields:["amount","date","notes"]}
-    }},
-    "Bank Charges":{icon:"🏧",sub:{
-      "ATM Charges":{icon:"🏧",fields:["amount","date","notes"]},
-      "SMS Charges":{icon:"📩",fields:["amount","date","notes"]},
-      "Account Fees":{icon:"📒",fields:["amount","date","notes"]},
-      "Penalties":{icon:"⚠️",fields:["amount","date","notes"]}
+      "Emergency Fund":{icon:"🆘",fields:["amount","date","notes"]},
+      "General Savings":{icon:"💵",fields:["amount","date","notes"]}
     }}
   }},
+  "Food & Drinks":{icon:"🍔",sub:{
+    "Bakery":{icon:"🥖",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Beverages":{icon:"🥤",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Curry Point":{icon:"🍛",fields:["amount","date","notes"]},
+    "Frozen":{icon:"🧊",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Fruits":{icon:"🍎",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Restaurant":{icon:"🍽️",fields:["amount","date","notes"]},
+    "Snacks":{icon:"🍪",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Street Food":{icon:"🌮",fields:["amount","date","notes"]},
+    "Tiffin Center":{icon:"🥣",fields:["amount","date","notes"]}
+  }},
+  "Groceries":{icon:"🛒",_grocery:true,sub:{
+    "Baby":{icon:"🍼",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Dairy":{icon:"🥛",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Dry Fruits":{icon:"🥜",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Household":{icon:"🧹",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Meat & Fish":{icon:"🍗",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Oils":{icon:"🫗",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Other":{icon:"📦",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Pulses":{icon:"🫘",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Ready Mixes":{icon:"🥣",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Rice & Flour":{icon:"🌾",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Spices":{icon:"🌶️",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Toiletries":{icon:"🧴",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Vegetables":{icon:"🥦",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]}
+  }},
+  "Health":{icon:"🏥",sub:{
+    "Insurance":{icon:"🛡️",sub:{
+      "Health":{icon:"🩺",fields:["amount","date","notes"]},
+      "Life":{icon:"🫶",fields:["amount","date","notes"]}
+    }},
+    "Medical":{icon:"🏥",fields:["amount","hospital","medicine","date","notes"]}
+  }},
+  "Home":{icon:"🏡",sub:{
+    "Appliances":{icon:"📺",fields:["amount","warranty","date","notes"]},
+    "Cleaning Help":{icon:"🧹",fields:["amount","date","notes"]},
+    "Decor":{icon:"🖼️",fields:["amount","date","notes"]},
+    "Furniture":{icon:"🛋️",fields:["amount","date","notes"]},
+    "Maintenance":{icon:"🧰",fields:["amount","date","notes"]},
+    "Repairs":{icon:"🪛",fields:["amount","date","notes"]}
+  }},
+  "Leisure":{icon:"🎬",sub:{
+    "Entertainment":{icon:"🎥",fields:["amount","date","notes"]},
+    "Snacks":{icon:"🍟",fields:["amount","date","notes"]}
+  }},
+  "Lifestyle":{icon:"🛍️",sub:{
+    "Electronics":{icon:"📱",fields:["amount","warranty","date","notes"]},
+    "Gifts":{icon:"🎁",fields:["amount","recipient","date","notes"]},
+    "Personal Care":{icon:"🧴",fields:["amount","date","notes"]},
+    "Shopping":{icon:"🛍️",fields:["amount","date","notes"]}
+  }},
   "Others":{icon:"📦",sub:{
-    "Misc":{icon:"📦",fields:["amount","date","notes"]},
-    "Custom":{icon:"➕",fields:["customName","amount","date","notes"]}
+    "Custom":{icon:"➕",fields:["customName","amount","date","notes"]},
+    "Misc":{icon:"📦",fields:["amount","date","notes"]}
+  }},
+  "Rent":{icon:"🏠",fields:["amount","date","notes"]},
+  "Transport":{icon:"🚂",sub:{
+    "Travel":{icon:"🧳",fields:["amount","date","notes"]}
+  }},
+  "Vehicle":{icon:"🛵",sub:{
+    "Fuel":{icon:"⛽",fields:["amount","liters","odometer","date","notes"]},
+    "Insurance":{icon:"🛡️",fields:["amount","date","notes"]},
+    "Parking":{icon:"🅿️",fields:["amount","date","notes"]},
+    "Repairs":{icon:"🛠️",fields:["amount","odometer","date","notes"]},
+    "Service":{icon:"🔧",fields:["amount","odometer","date","notes"]},
+    "Toll":{icon:"🛣️",fields:["amount","date","notes"]},
+    "Washing":{icon:"🧼",fields:["amount","date","notes"]}
   }}
 };
 const DASH_ORDER=['week','month','year','all'];
@@ -2736,6 +2734,38 @@ function normalizeGroceryCategoryName(name){
   const normalized=normalizeCategoryName(name);
   return normalized==='Personal'?'Toiletries':normalized;
 }
+function normalizeExpensePathParts(category,subcategory,leaf){
+  const normalizedCategory=normalizeCategoryName(category);
+  const normalizedSubcategory=normalizeCategoryName(subcategory);
+  const normalizedLeaf=normalizeGroceryCategoryName(leaf);
+  if(EXPENSE_TREE[normalizedCategory]?.fields){
+    return {category:normalizedCategory,subcategory:null,leaf:null};
+  }
+  if(normalizedCategory==='Essentials'){
+    if(normalizedSubcategory==='Groceries'){
+      return {
+        category:'Groceries',
+        subcategory:CATS.includes(normalizedLeaf)?normalizedLeaf:'Other',
+        leaf:null
+      };
+    }
+    if(normalizedSubcategory==='Bills'){
+      return {
+        category:'Bills',
+        subcategory:normalizedLeaf||null,
+        leaf:null
+      };
+    }
+    if(normalizedSubcategory==='Rent'){
+      return {category:'Rent',subcategory:null,leaf:null};
+    }
+  }
+  return {
+    category:normalizedCategory,
+    subcategory:normalizedSubcategory,
+    leaf:normalizedLeaf
+  };
+}
 function getCategoryLabel(...parts){
   const normalizedParts=parts.map(normalizeCategoryName);
   const key=pathKey(normalizedParts);
@@ -2743,27 +2773,39 @@ function getCategoryLabel(...parts){
   return categoryLabels[key]||fallback;
 }
 function getExpenseIcon(category,subcategory,leaf){
-  category=normalizeCategoryName(category);
-  return EXPENSE_TREE[category]?.sub?.[subcategory]?.sub?.[leaf]?.icon
-    ||EXPENSE_TREE[category]?.sub?.[subcategory]?.icon
-    ||EXPENSE_TREE[category]?.icon
+  const path=normalizeExpensePathParts(category,subcategory,leaf);
+  return EXPENSE_TREE[path.category]?.sub?.[path.subcategory]?.sub?.[path.leaf]?.icon
+    ||EXPENSE_TREE[path.category]?.sub?.[path.subcategory]?.icon
+    ||EXPENSE_TREE[path.category]?.icon
     ||'💳';
 }
 function getExpenseDisplayPath(entry){
-  const category=normalizeCategoryName(entry.category);
+  const path=normalizeExpensePathParts(entry.category,entry.subcategory,entry.leaf);
   return {
-    category:getCategoryLabel(category),
-    subcategory:getCategoryLabel(category,entry.subcategory),
-    leaf:getCategoryLabel(category,entry.subcategory,entry.leaf)
+    category:getCategoryLabel(path.category),
+    subcategory:getCategoryLabel(path.category,path.subcategory),
+    leaf:getCategoryLabel(path.category,path.subcategory,path.leaf)
   };
 }
 function getValidStoreName(value){
   return STORES.includes(value)?value:'Other';
 }
 function isGroceryPurchaseEntry(entry){
-  const category=normalizeCategoryName(entry?.sourceCategory);
-  const subcategory=entry?.sourceSubcategory;
-  return !!(category&&subcategory&&EXPENSE_TREE[category]?.sub?.[subcategory]?._grocery);
+  const path=normalizeExpensePathParts(entry?.sourceCategory,entry?.sourceSubcategory,entry?.sourceLeaf);
+  return !!(path.category&&path.subcategory&&EXPENSE_TREE[path.category]?.sub?.[path.subcategory]?._grocery);
+}
+function getPurchasePath(p,itemCategory){
+  return normalizeExpensePathParts(
+    p?.sourceCategory||'Groceries',
+    p?.sourceSubcategory||itemCategory||'Other',
+    p?.sourceLeaf||itemCategory||'Other'
+  );
+}
+function formatEntryPath(...parts){
+  return parts.filter(part=>part&&String(part).trim()).join(' › ');
+}
+function entryChip(text){
+  return `<span style="font-size:11px;background:#F3F6F4;border:1px solid var(--border);border-radius:999px;padding:5px 9px;color:var(--text-secondary);font-weight:800">${safeText(text)}</span>`;
 }
 function normalizePurchaseStores(){
   purchases=purchases.map(p=>{
@@ -3708,6 +3750,12 @@ function renderExpDrillDown(){
   } else if(!l2){
     const n=EXPENSE_TREE[l1];
     if(n.sub){ node=n.sub; level=2; label='Sub-Category'; }
+    else{
+      dd.innerHTML='';
+      form.style.display='none';
+      showExpForm();
+      return;
+    }
   } else {
     const n=EXPENSE_TREE[l1].sub[l2];
     if(!l3){
@@ -3736,7 +3784,7 @@ function renderExpDrillDown(){
             data-n="${name.replace(/"/g,'&quot;')}"
             style="display:flex;align-items:center;gap:10px;padding:14px 12px;background:#FFFFFF;border:1px solid var(--border);border-radius:18px;cursor:pointer;text-align:left;box-shadow:var(--shadow);width:100%">
             <span style="font-size:22px">${val.icon}</span>
-            <span style="font-size:13px;font-weight:700;color:var(--text)">${safeText(getCategoryLabel(l1,l2,name))}</span>
+            <span style="font-size:13px;font-weight:700;color:var(--text)">${safeText(getCategoryLabel(...[l1,l2,name].filter(Boolean)))}</span>
           </button>`).join('')}
       </div>`;
   }
@@ -4468,12 +4516,13 @@ async function saveUnifiedEntry(){
     }
   }else{
     if(!amount){toast('Enter an amount');return;}
+    const isTopLevelLeaf=!!(meta.l1&&!meta.l2&&!meta.l3&&meta.node?.fields);
     const expenseRecord=queuePendingUpsert('expense',{
       id:(editingEntry&&(editingEntry.type==='expense'||editingEntry.type==='purchase'))?editingEntry.id:uid(),
       datetime:date,
       category:meta.l1||'Others',
-      subcategory:meta.l2||'Misc',
-      leaf:meta.leafName||'Misc',
+      subcategory:isTopLevelLeaf?'':(meta.l2||'Misc'),
+      leaf:isTopLevelLeaf?'':(meta.l3||meta.l2||meta.leafName||'Misc'),
       amount,
       payMode,
       notes,
@@ -4628,10 +4677,11 @@ function dupeLast(){
   selPy=l.payMode||PAYS[1];
   // Navigate to grocery drill-down pre-set to last store's first item category
   const firstCat=normalizeGroceryCategoryName(l.items?.[0]?.category||l.sourceLeaf||'Vegetables');
+  const copyPath=normalizeExpensePathParts(l.sourceCategory||'Groceries',l.sourceSubcategory||firstCat,l.sourceLeaf||firstCat);
   expState={
-    l1:normalizeCategoryName(l.sourceCategory)||'Essentials',
-    l2:l.sourceSubcategory||'Groceries',
-    l3:normalizeGroceryCategoryName(l.sourceLeaf||firstCat)
+    l1:copyPath.category,
+    l2:copyPath.subcategory,
+    l3:copyPath.leaf
   };
   groceryEntryMode=l.items&&l.items.length>1?'bulk':'normal';
   goTab('add',document.getElementById('navAdd'));
@@ -4726,10 +4776,11 @@ function startEdit(id,type='purchase'){
   editingEntry={type,id};
   if(type==='purchase'){
     const itemCategory=normalizeGroceryCategoryName(record.items?.[0]?.category||record.store||'Other');
+    const purchasePath=normalizeExpensePathParts(record.sourceCategory||'Groceries',record.sourceSubcategory||itemCategory,record.sourceLeaf||itemCategory);
     expState={
-      l1:normalizeCategoryName(record.sourceCategory)||'Essentials',
-      l2:record.sourceSubcategory||'Groceries',
-      l3:normalizeGroceryCategoryName(record.sourceLeaf||itemCategory)
+      l1:purchasePath.category,
+      l2:purchasePath.subcategory,
+      l3:purchasePath.leaf
     };
     groceryEntryMode=record.items&&record.items.length>1?'bulk':'normal';
     renderExpDrillDown();
@@ -4749,10 +4800,11 @@ function startEdit(id,type='purchase'){
     }
     showEditBanner('Editing expense entry');
   }else if(type==='expense'){
+    const expensePath=normalizeExpensePathParts(record.category||'Others',record.subcategory||record.leaf||'Misc',record.leaf&&record.leaf!==record.subcategory?record.leaf:null);
     expState={
-      l1:normalizeCategoryName(record.category)||'Others',
-      l2:record.subcategory||record.leaf||'Misc',
-      l3:record.leaf&&record.leaf!==record.subcategory?record.leaf:null
+      l1:expensePath.category||'Others',
+      l2:expensePath.subcategory||null,
+      l3:expensePath.leaf||null
     };
     renderExpDrillDown();
     setFormValue('date',record.datetime||toLocalDateTimeValue(new Date()));
@@ -4999,30 +5051,33 @@ function renderSessions(){
     <div class="sdate">${safeText(date)}</div>
     ${ps.map(entry=>entry.type==='purchase'?(()=>{
       const p=entry.record;
-      const purchaseIcon=getExpenseIcon(p.sourceCategory||'Essentials',p.sourceSubcategory||'Groceries',p.sourceLeaf||p.items?.[0]?.category||'Other');
-      const categoryLabel=getCategoryLabel(p.sourceCategory||'Essentials');
-      const subcategoryLabel=getCategoryLabel(p.sourceCategory||'Essentials',p.sourceSubcategory||'Groceries');
-      const leafLabel=getCategoryLabel(p.sourceCategory||'Essentials',p.sourceSubcategory||'Groceries',p.sourceLeaf||p.items?.[0]?.category||'Other');
+      const purchasePath=getPurchasePath(p,p.items?.[0]?.category);
+      const purchaseIcon=getExpenseIcon(purchasePath.category,purchasePath.subcategory,purchasePath.leaf);
+      const categoryLabel=getCategoryLabel(purchasePath.category);
+      const subcategoryLabel=getCategoryLabel(purchasePath.category,purchasePath.subcategory);
+      const leafLabel=getCategoryLabel(purchasePath.category,purchasePath.subcategory,purchasePath.leaf);
       const storeLabel=getValidStoreName(p.store);
+      const itemCount=(p.items||[]).length;
+      const previewItems=(p.items||[]).slice(0,3).map(it=>entryChip(`${it.name||'Item'} ${fmt(parseFloat(it.price||0))}`)).join('');
+      const moreItems=itemCount>3?entryChip(`+${itemCount-3}`):'';
       return wrapSwipeCard(`sess-${p.id}`,`startEdit('${p.id}')`,`delPurch('${p.id}')`,`<div class="hi" style="padding:12px 14px;border-radius:18px">
         <div class="row" style="cursor:pointer" onclick="togHist('sess-${p.id}')">
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-            <span style="font-size:18px">${purchaseIcon}</span>
-            ${tag('pay',p.payMode||'NA')}
-            ${tag('store',storeLabel)}
-            <span style="font-size:11px;color:var(--text-secondary)">${fmtT(p.datetime)}</span>
+          <div style="display:flex;align-items:center;gap:10px;min-width:0">
+            <span style="width:36px;height:36px;border-radius:14px;background:#F3F6F4;display:inline-flex;align-items:center;justify-content:center;font-size:20px;flex:0 0 auto">${purchaseIcon}</span>
+            <div style="min-width:0">
+              <div style="font-size:14px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(leafLabel)}</div>
+              <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${fmtT(p.datetime)}</div>
+            </div>
           </div>
-          <div style="font-size:17px;font-weight:900;color:var(--expense)">${fmt(p.total)}</div>
+          <div style="font-size:18px;font-weight:900;color:var(--expense);white-space:nowrap">${fmt(p.total)}</div>
         </div>
-        <div style="font-size:14px;font-weight:800;color:var(--text);margin-top:8px">${safeText(leafLabel)}</div>
-        <div style="font-size:12px;color:var(--text-secondary);margin-top:3px">${safeText(categoryLabel)} › ${safeText(subcategoryLabel)}${p.notes?` · ${safeText(p.notes)}`:''}</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:9px">${safeText(formatEntryPath(categoryLabel,subcategoryLabel))}</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:5px;font-weight:700">${safeText([p.payMode||'NA',storeLabel].filter(Boolean).join(' · '))}</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:9px">
-          ${(p.items||[]).slice(0,5).map(it=>`<span style="font-size:11px;background:#F3F6F4;border:1px solid var(--border);border-radius:999px;padding:5px 9px;color:var(--text-secondary);font-weight:700">${safeText(it.name)} · ${safeText(it.qty)} ${safeText(it.unit)} · ${fmt(parseFloat(it.price||0))}</span>`).join('')}
-          ${(p.items||[]).length>5?`<span style="font-size:10px;color:var(--text-secondary)">+${(p.items||[]).length-5} more</span>`:''}
+          ${previewItems}${moreItems}
         </div>
-        <div class="row" style="margin-top:10px">
-          <button class="sbtn" style="padding:7px 11px;font-size:11px" onclick="event.stopPropagation();togHist('sess-${p.id}')">Details</button>
-          <div></div>
+        <div style="margin-top:10px">
+          <button class="sbtn" style="padding:6px 0;font-size:11px;background:transparent;border:none;color:var(--accent)" onclick="event.stopPropagation();togHist('sess-${p.id}')">View details →</button>
         </div>
         <div class="hd" id="hd-sess-${p.id}">
           <table style="width:100%;font-size:12px;border-collapse:collapse">
@@ -5043,24 +5098,22 @@ function renderSessions(){
       const labels=getExpenseDisplayPath(e);
       const icon=getExpenseIcon(e.category,e.subcategory,e.leaf);
       const extra=Object.entries({liters:'L',odometer:'km',recipient:'To',warranty:'Warranty',hospital:'Hospital',medicine:'Medicine',customName:'Name'}).map(([k,lbl])=>e[k]?`<span style="font-size:10px;background:#F3F6F4;border:1px solid var(--border);border-radius:999px;padding:4px 8px;color:var(--text-secondary)">${lbl}: ${safeText(e[k])}</span>`:'').filter(Boolean).join('');
+      const titleLabel=labels.leaf||labels.subcategory||labels.category;
       return wrapSwipeCard(`sess-${e.id}`,`startEdit('${e.id}','expense')`,`delExpense('${e.id}')`,`<div class="hi" style="padding:12px 14px;border-radius:18px">
         <div class="row">
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-            <span style="font-size:18px">${icon}</span>
-            ${tag('pay',e.payMode||'NA')}
-            <span style="font-size:11px;color:var(--text-secondary)">${fmtT(e.datetime)}</span>
+          <div style="display:flex;align-items:center;gap:10px;min-width:0">
+            <span style="width:36px;height:36px;border-radius:14px;background:#F3F6F4;display:inline-flex;align-items:center;justify-content:center;font-size:20px;flex:0 0 auto">${icon}</span>
+            <div style="min-width:0">
+              <div style="font-size:14px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(titleLabel)}</div>
+              <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${fmtT(e.datetime)}</div>
+            </div>
           </div>
-          <div style="font-size:17px;font-weight:900;color:var(--expense)">${fmt(e.amount)}</div>
+          <div style="font-size:18px;font-weight:900;color:var(--expense);white-space:nowrap">${fmt(e.amount)}</div>
         </div>
-        <div style="font-size:14px;font-weight:800;color:var(--text);margin-top:8px">${safeText(labels.leaf||labels.subcategory||labels.category)}</div>
-        <div style="font-size:12px;color:var(--text-secondary);margin-top:3px">${safeText(labels.category)} › ${safeText(labels.subcategory)}${e.notes?` · ${safeText(e.notes)}`:''}</div>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:9px">
-          <span style="font-size:11px;background:#F3F6F4;border:1px solid var(--border);border-radius:999px;padding:5px 9px;color:var(--text-secondary);font-weight:700">${safeText(labels.leaf||labels.subcategory||labels.category)}</span>
-          ${extra}
-        </div>
-        <div class="row" style="margin-top:10px">
-          <div></div>
-        </div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:9px">${safeText(formatEntryPath(labels.category,labels.subcategory,labels.leaf))}</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:5px;font-weight:700">${safeText(e.payMode||'NA')}</div>
+        ${e.notes?`<div style="font-size:12px;color:var(--text-secondary);margin-top:5px">${safeText(e.notes)}</div>`:''}
+        ${extra?`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:9px">${extra}</div>`:''}
       </div>`);
     })():entry.type==='income'?(()=>{
       const i=entry.record;
@@ -5532,27 +5585,31 @@ function renderHist(){
     expEl.innerHTML=combinedExpenseEntries.length?combinedExpenseEntries.map(entry=>{
       if(entry.type==='purchase'){
         const p=entry.record;
-        const purchaseIcon=getExpenseIcon(p.sourceCategory||'Essentials',p.sourceSubcategory||'Groceries',p.sourceLeaf||p.items?.[0]?.category||'Other');
-        const categoryLabel=getCategoryLabel(p.sourceCategory||'Essentials');
-        const subcategoryLabel=getCategoryLabel(p.sourceCategory||'Essentials',p.sourceSubcategory||'Groceries');
-        const leafLabel=getCategoryLabel(p.sourceCategory||'Essentials',p.sourceSubcategory||'Groceries',p.sourceLeaf||p.items?.[0]?.category||'Other');
+        const purchasePath=getPurchasePath(p,p.items?.[0]?.category);
+        const purchaseIcon=getExpenseIcon(purchasePath.category,purchasePath.subcategory,purchasePath.leaf);
+        const categoryLabel=getCategoryLabel(purchasePath.category);
+        const subcategoryLabel=getCategoryLabel(purchasePath.category,purchasePath.subcategory);
+        const leafLabel=getCategoryLabel(purchasePath.category,purchasePath.subcategory,purchasePath.leaf);
+        const storeLabel=getValidStoreName(p.store);
+        const previewItems=(p.items||[]).slice(0,3).map(it=>entryChip(`${it.name||'Item'} ${fmt(parseFloat(it.price||0))}`)).join('');
+        const moreItems=(p.items||[]).length>3?entryChip(`+${(p.items||[]).length-3}`):'';
         return `<div class="hi" style="margin-bottom:10px">
           <div class="row">
-            <div style="display:flex;align-items:center;gap:8px">
-              <span style="font-size:20px">${purchaseIcon}</span>
-              <div>
-                <div style="font-size:14px;font-weight:800">${safeText(leafLabel)}</div>
-                <div style="font-size:11px;color:var(--text-secondary)">${safeText(categoryLabel)} › ${safeText(subcategoryLabel)}${p.notes?` · ${safeText(p.notes)}`:''}</div>
+            <div style="display:flex;align-items:center;gap:10px;min-width:0">
+              <span style="width:36px;height:36px;border-radius:14px;background:#F3F6F4;display:inline-flex;align-items:center;justify-content:center;font-size:20px;flex:0 0 auto">${purchaseIcon}</span>
+              <div style="min-width:0">
+                <div style="font-size:14px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(leafLabel)}</div>
+                <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${fmtT(p.datetime)}</div>
               </div>
             </div>
             <div style="text-align:right">
-              <div style="font-size:18px;font-weight:900">${fmt(p.total)}</div>
-              <div style="font-size:11px;color:var(--text-secondary)">${fmtS(p.datetime)}</div>
+              <div style="font-size:18px;font-weight:900;color:var(--expense)">${fmt(p.total)}</div>
             </div>
           </div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:9px">${safeText(formatEntryPath(categoryLabel,subcategoryLabel))}</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:5px;font-weight:700">${safeText([p.payMode||'NA',storeLabel].filter(Boolean).join(' · '))}</div>
           <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">
-            ${(p.items||[]).slice(0,4).map(it=>`<span style="font-size:10px;background:#F3F6F4;border:1px solid var(--border);border-radius:999px;padding:3px 8px;color:var(--text-secondary)">${safeText(it.name)} · ${safeText(it.qty)} ${safeText(it.unit||'pcs')}</span>`).join('')}
-            ${(p.items||[]).length>4?`<span style="font-size:10px;color:var(--text-secondary)">+${(p.items||[]).length-4} more</span>`:''}
+            ${previewItems}${moreItems}
           </div>
           <div style="margin-top:8px;text-align:right;display:flex;justify-content:flex-end;gap:6px">
             <button class="ebtn" style="padding:5px 10px;font-size:11px" onclick="startEdit('${p.id}')">Edit</button>
@@ -5564,20 +5621,23 @@ function renderHist(){
       const icon=getExpenseIcon(e.category,e.subcategory,e.leaf);
       const labels=getExpenseDisplayPath(e);
       const extra=Object.entries({liters:'L',odometer:'km',recipient:'To',warranty:'Warranty',hospital:'Hospital',medicine:'Medicine',customName:'Name'}).map(([k,lbl])=>e[k]?`<span style="font-size:10px;background:#F3F6F4;border:1px solid var(--border);border-radius:999px;padding:3px 8px;color:var(--text-secondary)">${lbl}: ${e[k]}</span>`:'').filter(Boolean).join('');
+      const titleLabel=labels.leaf||labels.subcategory||labels.category;
       return `<div class="hi" style="margin-bottom:10px">
         <div class="row">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:20px">${icon}</span>
-            <div>
-              <div style="font-size:14px;font-weight:800">${safeText(labels.leaf||labels.subcategory||labels.category)}</div>
-              <div style="font-size:11px;color:var(--text-secondary)">${safeText(labels.category)} › ${safeText(labels.subcategory)}${e.notes?' · '+safeText(e.notes):''}</div>
+          <div style="display:flex;align-items:center;gap:10px;min-width:0">
+            <span style="width:36px;height:36px;border-radius:14px;background:#F3F6F4;display:inline-flex;align-items:center;justify-content:center;font-size:20px;flex:0 0 auto">${icon}</span>
+            <div style="min-width:0">
+              <div style="font-size:14px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(titleLabel)}</div>
+              <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${fmtT(e.datetime)}</div>
             </div>
           </div>
           <div style="text-align:right">
-            <div style="font-size:18px;font-weight:900">${fmt(e.amount)}</div>
-            <div style="font-size:11px;color:var(--text-secondary)">${fmtS(e.datetime)}</div>
+            <div style="font-size:18px;font-weight:900;color:var(--expense)">${fmt(e.amount)}</div>
           </div>
         </div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:9px">${safeText(formatEntryPath(labels.category,labels.subcategory,labels.leaf))}</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:5px;font-weight:700">${safeText(e.payMode||'NA')}</div>
+        ${e.notes?`<div style="font-size:12px;color:var(--text-secondary);margin-top:5px">${safeText(e.notes)}</div>`:''}
         ${extra?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">${extra}</div>`:''}
         <div style="margin-top:8px;text-align:right;display:flex;justify-content:flex-end;gap:6px">
           <button class="ebtn" style="padding:5px 10px;font-size:11px" onclick="startEdit('${e.id}','expense')">Edit</button>
@@ -5607,8 +5667,8 @@ function expCSV(){
   purchases.forEach(p=>(p.items||[]).forEach(it=>rows.push([
     'Expense',
     fmtS(p.datetime),
-    getCategoryLabel(p.sourceCategory||'Essentials'),
-    getCategoryLabel(p.sourceCategory||'Essentials',p.sourceSubcategory||'Groceries',p.sourceLeaf||it.category),
+    getCategoryLabel(getPurchasePath(p,it.category).category),
+    getCategoryLabel(getPurchasePath(p,it.category).category,getPurchasePath(p,it.category).subcategory,getPurchasePath(p,it.category).leaf),
     p.store,
     '',
     p.payMode,
@@ -6141,8 +6201,12 @@ if ("serviceWorker" in navigator && !location.hostname.includes("claudeuserconte
     if(updateBanner) updateBanner.classList.add("on");
   };
 
+  let refreshingForUpdate=false;
+  let serviceWorkerRegistration=null;
+
   navigator.serviceWorker.register("service-worker.js", { scope: "./" })
     .then((registration) => {
+      serviceWorkerRegistration=registration;
       if(registration.waiting) showUpdateBanner(registration.waiting);
       registration.addEventListener("updatefound", () => {
         const newWorker=registration.installing;
@@ -6157,16 +6221,29 @@ if ("serviceWorker" in navigator && !location.hostname.includes("claudeuserconte
     .catch((err) => console.warn("SW registration failed", err));
 
   if(updateReloadBtn){
-    updateReloadBtn.addEventListener("click", () => {
-      if(!waitingServiceWorker) {
+    updateReloadBtn.addEventListener("click", async () => {
+      updateReloadBtn.disabled=true;
+      updateReloadBtn.textContent="Refreshing...";
+      try{
+        const registration=serviceWorkerRegistration || await navigator.serviceWorker.getRegistration();
+        if(registration) await registration.update();
+        const worker=waitingServiceWorker || registration?.waiting || registration?.installing;
+        if(worker){
+          worker.postMessage({type:"SKIP_WAITING"});
+          setTimeout(()=>location.reload(),1200);
+          return;
+        }
         location.reload();
-        return;
+      }catch(err){
+        console.warn("Update refresh failed",err);
+        location.reload();
       }
-      waitingServiceWorker.postMessage({type:"SKIP_WAITING"});
     });
   }
 
   navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if(refreshingForUpdate) return;
+    refreshingForUpdate=true;
     location.reload();
   });
 }
@@ -6174,7 +6251,7 @@ if ("serviceWorker" in navigator && !location.hostname.includes("claudeuserconte
 <script>
 let deferredPrompt;
 const installBtn=document.getElementById("installBtn");
-const isStandalone=window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true;
+const isStandalone=(typeof window.matchMedia==='function'&&window.matchMedia("(display-mode: standalone)").matches)||window.navigator.standalone===true;
 
 if(installBtn&&isStandalone){
   installBtn.style.display="none";
