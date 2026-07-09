@@ -2452,7 +2452,7 @@ body{
 <script>
 const APP_VERSION='2.1.1';
 const STORES=['Dmart','RelianceMart','Local Shop','Other'];
-const CATS=['Vegetables','Fruits','Pulses','Dairy','Meat & Fish','Snacks','Beverages','Frozen','Bakery','Spices','Oils','Rice & Flour','Ready Mixes','Dry Fruits','Household','Cleaning Supplies','Personal','Baby','Other'];
+const CATS=['Vegetables','Fruits','Pulses','Dairy','Meat & Fish','Snacks','Beverages','Frozen','Bakery','Spices','Oils','Rice & Flour','Ready Mixes','Dry Fruits','Household','Toiletries','Baby','Other'];
 const PAYS=['Cash','UPI','Debit Card','Credit Card','Rupay Credit UPI'];
 const TRANSFER_CHANNELS=['Account','Cash','UPI','Credit Card','Rupay Credit UPI'];
 const INCOME_CATEGORIES=['Salary','Business','Interest','Dividends','Gifts','Refunds','Rewards','Coupons'];
@@ -2480,8 +2480,7 @@ const EXPENSE_TREE={
       "Ready Mixes":{icon:"🥣",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
       "Dry Fruits":{icon:"🥜",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
       "Household":{icon:"🧹",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-      "Cleaning Supplies":{icon:"🧽",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-      "Personal":{icon:"🧴",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+      "Toiletries":{icon:"🧴",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
       "Baby":{icon:"🍼",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
       "Other":{icon:"📦",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]}
     }}
@@ -2571,42 +2570,41 @@ const DASH_ORDER=['week','month','year','all'];
 const CATEGORY_ICONS={
   'Vegetables':'🥦','Fruits':'🍎','Pulses':'🫘','Dairy':'🥛','Meat & Fish':'🍗','Snacks':'🍪','Beverages':'🥤',
   'Frozen':'🧊','Bakery':'🥖','Spices':'🌶️','Oils':'🫗','Rice & Flour':'🌾','Ready Mixes':'🥣','Dry Fruits':'🥜',
-  'Household':'🧽','Cleaning Supplies':'🧴','Personal':'🧴','Baby':'🧸','Other':'🧾'
+  'Household':'🧽','Toiletries':'🧴','Baby':'🧸','Other':'🧾'
 };
 
 const CCOLOR={
   'Vegetables':'#639922','Fruits':'#D85A30','Pulses':'#9A6B2F','Dairy':'#378ADD',
   'Meat & Fish':'#A32D2D','Snacks':'#EF9F27','Beverages':'#1D9E75','Bakery':'#C6854A',
   'Frozen':'#185FA5','Spices':'#C94B2C','Oils':'#D9A422','Rice & Flour':'#B9985B','Ready Mixes':'#B06F3B','Dry Fruits':'#8A5A2F',
-  'Household':'#888780','Cleaning Supplies':'#5E9AA8','Personal':'#D4537E',
+  'Household':'#888780','Toiletries':'#D4537E',
   'Baby':'#E07B7B','Other':'#aaa'
 };
 const CTAG_BG={
   'Vegetables':'#EAF3DE','Fruits':'#FAECE7','Pulses':'#F5E8D7','Dairy':'#E6F1FB',
   'Meat & Fish':'#FCEBEB','Snacks':'#FAEEDA','Beverages':'#E1F5EE','Bakery':'#F7E9DA',
   'Frozen':'#E6F1FB','Spices':'#FCE8E1','Oils':'#FBF1D8','Rice & Flour':'#F5EDDE','Ready Mixes':'#F8E8DC','Dry Fruits':'#F4E6D7',
-  'Household':'#F1EFE8','Cleaning Supplies':'#E6F3F5','Personal':'#FBEAF0',
+  'Household':'#F1EFE8','Toiletries':'#FBEAF0',
   'Baby':'#FFF0F0','Other':'#F4F5F0'
 };
 
 const SUGG={
-  'Vegetables':['Tomatoes','Onions','Potatoes','Drumsticks','Dondakaya','Chikkudukaya','Carrots','Beetroot','Spinach','Capsicum','Cauliflower','Beans','Peas','Cabbage','Lady Finger','Brinjal','Garlic','Ginger','Coriander','Lemons','Cucumber','Radish','Mushroom'],
+  'Vegetables':['Tomatoes','Onions','Potatoes','Drumsticks','Dondakaya','Chikkudukaya','Carrots','Beetroot','Spinach','Capsicum','Cauliflower','Beans','Peas','Cabbage','Lady Finger','Brinjal','Cucumber','Radish','Mushroom','Garlic','Ginger','Coriander','Lemons','Chillis'],
   'Fruits':['Apples','Bananas','Mangos','Oranges','Grapes','Watermelon','Papaya','Guava','Pomegranate','Pineapple','Strawberry','Kiwi','Pear','Litchi','Chikoo','Coconut','Plum','Peach'],
   'Pulses':['Toor Dal','Moong Dal','Urad Dal','Chana Dal','Rajma','Chickpeas','Black Gram','Green Gram','Masoor Dal','Peanuts'],
-  'Dairy':['Milk','Curd','Butter','Paneer','Cheese','Ghee','Cream','Buttermilk','Lassi','Amul Taza','Amul Gold'],
-  'Meat & Fish':['Chicken','Mutton','Fish','Prawns','Eggs','Crab','Tuna','Salmon','Sardine','Catfish'],
+  'Dairy':['Milk','Curd','Butter','Paneer','Cheese','Ghee','Cream'],
+  'Meat & Fish':['Chicken','Mutton','Fish','Prawns','Eggs','Crab','Tuna','Salmon'],
   'Snacks':['Biscuits','Chips','Namkeen','Cookies','Chocolates','Crackers','Popcorn','Nuts','Murukku','Lays','Kurkure','Peanuts','Mixture','Sweets'],
-  'Beverages':['Tea','Coffee','Juice','Soft Drink','Water Bottle','Energy Drink','Coconut Water','Milkshake','Lassi','Green Tea'],
+  'Beverages':['Tea','Coffee','Juice','Soft Drink','Water Bottle','Energy Drink','Coconut Water','Milkshake','Buttermilk','Lassi','Green Tea'],
   'Frozen':['Ice Cream'],
   'Bakery':['Bread','Brown Bread','Buns','Cake','Muffins','Pav','Croissant','Cookies'],
-  'Spices':['Turmeric','Chilli Powder','Coriander Powder','Garam Masala','Cumin','Mustard Seeds','Pepper','Cardamom'],
-  'Oils':['Sunflower Oil','Groundnut Oil','Mustard Oil','Olive Oil','Ghee'],
+  'Spices':['Turmeric','Salt','Chilli Powder','Dry Chilli','Coriander Powder','Garam Masala','Mustard Seeds','Pepper','Cardamom','Jeera'],
+  'Oils':['Sunflower Oil','Groundnut Oil','Mustard Oil','Olive Oil'],
   'Rice & Flour':['Rice','Basmati Rice','Atta','Maida','Rava','Besan','Rice Flour','Jowar Flour'],
   'Ready Mixes':['Idli Mix','Dosa Mix','Gulab Jamun Mix','Pancake Mix','Soup Mix','Noodle Mix'],
   'Dry Fruits':['Almonds','Cashews','Raisins','Dates','Pistachios','Walnuts','Anjeer'],
-  'Household':['Detergent','Soap','Shampoo','Toothpaste','Dishwash','Tissues','Toilet Paper','Garbage Bags','Floor Cleaner','Surf Excel','Vim','Lizol','Phenyl','Mosquito Repellent'],
-  'Cleaning Supplies':['Floor Cleaner','Toilet Cleaner','Dishwash Liquid','Sponges','Brushes','Cleaning Cloth','Disinfectant Spray'],
-  'Personal':['Face Wash','Moisturizer','Deodorant','Razor','Sanitary Pads','Cotton','Lotion','Sunscreen','Lip Balm'],
+  'Household':['Toothpaste','Soap','Shampoo','Detergent Soap','Detergent Liquid','Dishwash Soap','Dishwash Liquid','Tissues','Garbage Bags','Floor Cleaner','Toilet Paper','Toilet Cleaner','Sponges','Scrubbers','Brushes','Cleaning Cloth','Disinfectant Spray','Surf Excel','Vim','Lizol','Phenyl','Mosquito Repellent'],
+  'Toiletries':['Face Wash','Moisturizer','Deodorant','Cotton','Lotion','Sunscreen','Lip Balm','Razor','Sanitary Pads'],
   'Baby':['Baby Soap','Baby Powder','Diapers','Baby Oil','Baby Shampoo','Baby Food','Baby Wipes','Rash Cream'],
   'Other':[]
 };
@@ -2730,7 +2728,13 @@ function pathKey(parts){
   return parts.filter(Boolean).join('>');
 }
 function normalizeCategoryName(name){
-  return name==='Food & Dining'?'Food & Drinks':name;
+  if(name==='Food & Dining') return 'Food & Drinks';
+  if(name==='Cleaning Supplies') return 'Household';
+  return name;
+}
+function normalizeGroceryCategoryName(name){
+  const normalized=normalizeCategoryName(name);
+  return normalized==='Personal'?'Toiletries':normalized;
 }
 function getCategoryLabel(...parts){
   const normalizedParts=parts.map(normalizeCategoryName);
@@ -2830,7 +2834,7 @@ function categoryIcon(cat){
     'Beverages':'BV',
     'Frozen':'FZ',
     'Household':'HH',
-    'Personal':'PE',
+    'Toiletries':'TL',
     'Baby':'BY',
     'Other':'OT'
   };
@@ -2838,10 +2842,10 @@ function categoryIcon(cat){
 }
 function recentIcon(p){
   const cat=p.items?.[0]?.category||'Other';
-  if(cat==='Vegetables'||cat==='Fruits') return ['ðŸ›’',''];
-  if(cat==='Snacks'||cat==='Beverages') return ['ðŸ½','food'];
-  if(cat==='Household'||cat==='Personal') return ['ðŸ§¼',''];
-  return ['ðŸ›',''];
+  if(cat==='Vegetables'||cat==='Fruits') return ['🛒',''];
+  if(cat==='Snacks'||cat==='Beverages') return ['🍽️','food'];
+  if(cat==='Household'||cat==='Toiletries'||cat==='Personal') return ['🧼',''];
+  return ['🛍️',''];
 }
 
 
@@ -3657,8 +3661,9 @@ function getEntryMeta(){
   const level2=l2?level1?.sub?.[l2]||null:null;
   const level3=l3?level2?.sub?.[l3]||null:null;
   const node=level3||level2||level1;
-  const leafName=l3||l2||l1;
-  const groceryCategory=CATS.includes(leafName)?leafName:(CATS.includes(l2)?l2:'Other');
+  const leafName=normalizeGroceryCategoryName(l3||l2||l1);
+  const normalizedL2=normalizeGroceryCategoryName(l2);
+  const groceryCategory=CATS.includes(leafName)?leafName:(CATS.includes(normalizedL2)?normalizedL2:'Other');
   return {
     l1,l2,l3,level1,level2,level3,node,leafName,
     path:[l1,l2,l3].filter(Boolean),
@@ -4203,6 +4208,17 @@ function syncBulkGroceryTextarea(){
   return items;
 }
 
+function setBulkGroceryRowsFromText(text){
+  const rows=document.getElementById('bulkGroceryRows');
+  const hidden=document.getElementById('ef_bulkItems');
+  if(hidden) hidden.value=text||'';
+  if(!rows) return;
+  const meta=getEntryMeta();
+  const items=parseBulkGroceryItems(text,meta?.groceryCategory||'Other');
+  rows.innerHTML=(items.length?items:[{name:'',qty:'1',unit:'pcs',price:''}]).map(item=>buildBulkGroceryRow(item)).join('');
+  updateGroceryBulkAmount();
+}
+
 function addBulkGroceryRow(){
   const rows=document.getElementById('bulkGroceryRows');
   if(!rows) return;
@@ -4611,11 +4627,11 @@ function dupeLast(){
   selSt=l.store;
   selPy=l.payMode||PAYS[1];
   // Navigate to grocery drill-down pre-set to last store's first item category
-  const firstCat=l.items?.[0]?.category||l.sourceLeaf||'Vegetables';
+  const firstCat=normalizeGroceryCategoryName(l.items?.[0]?.category||l.sourceLeaf||'Vegetables');
   expState={
     l1:normalizeCategoryName(l.sourceCategory)||'Essentials',
     l2:l.sourceSubcategory||'Groceries',
-    l3:l.sourceLeaf||firstCat
+    l3:normalizeGroceryCategoryName(l.sourceLeaf||firstCat)
   };
   groceryEntryMode=l.items&&l.items.length>1?'bulk':'normal';
   goTab('add',document.getElementById('navAdd'));
@@ -4626,8 +4642,7 @@ function dupeLast(){
     setFormValue('payMode',selPy);
     if(groceryEntryMode==='bulk'){
       const bulkText=(l.items||[]).map(it=>`${it.name}, ${it.qty||1}, ${it.unit||'pcs'}, ${it.price||0}`).join('\n');
-      setFormValue('bulkItems',bulkText);
-      updateGroceryBulkAmount();
+      setBulkGroceryRowsFromText(bulkText);
     }else{
       const it=l.items?.[0]||{};
       setFormValue('itemName',it.name||'');
@@ -4710,11 +4725,11 @@ function startEdit(id,type='purchase'){
   goTab('add',document.getElementById('navAdd'));
   editingEntry={type,id};
   if(type==='purchase'){
-    const itemCategory=record.items?.[0]?.category||record.store||'Other';
+    const itemCategory=normalizeGroceryCategoryName(record.items?.[0]?.category||record.store||'Other');
     expState={
       l1:normalizeCategoryName(record.sourceCategory)||'Essentials',
       l2:record.sourceSubcategory||'Groceries',
-      l3:record.sourceLeaf||itemCategory
+      l3:normalizeGroceryCategoryName(record.sourceLeaf||itemCategory)
     };
     groceryEntryMode=record.items&&record.items.length>1?'bulk':'normal';
     renderExpDrillDown();
@@ -4723,8 +4738,7 @@ function startEdit(id,type='purchase'){
     setFormValue('notes',record.notes||'');
     if(groceryEntryMode==='bulk'){
       const bulkText=(record.items||[]).map(it=>`${it.name||''}, ${it.qty||'1'}, ${it.unit||'pcs'}, ${it.price||0}`).join('\n');
-      setFormValue('bulkItems',bulkText);
-      updateGroceryBulkAmount();
+      setBulkGroceryRowsFromText(bulkText);
     }else{
       const item=record.items?.[0]||{};
       setFormValue('itemName',item.name||record.sourceLeaf||itemCategory);
