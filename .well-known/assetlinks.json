@@ -1,0 +1,8 @@
+[{
+     "relation": ["delegate_permission/common.handle_all_urls"],
+     "target": {
+       "namespace": "android_app",
+       "package_name": "com.vsramaiah.moneynest",
+       "sha256_cert_fingerprints": ["47:E2:FD:D4:FC:E1:50:5D:5C:1C:29:CD:44:26:DB:DE:60:21:0A:2F:BF:2F:E3:E8:A0:A7:1E:CC:E3:D0:5F:F5"]
+     }
+   }]
