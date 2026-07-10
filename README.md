@@ -1,4 +1,4 @@
-﻿# 🪺 MoneyNest — Smart Grocery & Budget Tracker
+# 🪺 MoneyNest — Smart Grocery & Budget Tracker
 
 > **Track every rupee on your daily run.** MoneyNest is a free Progressive Web App (PWA) that helps Indian families log grocery purchases, track household expenses, manage shopping lists, and stay within monthly budgets fully offline on one device.
 
@@ -35,18 +35,27 @@ https://<your-github-username>.github.io/AI_MoneyNest/
 
 ## 🗂️ Expense Categories
 
+These are the top-level categories in the current Add tab, matching the `EXPENSE_TREE` structure in `moneynest-app.html`:
+
 ```text
-Essentials       -> Rent · Bills (Electricity, WiFi, DTH, Gas, Mobile, Water) · Groceries (Vegetables, Fruits, Pulses, Dairy, Meat & Fish, Snacks, Beverages, Frozen, Bakery, Spices, Oils, Rice & Flour, Ready Mixes, Dry Fruits, Household, Cleaning Supplies, Personal, Baby, Other)
-Transport        -> Travel
-Food & Drinks    -> Restaurant · Street Food · Tiffin Center · Curry Point · Fruits · Snacks · Frozen · Beverages · Bakery
-Lifestyle        -> Shopping · Electronics · Personal Care · Gifts
+Bills            -> DTH · Electricity · Gas · Mobile Recharge · Water · WiFi
+Finance          -> Bank Charges (Account Fees, ATM Charges, Penalties, SMS Charges)
+                     · EMI (Credit Card EMI, Home Loan, Personal Loan, Vehicle Loan)
+                     · Investments (Bonds, Crypto, EPF, Fixed Deposits (FD), Gold, Mutual Funds, PPF, Stocks)
+                     · Savings (Emergency Fund, General Savings)
+Food & Drinks    -> Bakery · Beverages · Curry Point · Frozen · Fruits · Restaurant · Snacks · Street Food · Tiffin Center
+Groceries        -> Baby · Dairy · Dry Fruits · Household · Meat & Fish · Oils · Other · Pulses · Ready Mixes · Rice & Flour · Spices · Toiletries · Vegetables
+Health           -> Insurance (Health, Life) · Medical
+Home             -> Appliances · Cleaning Help · Decor · Furniture · Maintenance · Repairs
 Leisure          -> Entertainment · Snacks
-Health           -> Medical · Insurance (Health, Life)
-Vehicle          -> Fuel · Service · Repairs · Insurance · Parking · Toll · Washing
-Home             -> Furniture · Appliances · Repairs · Maintenance · Cleaning Help · Decor
-Finance          -> EMI (Credit Card EMI, Home Loan, Personal Loan, Vehicle Loan) · Investments (Stocks, Mutual Funds, PPF, EPF, Fixed Deposits (FD), Bonds, Gold, Crypto) · Savings (General Savings, Emergency Fund) · Bank Charges (ATM Charges, SMS Charges, Account Fees, Penalties)
-Others           -> Misc · Custom
+Lifestyle        -> Electronics · Gifts · Personal Care · Shopping
+Others           -> Custom · Misc
+Rent             -> (single entry, no sub-categories)
+Transport        -> Travel
+Vehicle          -> Fuel · Insurance · Parking · Repairs · Service · Toll · Washing
 ```
+
+> Note: Older backups created before v2.1.0 may still contain legacy category names such as `Essentials`, `Food & Dining`, `Cleaning Supplies`, or `Personal`. These are automatically remapped to the categories above when the app loads (see `normalizeCategoryName` / `normalizeGroceryCategoryName` in `moneynest-app.html`), so existing history stays intact even though the display names have changed.
 
 ## Income Categories
 
@@ -158,9 +167,12 @@ https://<your-github-username>.github.io/<your-repo-name>/
 AI_MoneyNest/
 ├── index.html              # PWA entry redirect
 ├── moneynest-app.html      # Main single-page application
+├── local-store.js          # Local storage load/save/normalize helpers
+├── ui-shell.js             # Tab navigation and modal open/close UI logic
 ├── manifest.json           # PWA manifest
 ├── service-worker.js       # Offline caching
-├── offline.html            # Shown when app is offline
+├── offline.html             # Shown when app is offline
+├── serve-moneynest.ps1     # Local dev server (Windows PowerShell)
 ├── icon.svg                # App icon (scalable)
 ├── icon-maskable.svg       # Maskable icon for Android
 ├── icon-192.png            # Android home screen icon
@@ -176,7 +188,7 @@ AI_MoneyNest/
 
 | Layer | Technology |
 |---|---|
-| Frontend | Vanilla HTML · CSS · JavaScript (no framework) |
+| Frontend | Vanilla HTML · CSS · JavaScript (no framework), split across `moneynest-app.html`, `local-store.js`, and `ui-shell.js` |
 | Storage | Browser local storage via helper wrappers |
 | Offline | Service Worker + Cache API |
 | PWA | Web App Manifest + Install prompt |
@@ -221,4 +233,4 @@ Personal / family use. Not for redistribution.
 ## 🙏 Credits
 
 Built with ❤️ by VISIRA.
-App Version: 2.1.0
+App Version: 2.1.1
