@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1280" viewBox="0 0 720 1280" role="img" aria-label="MoneyNest mobile preview">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f7f1e7"/>
+      <stop offset="100%" stop-color="#eef4e5"/>
+    </linearGradient>
+  </defs>
+  <rect width="720" height="1280" rx="36" fill="url(#bg)"/>
+  <rect x="42" y="42" width="636" height="1196" rx="34" fill="#fffaf2" stroke="#e6dccb"/>
+  <text x="84" y="118" font-family="Segoe UI, Arial, sans-serif" font-size="38" font-weight="700" fill="#2d3a2e">MoneyNest</text>
+  <text x="84" y="156" font-family="Segoe UI, Arial, sans-serif" font-size="20" fill="#617063">Track every rupee offline</text>
+  <rect x="84" y="204" width="552" height="166" rx="24" fill="#476a2e"/>
+  <text x="118" y="260" font-family="Segoe UI, Arial, sans-serif" font-size="20" fill="#eef6e8">Available Budget</text>
+  <text x="118" y="320" font-family="Segoe UI, Arial, sans-serif" font-size="46" font-weight="700" fill="#ffffff">?6,550</text>
+  <rect x="84" y="404" width="552" height="136" rx="22" fill="#ffffff" stroke="#dfe6d6"/>
+  <rect x="84" y="566" width="552" height="136" rx="22" fill="#ffffff" stroke="#dfe6d6"/>
+  <rect x="84" y="728" width="552" height="136" rx="22" fill="#ffffff" stroke="#dfe6d6"/>
+  <text x="116" y="472" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#2d3a2e">Add Expense</text>
+  <text x="116" y="634" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#2d3a2e">Backup JSON</text>
+  <text x="116" y="796" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#2d3a2e">View Insights</text>
+  <rect x="84" y="920" width="552" height="232" rx="24" fill="#ffffff" stroke="#dfe6d6"/>
+  <text x="116" y="980" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#2d3a2e">Recent Activity</text>
+  <rect x="116" y="1014" width="488" height="28" rx="10" fill="#f2f6ed"/>
+  <rect x="116" y="1062" width="432" height="28" rx="10" fill="#f6efe4"/>
+  <rect x="116" y="1110" width="464" height="28" rx="10" fill="#edf4fb"/>
+</svg>

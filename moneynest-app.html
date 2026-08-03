@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <link rel="manifest" href="manifest.json">
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<meta name="theme-color" content="#2E7D32"/>
+<meta name="theme-color" content="#4a7a30"/>
 <meta name="description" content="MoneyNest helps you track expenses, transfers, budgets, and backups fully offline on your device."/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -1517,8 +1517,34 @@ strong{font-weight:900}
   background:#fff;border:1px solid #eef0ea;border-radius:18px;padding:12px 14px;color:#7f8b94;line-height:1.5
 }
 .add-breadcrumb{
-  display:none;font-size:12px;color:#8a969f;border-radius:16px;background:#fff;padding:12px 14px;border:1px solid #eef0ea;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px
+  display:none;font-size:14px;color:#8a969f;border-radius:16px;background:#fff;padding:12px 14px;border:1px solid #eef0ea;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px
 }
+.add-breadcrumb-item{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  min-height:34px;
+  font-size:14px;
+  line-height:1;
+  font-weight:800;
+}
+.add-breadcrumb-item.clickable{cursor:pointer;color:var(--accent)}
+.add-breadcrumb-item.current{color:var(--text)}
+.add-breadcrumb-sep{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color:#b9c0c5;
+  width:16px;
+  height:34px;
+}
+.add-breadcrumb-sep .material-symbols-rounded{font-size:20px}
+.add-breadcrumb .icon-badge-sm{
+  width:34px;
+  height:34px;
+  border-radius:13px;
+}
+.add-breadcrumb .icon-badge-sm .material-symbols-rounded{font-size:20px}
 .add-form-wrap{
   display:none;background:#fff;border:1px solid #e9ece5;border-radius:24px;padding:14px;box-shadow:0 10px 24px rgba(79,59,30,.06)
 }
@@ -2200,7 +2226,7 @@ strong{font-weight:900}
     </button>
   </div>
 
-  <p class="welcome-footnote"><span class="material-symbols-rounded" aria-hidden="true">lock</span> Your data is always private and secure.</p>
+  <p class="welcome-footnote"><span class="material-symbols-rounded" aria-hidden="true">lock</span> Your data stays on this device unless you export a backup.</p>
 </div>
 
 <div id="wrap" style="display:none">
@@ -2687,10 +2713,10 @@ strong{font-weight:900}
           <div class="more-item">
             <div class="more-item-main">
               <strong>App Lock</strong>
-              <span id="appLockText">UI only. Turn this on to mark that app lock should be enabled on this device later.</span>
+              <span id="appLockText">Reminder only. This does not add a PIN, biometric lock, or encryption.</span>
             </div>
             <label class="toggle">
-              <input type="checkbox" id="appLockToggle" onchange="toggleAppLockUi(this)"/>
+              <input type="checkbox" id="appLockToggle"/>
               <span class="toggle-slider"></span>
             </label>
           </div>
@@ -2756,7 +2782,7 @@ strong{font-weight:900}
   </div>
   <button type="button" id="updateReloadBtn">Refresh</button>
 </div>
-<input type="file" id="restoreBackupInput" accept=".json,.bk" style="display:none" onchange="handleRestoreBackup(event)"/>
+<input type="file" id="restoreBackupInput" accept=".json,.bk" style="display:none"/>
 
 <div class="overlay" id="settMod" onclick="if(event.target===this)closeSett()">
   <div class="sheet">
@@ -2809,6 +2835,8 @@ strong{font-weight:900}
 
 <script src="local-store.js"></script>
 <script src="ui-shell.js"></script>
+<script src="app-state.js"></script>
+<script src="backup-restore.js"></script>
 <script>
 const APP_VERSION='2.1.1';
 const STORES=['Dmart','RelianceMart','Local Shop','Other'];
@@ -2988,12 +3016,7 @@ let iRows=[],histSF='All',insightCategoryFilter=null,sessionCategoryFilter=null;
 let autoT=null,editingId=null,editingEntry=null,editingDraft=null;
 let serverVersion=0;
 const PROFILE_NAME_KEY='gt_profile_name';
-const LAST_SYNC_AT_KEY='gt_last_sync_at';
 const LAST_BACKUP_AT_KEY='gt_last_backup_at';
-const PENDING_SYNC_COUNT_KEY='gt_pending_sync_count';
-const SYNC_CODE_KEY='gt_sync_code';
-const SYNC_ENABLED_KEY='gt_sync_enabled';
-const SYNC_PENDING_KEY='gt_sync_pending';
 const ONBOARDED_KEY='gt_onboarded';
 let dashRange='month';
 // Use a single Date snapshot to avoid midnight-boundary race on cursor init
@@ -3011,7 +3034,7 @@ function _buildPriceCache(){
     .forEach(it=>{const k=String(it.name||'').toLowerCase();if(k&&!_priceCache[k])_priceCache[k]=it;});
 }
 
-const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2);
+const uid=()=>window.crypto?.randomUUID?.()||Date.now().toString(36)+Math.random().toString(36).slice(2);
 const fmt=n=>'₹'+Math.round(n||0).toLocaleString('en-IN');
 const STANDARD_ENTRY_FIELDS=['date','amount','payMode','notes'];
 const FIELD_DEFS={
@@ -3182,6 +3205,20 @@ function entryMetaPills(...items){
   return `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:7px">${
     items.filter(item=>item&&item.text).map(item=>tag(item.type,item.text)).join('')
   }</div>`;
+}
+function paymentIconName(value){
+  const icons={
+    Cash:'payments',
+    UPI:'qr_code',
+    'Debit Card':'credit_card',
+    'Credit Card':'credit_card',
+    'Rupay Credit UPI':'payment_card'
+  };
+  return icons[value]||'payments';
+}
+function paymentMetaLine(value){
+  const payMode=value||'NA';
+  return `<span style="display:inline-flex;align-items:center" title="${safeText(payMode)}" aria-label="${safeText(payMode)}">${coloredIconBadge(paymentIconName(payMode),{label:payMode,size:'xs'})}</span>`;
 }
 function transactionSummary(type,record){
   if(type==='purchase'){
@@ -3367,334 +3404,17 @@ function recentIcon(p){
 }
 
 
-function loadLocalState(){
-  const state=window.MoneyNestLocalStore.loadLocalState({curM,uniq});
-  purchases=state.purchases;
-  expenses=state.expenses;
-  incomes=state.incomes;
-  transfers=state.transfers;
-  monthlyBudgets=state.monthlyBudgets;
-  catBudgetsByMonth=state.catBudgetsByMonth;
-  deletedIds=state.deletedIds;
-  categoryLabels=state.categoryLabels;
-}
-function normalizeCloudState(data){
-  return window.MoneyNestLocalStore.normalizeCloudState(data,{curM,uniq});
-}
-function defaultCloudState(){
-  return window.MoneyNestLocalStore.defaultCloudState();
-}
-function applyCloudState(data){
-  const state=normalizeCloudState(data);
-  purchases=state.purchases;
-  expenses=state.expenses;
-  incomes=state.incomes;
-  transfers=state.transfers;
-  monthlyBudgets=state.monthlyBudgets;
-  catBudgetsByMonth=state.catBudgetsByMonth;
-  deletedIds=state.deletedIds;
-  categoryLabels=state.categoryLabels;
-  normalizePurchaseStores();
-  serverVersion=state.version;
-  saveLocal();
-  _buildPriceCache();
-  renderDash();
-  renderHist();
-}
-function saveLocal(){
-  deletedIds=window.MoneyNestLocalStore.saveLocalState({
-    purchases,
-    expenses,
-    incomes,
-    transfers,
-    monthlyBudgets,
-    catBudgetsByMonth,
-    deletedIds,
-    categoryLabels
-  },{uniq});
-  serverVersion=Math.max(0,Number(serverVersion)||0);
-}
-function cleanSyncCode(value){return String(value||'default').trim().toLowerCase().replace(/[^a-z0-9_-]/g,'-').replace(/-{2,}/g,'-').replace(/^-+|-+$/g,'')||'default';}
-function getSyncCode(){return 'local-only';}
-function setSyncCode(value){SCODE=cleanSyncCode(value);DKEY='gt_local';}
-function isSyncEnabled(){return false;}
-function setSyncEnabled(enabled){return false;}
-function getPendingSyncState(){
-  return {upserts:{},deletes:[]};
-}
-function savePendingSyncState(state){
-  setPendingSyncCount(0);
-}
-function getPendingSyncCount(){
-  return 0;
-}
-function getProfileName(){
-  return (localStorage.getItem(PROFILE_NAME_KEY) || 'Varun').trim() || 'Varun';
-}
-function setProfileName(name){
-  localStorage.setItem(PROFILE_NAME_KEY, (name || 'Varun').trim() || 'Varun');
-}
-function renderProfileName(){
-  const greetingNameEl=document.getElementById('homeGreetingName');
-  if(greetingNameEl) greetingNameEl.textContent=getProfileName();
-}
-function editProfileName(){
-  const nextName=window.prompt('Enter your name', getProfileName());
-  if(nextName===null) return;
-  const cleaned=nextName.trim();
-  if(!cleaned){
-    toast('Name cannot be empty');
-    return;
-  }
-  setProfileName(cleaned);
-  renderProfileName();
-  toast('Name updated');
-}
-function setPendingSyncCount(count){
-  return 0;
-}
-function getLastSyncedAt(){
-  return 0;
-}
-function setLastSyncedAt(timestamp){
-  return 0;
-}
-function formatSyncTime(timestamp){
-  return 'Offline';
-}
-function getLastBackupAt(){
-  return Number(localStorage.getItem(LAST_BACKUP_AT_KEY) || '0') || 0;
-}
-function setLastBackupAt(timestamp){
-  localStorage.setItem(LAST_BACKUP_AT_KEY, String(Number(timestamp) || Date.now()));
-}
-function formatBackupTime(timestamp){
-  if(!timestamp) return 'Never';
-  const date=new Date(timestamp);
-  return `${date.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})} at ${date.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false})}`;
-}
-function getBackupStamp(date=new Date()){
-  return `${date.getFullYear()}${String(date.getMonth()+1).padStart(2,'0')}${String(date.getDate()).padStart(2,'0')}T${String(date.getHours()).padStart(2,'0')}${String(date.getMinutes()).padStart(2,'0')}${String(date.getSeconds()).padStart(2,'0')}`;
-}
-function updateBackupInfo(){
-  const backupInfoEl=document.getElementById('backupInfo');
-  if(!backupInfoEl) return;
-  const lastBackupAt=getLastBackupAt();
-  backupInfoEl.classList.remove('warn');
-  if(!lastBackupAt){
-    backupInfoEl.classList.add('warn');
-    backupInfoEl.textContent=hasAnyLocalData()
-      ?'Backup reminder: No backup exported yet. Download one now to protect your data.'
-      :'Last backup: Never';
-    return;
-  }
-  const ageDays=Math.floor((Date.now()-lastBackupAt)/(24*60*60*1000));
-  if(ageDays>=7){
-    backupInfoEl.classList.add('warn');
-    backupInfoEl.textContent=`Backup reminder: Last backup was ${ageDays} days ago. Export a fresh backup.`;
-    return;
-  }
-  backupInfoEl.textContent=`Last backup: ${formatBackupTime(lastBackupAt)}`;
-}
-function hasAnyLocalData(){
-  return !!(
-    purchases.length||
-    expenses.length||
-    incomes.length||
-    transfers.length||
-    Object.keys(monthlyBudgets||{}).length||
-    Object.keys(catBudgetsByMonth||{}).length||
-    deletedIds.length
-  );
-}
-function getAllTransactionBuckets(){
-  return [
-    ['purchase',purchases],
-    ['expense',expenses],
-    ['income',incomes],
-    ['transfer',transfers]
-  ];
-}
-function eachTransaction(handler){
-  getAllTransactionBuckets().forEach(([type,list])=>list.forEach(item=>handler(type,item,list)));
-}
-function setTransactionSyncStatus(ids,status){
-  const idSet=new Set((ids||[]).filter(Boolean));
-  if(!idSet.size) return;
-  const mark=list=>list.map(item=>idSet.has(item.id)?{...item,syncStatus:status}:item);
-  purchases=mark(purchases);
-  expenses=mark(expenses);
-  incomes=mark(incomes);
-  transfers=mark(transfers);
-}
-function markAllTransactionsSynced(){
-  const mark=list=>list.map(item=>({...item,syncStatus:'synced'}));
-  purchases=mark(purchases);
-  expenses=mark(expenses);
-  incomes=mark(incomes);
-  transfers=mark(transfers);
-}
-function normalizeRecordForSync(type,record){
-  const stamp=Date.now();
+function normalizeRecord(type,record){
   return {
     ...record,
-    updatedAt:record?.updatedAt||stamp,
-    syncStatus:'synced'
+    updatedAt:record?.updatedAt||Date.now()
   };
 }
 function queuePendingUpsert(type,record){
-  return normalizeRecordForSync(type,{...record,updatedAt:Date.now(),syncStatus:'synced'});
+  return normalizeRecord(type,{...record,updatedAt:Date.now()});
 }
-function queuePendingDelete(id){
-  return;
-}
-function clearPendingSyncState(){
-  return;
-}
-function persistLocalChange(pendingIncrement=0){
+function persistLocalChange(){
   saveLocal();
-}
-function mergeRecordsById(localList,cloudList){
-  const map=new Map();
-  [...localList,...cloudList].forEach(item=>{
-    if(!item?.id) return;
-    const existing=map.get(item.id);
-    if(!existing){
-      map.set(item.id,item);
-      return;
-    }
-    const existingStamp=Number(existing.updatedAt||new Date(existing.datetime||0).getTime()||0);
-    const nextStamp=Number(item.updatedAt||new Date(item.datetime||0).getTime()||0);
-    map.set(item.id,nextStamp>=existingStamp?item:existing);
-  });
-  return Array.from(map.values());
-}
-function stableStringify(value){
-  if(Array.isArray(value)){
-    return `[${value.map(stableStringify).join(',')}]`;
-  }
-  if(value && typeof value==='object'){
-    return `{${Object.keys(value).sort().map(key=>`${JSON.stringify(key)}:${stableStringify(value[key])}`).join(',')}}`;
-  }
-  return JSON.stringify(value ?? null);
-}
-function normalizeMergeValue(value){
-  if(value===undefined || value===null) return '';
-  if(typeof value==='number') return String(value);
-  return String(value).trim().toLowerCase();
-}
-function getRecordFingerprint(type, record){
-  if(!record) return '';
-  if(type==='purchase'){
-    const items=(record.items||[]).map(item=>({
-      name:normalizeMergeValue(item.name),
-      category:normalizeMergeValue(item.category),
-      qty:normalizeMergeValue(item.qty),
-      unit:normalizeMergeValue(item.unit || 'pcs'),
-      price:normalizeMergeValue(item.price)
-    })).sort((a,b)=>stableStringify(a).localeCompare(stableStringify(b)));
-    return stableStringify({
-      type,
-      datetime:normalizeMergeValue(record.datetime),
-      store:normalizeMergeValue(record.store),
-      payMode:normalizeMergeValue(record.payMode),
-      total:normalizeMergeValue(record.total),
-      notes:normalizeMergeValue(record.notes),
-      sourceCategory:normalizeMergeValue(record.sourceCategory),
-      sourceSubcategory:normalizeMergeValue(record.sourceSubcategory),
-      sourceLeaf:normalizeMergeValue(record.sourceLeaf),
-      items
-    });
-  }
-  if(type==='expense'){
-    return stableStringify({
-      type,
-      datetime:normalizeMergeValue(record.datetime),
-      category:normalizeMergeValue(record.category),
-      subcategory:normalizeMergeValue(record.subcategory),
-      leaf:normalizeMergeValue(record.leaf),
-      amount:normalizeMergeValue(record.amount),
-      payMode:normalizeMergeValue(record.payMode),
-      notes:normalizeMergeValue(record.notes),
-      liters:normalizeMergeValue(record.liters),
-      odometer:normalizeMergeValue(record.odometer),
-      hospital:normalizeMergeValue(record.hospital),
-      medicine:normalizeMergeValue(record.medicine),
-      warranty:normalizeMergeValue(record.warranty),
-      recipient:normalizeMergeValue(record.recipient),
-      customName:normalizeMergeValue(record.customName)
-    });
-  }
-  if(type==='income'){
-    return stableStringify({
-      type,
-      datetime:normalizeMergeValue(record.datetime),
-      category:normalizeMergeValue(record.category),
-      amount:normalizeMergeValue(record.amount),
-      notes:normalizeMergeValue(record.notes)
-    });
-  }
-  if(type==='transfer'){
-    return stableStringify({
-      type,
-      datetime:normalizeMergeValue(record.datetime),
-      amount:normalizeMergeValue(record.amount),
-      from:normalizeMergeValue(record.from),
-      to:normalizeMergeValue(record.to),
-      direction:normalizeMergeValue(record.direction),
-      personName:normalizeMergeValue(record.personName),
-      notes:normalizeMergeValue(record.notes)
-    });
-  }
-  return stableStringify(record);
-}
-function dedupeMergedRecords(type, records){
-  const byFingerprint=new Map();
-  records.forEach(record=>{
-    if(!record?.id) return;
-    const fingerprint=getRecordFingerprint(type,record);
-    const existing=byFingerprint.get(fingerprint);
-    if(!existing){
-      byFingerprint.set(fingerprint,record);
-      return;
-    }
-    const existingStamp=Number(existing.updatedAt||new Date(existing.datetime||0).getTime()||0);
-    const nextStamp=Number(record.updatedAt||new Date(record.datetime||0).getTime()||0);
-    byFingerprint.set(fingerprint,nextStamp>=existingStamp?record:existing);
-  });
-  return Array.from(byFingerprint.values());
-}
-function mergeCloudState(localState,cloudState){
-  const merged=defaultCloudState();
-  merged.purchases=dedupeMergedRecords('purchase',mergeRecordsById(localState.purchases||[],cloudState.purchases||[]));
-  merged.expenses=dedupeMergedRecords('expense',mergeRecordsById(localState.expenses||[],cloudState.expenses||[]));
-  merged.incomes=dedupeMergedRecords('income',mergeRecordsById(localState.incomes||[],cloudState.incomes||[]));
-  merged.transfers=dedupeMergedRecords('transfer',mergeRecordsById(localState.transfers||[],cloudState.transfers||[]));
-  merged.monthlyBudgets={...(cloudState.monthlyBudgets||{}),...(localState.monthlyBudgets||{})};
-  merged.catBudgetsByMonth={...(cloudState.catBudgetsByMonth||{}),...(localState.catBudgetsByMonth||{})};
-  merged.deletedIds=uniq([...(cloudState.deletedIds||[]),...(localState.deletedIds||[])]);
-  merged.categoryLabels={...(cloudState.categoryLabels||{}),...(localState.categoryLabels||{})};
-  merged.version=Math.max(Number(localState.version)||0,Number(cloudState.version)||0);
-  const deletedSet=new Set(merged.deletedIds);
-  ['purchases','expenses','incomes','transfers'].forEach(key=>{
-    merged[key]=merged[key].filter(item=>!deletedSet.has(item.id));
-  });
-  return merged;
-}
-function captureLocalState(){
-  return normalizeCloudState({purchases,expenses,incomes,transfers,monthlyBudgets,catBudgetsByMonth,deletedIds,categoryLabels,version:serverVersion});
-}
-function hasRemoteData(d){
-  return !!(
-    (d.version||0)>0||
-    d.purchases.length||
-    d.expenses.length||
-    d.incomes.length||
-    d.transfers.length||
-    Object.keys(d.monthlyBudgets||{}).length||
-    Object.keys(d.catBudgetsByMonth||{}).length||
-    d.deletedIds.length
-  );
 }
 function refreshAllViews(){
   _buildPriceCache();
@@ -3704,15 +3424,6 @@ function refreshAllViews(){
   renderSessions();
   renderCalendarView();
   renderIns();
-}
-async function push(){
-  saveLocal();
-  return captureLocalState();
-}
-async function pull(){
-  loadLocalState();
-  _buildPriceCache();
-  refreshAllViews();
 }
 function completeSetup(){
   localStorage.setItem(ONBOARDED_KEY,'1');
@@ -3735,8 +3446,19 @@ function bindWelcomeButtons(){
     el.addEventListener('click',handler);
   });
 }
+function bindStaticEventHandlers(){
+  const appLockToggle=document.getElementById('appLockToggle');
+  if(appLockToggle && appLockToggle.dataset.bound!=='1'){
+    appLockToggle.dataset.bound='1';
+    appLockToggle.addEventListener('change',()=>toggleAppLockUi(appLockToggle));
+  }
+  const restoreBackupInput=document.getElementById('restoreBackupInput');
+  if(restoreBackupInput && restoreBackupInput.dataset.bound!=='1'){
+    restoreBackupInput.dataset.bound='1';
+    restoreBackupInput.addEventListener('change',handleRestoreBackup);
+  }
+}
 function startFreshSetup(){
-  clearPendingSyncState();
   saveLocal();
   completeSetup();
   toast('Started fresh on this device');
@@ -4111,7 +3833,7 @@ async function saveCatBudgets(){
   setCategoryBudgetsForMonth(budgetCursor,next);
   closeCatBudget();
   renderDash();
-  await push();
+  saveLocal();
   toast('Category budgets saved');
 }
 
@@ -4209,12 +3931,12 @@ function renderExpDrillDown(){
 
   // Breadcrumb
   const crumbs=[];
-  if(l1) crumbs.push(`<span onclick="expState.l2=null;expState.l3=null;document.getElementById('expForm').style.display='none';renderExpDrillDown()" style="cursor:pointer;color:var(--accent)">${coloredIconBadge(EXPENSE_TREE[l1].icon,{label:l1,size:'sm'})} ${safeText(getCategoryLabel(l1))}</span>`);
+  if(l1) crumbs.push(`<span class="add-breadcrumb-item clickable" onclick="expState.l2=null;expState.l3=null;document.getElementById('expForm').style.display='none';renderExpDrillDown()">${coloredIconBadge(EXPENSE_TREE[l1].icon,{label:l1,size:'sm'})}<span>${safeText(getCategoryLabel(l1))}</span></span>`);
   if(l2){
     const n2=EXPENSE_TREE[l1].sub[l2];
-    crumbs.push(`<span style="color:#ccc"><span class="material-symbols-rounded">chevron_right</span></span><span onclick="expState.l3=null;document.getElementById('expForm').style.display='none';renderExpDrillDown()" style="cursor:pointer;color:var(--accent)">${coloredIconBadge(n2.icon,{label:l2,size:'sm'})} ${safeText(getCategoryLabel(l1,l2))}</span>`);
+    crumbs.push(`<span class="add-breadcrumb-sep"><span class="material-symbols-rounded">chevron_right</span></span><span class="add-breadcrumb-item clickable" onclick="expState.l3=null;document.getElementById('expForm').style.display='none';renderExpDrillDown()">${coloredIconBadge(n2.icon,{label:l2,size:'sm'})}<span>${safeText(getCategoryLabel(l1,l2))}</span></span>`);
   }
-  if(l3&&EXPENSE_TREE[l1]?.sub?.[l2]?.sub?.[l3]) crumbs.push(`<span style="color:#ccc"><span class="material-symbols-rounded">chevron_right</span></span><span style="color:var(--text)">${coloredIconBadge(EXPENSE_TREE[l1].sub[l2].sub[l3].icon,{label:l3,size:'sm'})} ${safeText(getCategoryLabel(l1,l2,l3))}</span>`);
+  if(l3&&EXPENSE_TREE[l1]?.sub?.[l2]?.sub?.[l3]) crumbs.push(`<span class="add-breadcrumb-sep"><span class="material-symbols-rounded">chevron_right</span></span><span class="add-breadcrumb-item current">${coloredIconBadge(EXPENSE_TREE[l1].sub[l2].sub[l3].icon,{label:l3,size:'sm'})}<span>${safeText(getCategoryLabel(l1,l2,l3))}</span></span>`);
   bc.style.display=crumbs.length?'flex':'none';
   bc.innerHTML=crumbs.join('');
   resetBtn.style.display=l1?'block':'none';
@@ -5030,7 +4752,6 @@ async function saveUnifiedEntry(){
 async function delExpense(id){
   if(!confirm('Delete this expense?'))return;
   expenses=expenses.filter(e=>e.id!==id);
-  queuePendingDelete(id);
   deletedIds=uniq(deletedIds.concat(id));
   if(editingEntry?.type==='expense'&&editingEntry.id===id) resetExpPath();
   renderDash();
@@ -5042,7 +4763,6 @@ async function delExpense(id){
 async function delIncome(id){
   if(!confirm('Delete this income entry?'))return;
   incomes=incomes.filter(i=>i.id!==id);
-  queuePendingDelete(id);
   deletedIds=uniq(deletedIds.concat(id));
   if(editingEntry?.type==='income'&&editingEntry.id===id) resetExpPath();
   renderDash();
@@ -5053,7 +4773,6 @@ async function delIncome(id){
 async function delTransfer(id){
   if(!confirm('Delete this transfer entry?'))return;
   transfers=transfers.filter(t=>t.id!==id);
-  queuePendingDelete(id);
   deletedIds=uniq(deletedIds.concat(id));
   if(editingEntry?.type==='transfer'&&editingEntry.id===id) resetExpPath();
   renderDash();
@@ -5072,12 +4791,11 @@ function addRow(n='',cat='Vegetables',qty='1',unit='pcs',price=''){
   r.innerHTML=`
   <div style="display:grid;grid-template-columns:1fr auto;gap:5px;margin-bottom:7px;align-items:start">
     <div class="acw"><input type="text" id="n-${id}" value="${safeText(n)}" placeholder="Item name"
-      oninput="rAC('${id}')" onfocus="rAC('${id}')" autocomplete="off"
-      onblur="autoFillPrice('${id}')"
+      autocomplete="off"
       style="width:100%;border:1px solid #dfe6df;border-radius:14px;padding:10px 11px;font-size:14px;font-family:inherit;outline:none;background:#fff"/>
     <div class="acl" id="ac-${id}" style="display:none"></div>
     <div class="autofill-hint" id="af-${id}"></div></div>
-    <button onclick="removeRow('${id}')" style="background:none;border:none;color:#c2c9ce;font-size:22px;cursor:pointer;padding:3px 7px;line-height:1"><span class="material-symbols-rounded">close</span></button>
+    <button type="button" class="row-remove-btn" data-row-id="${safeText(id)}" style="background:none;border:none;color:#c2c9ce;font-size:22px;cursor:pointer;padding:3px 7px;line-height:1"><span class="material-symbols-rounded">close</span></button>
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px;margin-bottom:4px">
     <div>
@@ -5088,25 +4806,45 @@ function addRow(n='',cat='Vegetables',qty='1',unit='pcs',price=''){
     </div>
     <div>
       <div class="flbl">Qty</div>
-      <input type="number" id="q-${id}" value="${qty}" min="0" step="0.1" oninput="calcT();updUP('${id}')"
+      <input type="number" id="q-${id}" value="${qty}" min="0" step="0.1"
         style="width:100%;border:1px solid #dfe6df;border-radius:12px;padding:9px 10px;font-size:14px;font-family:inherit;outline:none;background:#fff"/>
     </div>
     <div>
       <div class="flbl">Unit</div>
-      <select id="u-${id}" style="width:100%;border:1px solid #dfe6df;border-radius:12px;padding:9px 5px;font-size:12px;font-family:inherit;outline:none;background:#fff"
-        onchange="updUP('${id}')">
+      <select id="u-${id}" style="width:100%;border:1px solid #dfe6df;border-radius:12px;padding:9px 5px;font-size:12px;font-family:inherit;outline:none;background:#fff">
         ${UNITS.map(u=>`<option${u===unit?' selected':''}>${u}</option>`).join('')}
       </select>
     </div>
     <div>
-      <div class="flbl">Price ₹</div>
+      <div class="flbl">Price ?</div>
       <input type="number" id="p-${id}" value="${price}" min="0" step="0.5" placeholder="0"
-        oninput="calcT();updUP('${id}')"
         style="width:100%;border:1px solid #dfe6df;border-radius:12px;padding:9px 10px;font-size:14px;font-family:inherit;outline:none;background:#fff"/>
     </div>
   </div>
   <div class="uphint" id="up-${id}"></div>`;
   w.appendChild(r);
+  const nameInput=document.getElementById('n-'+id);
+  const qtyInput=document.getElementById('q-'+id);
+  const unitInput=document.getElementById('u-'+id);
+  const priceInput=document.getElementById('p-'+id);
+  const removeBtn=r.querySelector('.row-remove-btn');
+  if(nameInput){
+    nameInput.addEventListener('input',()=>rAC(id));
+    nameInput.addEventListener('focus',()=>rAC(id));
+    nameInput.addEventListener('blur',()=>autoFillPrice(id));
+  }
+  if(qtyInput){
+    qtyInput.addEventListener('input',()=>{calcT();updUP(id);});
+  }
+  if(unitInput){
+    unitInput.addEventListener('change',()=>updUP(id));
+  }
+  if(priceInput){
+    priceInput.addEventListener('input',()=>{calcT();updUP(id);});
+  }
+  if(removeBtn){
+    removeBtn.addEventListener('click',()=>removeRow(id));
+  }
   if(price) updUP(id);
   calcT();
 }
@@ -5314,6 +5052,26 @@ function startEdit(id,type='purchase'){
   toast('Editing entry');
 }
 
+function renderAutocompleteItems(container, items, onSelect){
+  container.replaceChildren();
+  items.forEach(item=>{
+    const option=document.createElement('div');
+    option.className='aci';
+    option.textContent=item.label;
+    option.addEventListener('mousedown',event=>{
+      event.preventDefault();
+      onSelect(item.value);
+    });
+    if(item.subLabel){
+      const sub=document.createElement('div');
+      sub.className='sub';
+      sub.textContent=item.subLabel;
+      option.appendChild(sub);
+    }
+    container.appendChild(option);
+  });
+  container.style.display=items.length?'block':'none';
+}
 function rAC(id){
   const inp=document.getElementById('n-'+id);
   const cat=document.getElementById('c-'+id)?.value||'Vegetables';
@@ -5322,23 +5080,27 @@ function rAC(id){
   const hits=q?pool.filter(x=>x.toLowerCase().includes(q)).slice(0,6):[];
   const l=document.getElementById('ac-'+id);
   if(!hits.length){l.style.display='none';return;}
-  l.innerHTML=hits.map(x=>{
+  renderAutocompleteItems(l,hits.map(x=>{
     const lp=lastPrice(x);
-    const sub=lp?`Last: ${fmt(parseFloat(lp.price))} at ${safeText(lp.store)}`:'';
-    return `<div class="aci" onmousedown="(function(){document.getElementById('n-${id}').value=${JSON.stringify(x)};document.getElementById('ac-${id}').style.display='none';autoFillPrice('${id}');})()">${safeText(x)}${sub?`<div class="sub">${sub}</div>`:''}</div>`;
-  }).join('');
-  l.style.display='block';
+    return {
+      label:x,
+      value:x,
+      subLabel:lp?`Last: ${fmt(parseFloat(lp.price))} at ${lp.store}`:''
+    };
+  }),selected=>{
+    const nameInput=document.getElementById('n-'+id);
+    if(nameInput) nameInput.value=selected;
+    l.style.display='none';
+    autoFillPrice(id);
+  });
 }
 function iAC(){
   const q=document.getElementById('iSrch').value.toLowerCase();
-  // Fix #24: build names set from current purchases instead of rebuilding every keystroke
   const names=[...new Set(purchases.flatMap(p=>(p.items||[]).map(it=>it.name)))];
   const hits=q?names.filter(x=>x.toLowerCase().includes(q)).slice(0,6):[];
   const l=document.getElementById('iACl');
   if(!hits.length){l.style.display='none';return;}
-  // Fix #5: escape item name in innerHTML
-  l.innerHTML=hits.map(x=>`<div class="aci" onmousedown="loadIns('${safeText(x)}')">${safeText(x)}</div>`).join('');
-  l.style.display='block';
+  renderAutocompleteItems(l,hits.map(x=>({label:x,value:x})),loadIns);
 }
 document.addEventListener('click',e=>{
   document.querySelectorAll('.acl').forEach(l=>{
@@ -5539,7 +5301,7 @@ function renderSessions(){
             <span style="display:inline-flex;flex:0 0 auto">${coloredIconBadge(purchaseIcon,{label:leafLabel||subcategoryLabel||categoryLabel,size:'sm'})}</span>
             <div style="min-width:0">
               <div style="font-size:14px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(leafLabel)}</div>
-              <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(transactionSummary('purchase',p))}</div>
+              <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${paymentMetaLine(p.payMode)}</div>
             </div>
           </div>
           <div style="text-align:right;flex:0 0 auto">
@@ -5559,7 +5321,7 @@ function renderSessions(){
             <span style="display:inline-flex;flex:0 0 auto">${coloredIconBadge(icon,{label:titleLabel,size:'sm'})}</span>
             <div style="min-width:0">
               <div style="font-size:14px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(titleLabel)}</div>
-              <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(transactionSummary('expense',e))}</div>
+              <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${paymentMetaLine(e.payMode)}</div>
             </div>
           </div>
           <div style="text-align:right;flex:0 0 auto">
@@ -5794,8 +5556,18 @@ const ICON_FG={
   dashboard:'#16A34A',settings:'#64748B',qr_code:'#3c0d8c',payment_card:'#BE123C',
   arrow_downward:'#16A34A',arrow_upward:'#DC2626',store:'#B45309'
 };
+const OPTION_ICON_COLORS={
+  Account:{bg:'#eef4ff',fg:'#2563eb'},
+  Cash:{bg:'#fff7ed',fg:'#ea580c'},
+  UPI:{bg:'#f5f3ff',fg:'#7c3aed'},
+  'Credit Card':{bg:'#ecfdf5',fg:'#059669'},
+  'Rupay Credit UPI':{bg:'#eff6ff',fg:'#1d4ed8'},
+  Sent:{bg:'#fff1f1',fg:'#dc2626'},
+  Receive:{bg:'#eaf7ef',fg:'#16a34a'}
+};
 function getIconColors(key, index=0){
   const k=String(key||'').trim();
+  if(OPTION_ICON_COLORS[k]) return OPTION_ICON_COLORS[k];
   if(CTAG_BG[k]) return {bg:CTAG_BG[k], fg:CCOLOR[k]||INSIGHT_COLORS[k]||getInsightColor(k,null,index)};
   if(INSIGHT_COLORS[k]) return {bg:tintHex(INSIGHT_COLORS[k]), fg:INSIGHT_COLORS[k]};
   if(ICON_FG[k]) return {bg:tintHex(ICON_FG[k]), fg:ICON_FG[k]};
@@ -6124,7 +5896,7 @@ function renderHist(){
               <span style="display:inline-flex;flex:0 0 auto">${coloredIconBadge(purchaseIcon,{label:leafLabel||subcategoryLabel||categoryLabel,size:'sm'})}</span>
               <div style="min-width:0">
                 <div style="font-size:14px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(leafLabel)}</div>
-                <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(transactionSummary('purchase',p))}</div>
+                <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${paymentMetaLine(p.payMode)}</div>
               </div>
             </div>
             <div style="text-align:right">
@@ -6144,7 +5916,7 @@ function renderHist(){
             <span style="display:inline-flex;flex:0 0 auto">${coloredIconBadge(icon,{label:titleLabel,size:'sm'})}</span>
             <div style="min-width:0">
               <div style="font-size:14px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(titleLabel)}</div>
-              <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(transactionSummary('expense',e))}</div>
+              <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${paymentMetaLine(e.payMode)}</div>
             </div>
           </div>
           <div style="text-align:right">
@@ -6161,7 +5933,6 @@ async function delPurch(id){
   if(!confirm('Delete this purchase?'))return;
   purchases=purchases.filter(p=>p.id!==id);
   if(editingEntry?.type==='purchase'&&editingEntry.id===id) resetExpPath();
-  queuePendingDelete(id);
   deletedIds=uniq(deletedIds.concat(id));
   _buildPriceCache();
   renderDash();
@@ -6285,99 +6056,53 @@ function renderIns(){
   if(appLockToggle) appLockToggle.checked=appLockEnabled;
   if(appLockText){
     appLockText.textContent=appLockEnabled
-      ?'UI only. App lock is marked as enabled for this device.'
-      :'UI only. Turn this on to mark that app lock should be enabled on this device later.';
+      ?'Reminder only. Marked on for this device, but no PIN, biometric lock, or encryption is enabled.'
+      :'Reminder only. This does not add a PIN, biometric lock, or encryption.';
   }
 }
 
-function buildBackupSnapshot(timestamp=new Date()){
-  return {
-    app:'MoneyNest',
-    exportedAt:timestamp.toISOString(),
-    version:serverVersion||0,
-    purchases,
-    expenses,
-    incomes,
-    transfers,
-    monthlyBudgets,
-    catBudgetsByMonth,
-    deletedIds:uniq(deletedIds),
-    categoryLabels
-  };
-}
-function downloadBackupFile({timestamp=new Date(),silent=false,reason='manual'}={}){
-  const snapshot=buildBackupSnapshot(timestamp);
-  const blob=new Blob([JSON.stringify(snapshot,null,2)],{type:'application/json;charset=utf-8'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download=`moneynest-backup-${getBackupStamp(timestamp)}.json`;
-  a.click();
-  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
-  setLastBackupAt(timestamp.getTime());
-  updateBackupInfo();
-  if(!silent){
-    toast('Backup completed');
-  }
-}
-function exportBackupJson(){
-  downloadBackupFile({timestamp:new Date(),reason:'manual'});
-}
 
-function triggerRestoreBackup(){
-  document.getElementById('restoreBackupInput')?.click();
+function isPlainObject(value){
+  return !!value && typeof value==='object' && !Array.isArray(value);
 }
-
-async function handleRestoreBackup(event){
-  const file=event.target.files?.[0];
-  if(!file) return;
-  try{
-    const text=await file.text();
-    const parsed=JSON.parse(text);
-    if(!parsed || typeof parsed!=='object'){
-      toast('Invalid backup file');
-      return;
-    }
-    applyCloudState(parsed);
-    markAllTransactionsSynced();
-    clearPendingSyncState();
-    saveLocal();
-    refreshAllViews();
-    updateHdr();
-    if(localStorage.getItem(ONBOARDED_KEY)==='pending_restore'){
-      localStorage.setItem(ONBOARDED_KEY,'1');
-      completeSetup();
-    }
-    toast('Backup restored locally');
-  }catch(err){
-    console.warn(err);
-    toast('Backup restore failed');
-  }finally{
-    event.target.value='';
-  }
+function isFiniteNumber(value){
+  return typeof value==='number' && Number.isFinite(value);
 }
-
-async function runSyncNow(skipToast=false){
-  updateHdr();
-  renderIns();
-  if(!skipToast) toast('Sync is removed. MoneyNest now works fully offline.');
+function isValidDateValue(value){
+  return typeof value==='string' && !Number.isNaN(Date.parse(value));
 }
-async function toggleSyncEnabled(toggle){
-  if(toggle) toggle.checked=false;
-  updateHdr();
-  renderIns();
-  toast('Sync is removed. MoneyNest now works fully offline.');
+function isValidVersionValue(value){
+  return value===undefined || value===null || Number.isFinite(Number(value));
 }
-function changeSyncCode(){
-  toast('Sync is removed. MoneyNest now works fully offline.');
+function validateBackupEntryArray(list, requiredFields){
+  if(!Array.isArray(list)) return false;
+  return list.every(item=>{
+    if(!isPlainObject(item) || typeof item.id!=='string') return false;
+    return requiredFields.every(field=>field(item));
+  });
+}
+function validateBackupItems(items){
+  if(items===undefined) return true;
+  if(!Array.isArray(items)) return false;
+  return items.every(item=>isPlainObject(item) && typeof item.name==='string');
+}
+function validateStringMap(value){
+  if(!isPlainObject(value)) return false;
+  return Object.values(value).every(entry=>typeof entry==='string');
+}
+function validateNumericMap(value){
+  if(!isPlainObject(value)) return false;
+  return Object.values(value).every(entry=>Number.isFinite(Number(entry)));
+}
+function validateNestedNumericMap(value){
+  if(!isPlainObject(value)) return false;
+  return Object.values(value).every(monthMap=>validateNumericMap(monthMap));
 }
 
 Object.assign(window,{
   startFreshSetup,
   triggerWelcomeRestore,
-  handleRestoreBackup,
-  toggleSyncEnabled,
-  runSyncNow,
-  changeSyncCode
+  handleRestoreBackup
 });
 
 function toggleAppLockUi(toggle){
@@ -6492,7 +6217,6 @@ async function deleteEntriesForPredicate(predicate, label){
   expenses=expenses.filter(e=>!expenseIds.includes(e.id));
   incomes=incomes.filter(i=>!incomeIds.includes(i.id));
   transfers=transfers.filter(t=>!transferIds.includes(t.id));
-  [...purchaseIds,...expenseIds,...incomeIds,...transferIds].forEach(id=>queuePendingDelete(id));
   deletedIds=uniq(deletedIds.concat(purchaseIds,expenseIds,incomeIds,transferIds));
   if(editingEntry&&(
     (editingEntry.type==='purchase'&&purchaseIds.includes(editingEntry.id))||
@@ -6678,12 +6402,13 @@ function openSett(){return window.MoneyNestUI.openSett();}
 function closeSett(){return window.MoneyNestUI.closeSett();}
 function resetApp(){
   if(!confirm('Clear all local MoneyNest data on this device?'))return;
-  ['gt_code','gt_dkey','gt_p','gt_e','gt_i','gt_t','gt_b','gt_cb','gt_bm','gt_cbm','gt_del','gt_cl',LAST_SYNC_AT_KEY,LAST_BACKUP_AT_KEY,PENDING_SYNC_COUNT_KEY,SYNC_CODE_KEY,SYNC_ENABLED_KEY,SYNC_PENDING_KEY,ONBOARDED_KEY].forEach(k=>localStorage.removeItem(k));
+  ['gt_p','gt_e','gt_i','gt_t','gt_b','gt_cb','gt_bm','gt_cbm','gt_del','gt_cl','gt_profile_name','gt_app_lock_ui',LAST_BACKUP_AT_KEY,ONBOARDED_KEY].forEach(k=>localStorage.removeItem(k));
   location.reload();
 }
 
 (function(){
   bindWelcomeButtons();
+  bindStaticEventHandlers();
   const hasLegacySession=!!(localStorage.getItem('gt_p')||localStorage.getItem('gt_e')||localStorage.getItem('gt_i')||localStorage.getItem('gt_t'));
   if(hasLegacySession&&localStorage.getItem(ONBOARDED_KEY)!=='1'){
     localStorage.setItem(ONBOARDED_KEY,'1');
@@ -6700,112 +6425,7 @@ function resetApp(){
   }
 })();
 </script>
-<script>
-if ("serviceWorker" in navigator && !location.hostname.includes("claudeusercontent.com")) {
-  let waitingServiceWorker=null;
-  const updateBanner=document.getElementById("updateBanner");
-  const updateReloadBtn=document.getElementById("updateReloadBtn");
-  const showUpdateBanner=(worker)=>{
-    waitingServiceWorker=worker;
-    if(updateBanner) updateBanner.classList.add("on");
-  };
-
-  let refreshingForUpdate=false;
-  let serviceWorkerRegistration=null;
-
-  navigator.serviceWorker.register("service-worker.js", { scope: "./" })
-    .then((registration) => {
-      serviceWorkerRegistration=registration;
-      if(registration.waiting) showUpdateBanner(registration.waiting);
-      registration.addEventListener("updatefound", () => {
-        const newWorker=registration.installing;
-        if(!newWorker) return;
-        newWorker.addEventListener("statechange", () => {
-          if(newWorker.state==="installed" && navigator.serviceWorker.controller){
-            showUpdateBanner(newWorker);
-          }
-        });
-      });
-    })
-    .catch((err) => console.warn("SW registration failed", err));
-
-  if(updateReloadBtn){
-    updateReloadBtn.addEventListener("click", async () => {
-      updateReloadBtn.disabled=true;
-      updateReloadBtn.textContent="Refreshing...";
-      try{
-        const registration=serviceWorkerRegistration || await navigator.serviceWorker.getRegistration();
-        if(registration) await registration.update();
-        const worker=waitingServiceWorker || registration?.waiting || registration?.installing;
-        if(worker){
-          worker.postMessage({type:"SKIP_WAITING"});
-          setTimeout(()=>location.reload(),1200);
-          return;
-        }
-        location.reload();
-      }catch(err){
-        console.warn("Update refresh failed",err);
-        location.reload();
-      }
-    });
-  }
-
-  navigator.serviceWorker.addEventListener("controllerchange", () => {
-    if(refreshingForUpdate) return;
-    refreshingForUpdate=true;
-    location.reload();
-  });
-}
-</script>
-<script>
-let deferredPrompt;
-const installBtn=document.getElementById("installBtn");
-const isStandalone=(typeof window.matchMedia==='function'&&window.matchMedia("(display-mode: standalone)").matches)||window.navigator.standalone===true;
-
-if(installBtn&&isStandalone){
-  installBtn.style.display="none";
-}
-
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  if(installBtn&&!isStandalone) installBtn.style.display = "block";
-});
-
-if(installBtn){
-  installBtn.addEventListener("click", () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(() => {
-        deferredPrompt = null;
-        installBtn.style.display="none";
-      });
-    }else if(isStandalone){
-      toast("App already installed");
-    }else{
-      toast("Install prompt is not available on this device yet");
-    }
-  });
-}
-
-window.addEventListener("appinstalled", () => {
-  deferredPrompt = null;
-  if(installBtn) installBtn.style.display = "none";
-  toast("MoneyNest installed");
-});
-
-window.addEventListener("online", () => {
-  setDot("on");
-  toast("Back online");
-});
-
-window.addEventListener("offline", () => {
-  setDot("off");
-  toast("You are offline");
-});
-
-setDot(navigator.onLine===false?"off":"on");
-</script>
+<script src="pwa.js"></script>
 </body>
 </html>
 

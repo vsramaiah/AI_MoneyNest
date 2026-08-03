@@ -1,200 +1,177 @@
-# 🪺 MoneyNest — Smart Grocery & Budget Tracker
+# MoneyNest - Smart Grocery and Budget Tracker
 
-> **Track every rupee on your daily run.** MoneyNest is a free Progressive Web App (PWA) that helps Indian families log grocery purchases, track household expenses, manage shopping lists, and stay within monthly budgets fully offline on one device.
+MoneyNest is a local-first Progressive Web App for tracking groceries, household expenses, income, transfers, shopping activity, budgets, and price history. It is designed for one device first: the app stores data in the browser on that device and works offline after the app shell is cached.
 
----
+## Install Or Run
 
-## 📱 Live Demo / Install
+Open the app in Chrome, Edge, or Safari and use the browser's install option:
 
-Open in Chrome or Safari and tap **Add to Home Screen** to install as a native-like app.
-
-```
-https://<your-github-username>.github.io/AI_MoneyNest/
+```text
+https://<github-username>.github.io/<repo-name>/
 ```
 
----
+For local testing:
+
+```powershell
+.\serve-moneynest.ps1
+```
+
+Or:
+
+```bash
+python -m http.server 8080
+```
+
+Then open:
+
+```text
+http://localhost:8080
+```
 
 ## Features
 
 | Feature | Description |
 |---|---|
-| Complete Transaction System | Add Income, Expense, and Transfer entries from one Add tab |
-| Grocery Tracker | Single-item and bulk grocery entry with store, payment, qty, unit, and price |
-| Monthly Budgeting | Budget is saved month by month instead of one global value |
-| Monthly Category Limits | Category budget limits are also saved month by month |
-| Home Cashflow Summary | Home now shows income-aware cashflow while excluding transfers from balance logic |
-| Past Sessions | Review transactions grouped by date |
-| Calendar View | Browse month-wise entries and delete all entries for a day or whole month |
-| Analysis | Category spend, payment breakdown, trends, and price tracking |
-| Local-Only Storage | Everything stays on this device unless you export a backup |
-| Offline Support | App shell cached with a service worker |
-| PWA Installable | Installable on Android, iPhone, Windows, and Mac |
+| Transactions | Add expense, income, and transfer entries |
+| Grocery Tracking | Record grocery items with store, payment mode, quantity, unit, and price |
+| Bulk Grocery Entry | Add multiple grocery rows quickly |
+| Monthly Budgets | Save budgets month by month |
+| Category Limits | Track category-level budget limits per month |
+| Cashflow Summary | Show income-aware balance while excluding transfers from balance logic |
+| History | Review transactions by date, month, and type |
+| Calendar | Browse entries by day or month and delete selected ranges |
+| Insights | View category spend, payment breakdowns, trends, and item price history |
+| Backup and Restore | Export or restore a local JSON backup |
+| Offline PWA | Cache the app shell with a service worker |
 | CSV Export | Export purchases, expenses, incomes, and transfers |
 
----
+## Offline And Privacy Model
 
-## 🗂️ Expense Categories
+- MoneyNest has no login, account, server sync, analytics, ads, or third-party tracking.
+- Data is saved in browser `localStorage` on the current device.
+- Data leaves the device only when you export a backup file or manually share files.
+- Clearing browser site data, resetting the app, or uninstalling the PWA can remove local data.
+- Export a JSON backup regularly if the data matters.
 
-These are the top-level categories in the current Add tab, matching the `EXPENSE_TREE` structure in `moneynest-app.html`:
+## App Lock
+
+The current App Lock setting is only a reminder flag in the UI. It does not add a PIN, biometric lock, encryption, or operating-system-level protection. Use your device lock and browser profile protection for real access control.
+
+## Backup And Restore
+
+Backups are JSON files exported from the app. Restore now validates the backup shape before applying it, so malformed files are rejected instead of being applied directly.
+
+Recommended backup flow:
+
+1. Open **More**.
+2. Choose **Backup Now**.
+3. Store the downloaded JSON file somewhere safe.
+4. Use **Restore Backup** only with files exported from MoneyNest.
+
+## Expense Categories
+
+Top-level categories in the Add tab:
 
 ```text
-Bills            -> DTH · Electricity · Gas · Mobile Recharge · Water · WiFi
-Finance          -> Bank Charges (Account Fees, ATM Charges, Penalties, SMS Charges)
-                     · EMI (Credit Card EMI, Home Loan, Personal Loan, Vehicle Loan)
-                     · Investments (Bonds, Crypto, EPF, Fixed Deposits (FD), Gold, Mutual Funds, PPF, Stocks)
-                     · Savings (Emergency Fund, General Savings)
-Food & Drinks    -> Bakery · Beverages · Curry Point · Frozen · Fruits · Restaurant · Snacks · Street Food · Tiffin Center
-Groceries        -> Baby · Dairy · Dry Fruits · Household · Meat & Fish · Oils · Other · Pulses · Ready Mixes · Rice & Flour · Spices · Toiletries · Vegetables
-Health           -> Insurance (Health, Life) · Medical
-Home             -> Appliances · Cleaning Help · Decor · Furniture · Maintenance · Repairs
-Leisure          -> Entertainment · Snacks
-Lifestyle        -> Electronics · Gifts · Personal Care · Shopping
-Others           -> Custom · Misc
-Rent             -> (single entry, no sub-categories)
-Transport        -> Travel
-Vehicle          -> Fuel · Insurance · Parking · Repairs · Service · Toll · Washing
+Bills
+Finance
+Food & Drinks
+Groceries
+Health
+Home
+Leisure
+Lifestyle
+Others
+Rent
+Transport
+Vehicle
 ```
 
-> Note: Older backups created before v2.1.0 may still contain legacy category names such as `Essentials`, `Food & Dining`, `Cleaning Supplies`, or `Personal`. These are automatically remapped to the categories above when the app loads (see `normalizeCategoryName` / `normalizeGroceryCategoryName` in `moneynest-app.html`), so existing history stays intact even though the display names have changed.
+Older backups created before v2.1.0 may contain legacy category names such as `Essentials`, `Food & Dining`, `Cleaning Supplies`, or `Personal`. The app normalizes those names when loading older data.
 
 ## Income Categories
 
-- Salary
-- Business
-- Interest
-- Dividends
-- Gifts
-- Refunds
-- Rewards
-- Coupons
-
-## Transfer
-
-Transfer fields:
-- Date & Time
-- Amount
-- From
-- To
-- Sent / Receive
-- Person Name
-- Notes
-
-Transfer logic:
-- transfers are stored as transactions
-- transfers do not count as income or expense
-- transfers do not affect balance calculation on Home
-
-## Home Logic
-
-- Income increases balance
-- Expense decreases balance
-- Transfer does not affect balance
-- Budget cards remain expense-focused
-- Monthly budget and category budget limits are saved separately for each month  
----
-
-## 🚀 Getting Started
-
-### 1 — Clone / Download
-
-```bash
-git clone https://github.com/<your-username>/AI_MoneyNest.git
-cd AI_MoneyNest
+```text
+Salary
+Business
+Interest
+Dividends
+Gifts
+Refunds
+Rewards
+Coupons
 ```
 
-### 2 — Run Locally
+## Transfer Logic
 
-**Option A — PowerShell (Windows)**
-```powershell
-.\serve-moneynest.ps1
+- Transfers are stored as transaction records.
+- Transfers do not count as income or expense.
+- Transfers do not affect the Home balance calculation.
+
+## Project Structure
+
+```text
+AI_MoneyNest/
+|-- index.html              # PWA entry redirect
+|-- moneynest-app.html      # Main app layout, styles, and remaining feature logic
+|-- app-state.js            # Local state, profile, and backup status helpers
+|-- backup-restore.js       # Backup validation, export, and restore logic
+|-- local-store.js          # localStorage load/save/normalize helpers
+|-- ui-shell.js             # Tab navigation and modal open/close UI logic
+|-- pwa.js                  # Install prompt, online/offline events, and SW update flow
+|-- manifest.json           # PWA manifest, icons, screenshots, and shortcuts
+|-- service-worker.js       # Offline app-shell and runtime caching
+|-- offline.html            # Offline fallback page
+|-- serve-moneynest.ps1     # Local dev server for Windows PowerShell
+|-- screenshot-wide.svg     # PWA wide screenshot preview
+|-- screenshot-narrow.svg   # PWA mobile screenshot preview
+|-- icon.svg                # App icon
+|-- icon-maskable.svg       # Maskable SVG icon
+|-- icon-192.png            # 192px app icon
+|-- icon-512.png            # 512px app icon
+|-- icon-maskable.png       # Maskable PNG icon
+|-- apple-touch-icon.png    # iOS home screen icon
+`-- .nojekyll               # Disables Jekyll on GitHub Pages
 ```
 
-**Option B — Python**
-```bash
-python -m http.server 8080
-# Open http://localhost:8080
-```
+## Tech Stack
 
-**Option C — VS Code Live Server**
-Install the *Live Server* extension and click **Go Live**.
+| Layer | Technology |
+|---|---|
+| Frontend | Vanilla HTML, CSS, and JavaScript |
+| Storage | Browser `localStorage` |
+| Offline | Service Worker and Cache API |
+| PWA | Web App Manifest and install prompt |
+| Packaging | GitHub Pages and optional PWABuilder |
 
----
+## Deploy To GitHub Pages
 
-## Deploy to GitHub Pages (Deploy from a branch)
-
-MoneyNest currently uses GitHub Pages with `Deploy from a branch`.
-
-### Recommended setup
+MoneyNest works with GitHub Pages using **Deploy from a branch**.
 
 1. Create a GitHub repository.
-2. Upload the contents of `E:\AI_MoneyNest` to the repository root.
+2. Upload the contents of this folder to the repository root.
 3. Commit the files to the `main` branch.
-4. In GitHub, open `Settings -> Pages`.
-5. Under `Source`, choose `Deploy from a branch`.
-6. Select:
-   - Branch: `main`
-   - Folder: `/ (root)`
-7. Save.
-8. Wait a few minutes for the site to publish.
+4. Open GitHub **Settings > Pages**.
+5. Set **Source** to **Deploy from a branch**.
+6. Select branch `main` and folder `/ (root)`.
+7. Save and wait for the site to publish.
 
 Live URL format:
 
 ```text
-https://<your-github-username>.github.io/<your-repo-name>/
+https://<github-username>.github.io/<repo-name>/
 ```
 
-### Important
+## Release Checklist
 
-- Local file changes do not affect the live app.
-- The live app updates only after you upload or push changed files to the GitHub Pages branch.
-- Installed PWA users may need to reopen or refresh before seeing some updates.
-- Icon changes may take longer to appear and sometimes need reinstalling.
+Before sharing a new version:
 
----
-
-## 📲 First Launch
-
-1. Open the app — a **Setup screen** appears once.
-2. Choose **Start Fresh** to begin locally on this device.
-3. Or choose **Restore Backup** to import an earlier JSON backup.
-4. Start tracking right away in full offline mode.
-
----
-
-## 🗃️ File Structure
-
-```
-AI_MoneyNest/
-├── index.html              # PWA entry redirect
-├── moneynest-app.html      # Main single-page application
-├── local-store.js          # Local storage load/save/normalize helpers
-├── ui-shell.js             # Tab navigation and modal open/close UI logic
-├── manifest.json           # PWA manifest
-├── service-worker.js       # Offline caching
-├── offline.html             # Shown when app is offline
-├── serve-moneynest.ps1     # Local dev server (Windows PowerShell)
-├── icon.svg                # App icon (scalable)
-├── icon-maskable.svg       # Maskable icon for Android
-├── icon-192.png            # Android home screen icon
-├── icon-512.png            # Splash / store icon
-├── icon-maskable.png       # Maskable PNG icon
-├── apple-touch-icon.png    # iOS home screen icon
-└── _nojekyll               # Disables Jekyll on GitHub Pages
-```
-
----
-
-## 🛠️ Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Frontend | Vanilla HTML · CSS · JavaScript (no framework), split across `moneynest-app.html`, `local-store.js`, and `ui-shell.js` |
-| Storage | Browser local storage via helper wrappers |
-| Offline | Service Worker + Cache API |
-| PWA | Web App Manifest + Install prompt |
-| Icons | SVG + PNG (192 / 512 / maskable / apple-touch) |
-
----
+1. Open the app online and refresh twice so the latest service worker installs.
+2. Confirm the app still opens after going offline.
+3. Add a test expense, income, and transfer.
+4. Export a backup and restore it.
+5. Confirm the app install prompt and icons still work.
+6. Confirm `manifest.json` and `service-worker.js` are included in the deployed root.
 
 ## PWABuilder Android Packaging
 
@@ -202,35 +179,24 @@ After the GitHub Pages URL is live:
 
 1. Open the live MoneyNest URL.
 2. Confirm the app loads and works offline after refresh.
-3. Go to [PWABuilder](https://www.pwabuilder.com/).
+3. Go to `https://www.pwabuilder.com/`.
 4. Paste the live URL.
 5. Review the PWA checks.
-6. Choose Android packaging.
-7. Generate the Android package.
-8. Follow PWABuilder's signing/export steps for the package you want to share.
+6. Generate the Android package.
+7. Follow PWABuilder's signing and export steps.
 
 Notes:
+
 - PWABuilder needs a live `https://` URL, not localhost.
 - Android users can install either the PWA or the packaged app.
-- iPhone users install from Safari using `Add to Home Screen`.
+- iPhone users install from Safari using **Add to Home Screen**.
 
----
+## License
 
-## 🔒 Privacy
+Personal and family use. Not for redistribution.
 
-- No login / no account required.
-- Data lives entirely on **this device** unless you export a backup file.
-- No analytics, no ads, no third-party tracking.
+## Credits
 
----
+Built by VISIRA.
 
-## 📝 License
-
-Personal / family use. Not for redistribution.
-
----
-
-## 🙏 Credits
-
-Built with ❤️ by VISIRA.
-App Version: 2.1.1
+App version: 2.1.1

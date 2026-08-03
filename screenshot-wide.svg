@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-label="MoneyNest dashboard preview">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f7f1e7"/>
+      <stop offset="100%" stop-color="#eef4e5"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" rx="36" fill="url(#bg)"/>
+  <rect x="56" y="52" width="1168" height="616" rx="28" fill="#fffaf2" stroke="#e6dccb"/>
+  <text x="100" y="126" font-family="Segoe UI, Arial, sans-serif" font-size="42" font-weight="700" fill="#2d3a2e">MoneyNest</text>
+  <text x="100" y="164" font-family="Segoe UI, Arial, sans-serif" font-size="22" fill="#617063">Offline grocery, budget, and cashflow tracking</text>
+  <rect x="100" y="212" width="320" height="160" rx="24" fill="#476a2e"/>
+  <text x="132" y="268" font-family="Segoe UI, Arial, sans-serif" font-size="20" fill="#eef6e8">This Month</text>
+  <text x="132" y="324" font-family="Segoe UI, Arial, sans-serif" font-size="42" font-weight="700" fill="#ffffff">?18,450</text>
+  <rect x="454" y="212" width="320" height="160" rx="24" fill="#ffffff" stroke="#dfe6d6"/>
+  <text x="486" y="268" font-family="Segoe UI, Arial, sans-serif" font-size="20" fill="#617063">Budget Left</text>
+  <text x="486" y="324" font-family="Segoe UI, Arial, sans-serif" font-size="42" font-weight="700" fill="#2d3a2e">?6,550</text>
+  <rect x="808" y="212" width="320" height="160" rx="24" fill="#ffffff" stroke="#dfe6d6"/>
+  <text x="840" y="268" font-family="Segoe UI, Arial, sans-serif" font-size="20" fill="#617063">Quick Actions</text>
+  <text x="840" y="324" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#2d3a2e">Add expense ? Backup</text>
+  <rect x="100" y="410" width="1028" height="206" rx="24" fill="#ffffff" stroke="#dfe6d6"/>
+  <text x="132" y="462" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#2d3a2e">Recent Activity</text>
+  <rect x="132" y="490" width="964" height="34" rx="12" fill="#f2f6ed"/>
+  <rect x="132" y="540" width="756" height="34" rx="12" fill="#f6efe4"/>
+  <rect x="132" y="590" width="864" height="34" rx="12" fill="#edf4fb"/>
+</svg>
