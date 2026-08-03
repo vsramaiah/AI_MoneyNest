@@ -1,9 +1,11 @@
 (function () {
   function goTab(id, btn, deps) {
+    const nav = document.querySelector(".nav");
     document.querySelectorAll(".view").forEach((view) => view.classList.remove("on"));
     document.querySelectorAll(".nav button").forEach((button) => button.classList.remove("on"));
     document.getElementById(`v-${id}`).classList.add("on");
     if (btn && btn.id) btn.classList.add("on");
+    if (nav) nav.style.display = "flex";
     if (id === "dash") deps.renderDash();
     if (id === "hist") {
       deps.renderHSF();

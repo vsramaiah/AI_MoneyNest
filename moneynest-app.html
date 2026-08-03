@@ -233,7 +233,7 @@ strong{font-weight:900}
   max-width:480px;
   margin:0 auto;
   min-height:100vh;
-  padding:var(--space-5) var(--space-4) 110px;
+  padding:var(--space-5) var(--space-4) calc(136px + env(safe-area-inset-bottom));
 }
 #setup{
   position:fixed;
@@ -894,6 +894,27 @@ strong{font-weight:900}
   display:flex;align-items:center;justify-content:center;font-size:18px
 }
 .add-option-text{line-height:1.15}
+.field-suggestion-chips{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+.field-suggestion-chip{
+  border:1px solid var(--border);
+  background:#f8faf8;
+  color:var(--text-secondary);
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:11px;
+  font-weight:800;
+  cursor:pointer;
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.field-suggestion-chip:active{transform:translateY(1px)}
 .add-amount-field{
   display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);
   border-radius:18px;padding:14px 16px
@@ -1083,7 +1104,10 @@ strong{font-weight:900}
   display:flex;
   justify-content:center;
   padding:14px 18px calc(18px + env(safe-area-inset-bottom));
-  z-index:120
+  z-index:997;
+  pointer-events:none;
+  transform:translateZ(0);
+  will-change:transform
 }
 .nav-shell{
   width:100%;
@@ -1094,6 +1118,7 @@ strong{font-weight:900}
   box-shadow:0 -6px 30px rgba(28,38,45,.08);
   display:flex;justify-content:space-between;align-items:flex-end;
   padding:14px 10px 12px;
+  pointer-events:auto;
 }
 .nav button{
   flex:1;padding:4px 2px 0;font-size:12px;font-weight:700;color:#9aa5ad;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;text-transform:none
@@ -1844,7 +1869,7 @@ strong{font-weight:900}
 }
 @media (max-width:430px){
   #wrap{
-    padding:14px 12px 98px;
+    padding:14px 12px calc(128px + env(safe-area-inset-bottom));
   }
   .topbar{
     gap:10px;
