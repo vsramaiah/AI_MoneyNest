@@ -576,11 +576,40 @@ strong{font-weight:900}
 }
 .icon-btn.gold{background:#E8F5E9}
 .hello-title{font-size:24px;font-weight:900;letter-spacing:-.5px;line-height:1.05;color:var(--text-primary)}
-.hello-title-row{display:flex;align-items:flex-start;gap:6px}
+.hello-title-row{display:flex;align-items:center;gap:8px}
+.hello-name-view{display:flex;align-items:center;gap:8px}
+.hello-name-edit{display:none;align-items:center;gap:0;position:relative;width:min(326px,68vw);max-width:100%}
+.hello-name-edit.on{display:flex}
+.hello-title-row.editing .hello-name-view{display:none}
+.hello-name-input{
+  width:100%;
+  border:1.5px solid #22c55e;
+  border-radius:16px;
+  padding:14px 64px 14px 20px;
+  font-family:inherit;
+  font-size:20px;
+  font-weight:800;
+  color:var(--text-primary);
+  outline:none;
+  background:#fff;
+}
+.hello-name-save{
+  position:absolute;
+  right:14px;
+  top:50%;
+  transform:translateY(-50%);
+  border:none;
+  background:transparent;
+  color:var(--text-primary);
+  font-size:14px;
+  font-weight:900;
+  cursor:pointer;
+  padding:8px 4px;
+}
 .hello-edit-btn{
-  width:28px;height:28px;border:none;border-radius:50%;background:#eef5ef;color:var(--primary);
+  width:38px;height:38px;border:1px solid var(--border);border-radius:50%;background:#fff;color:var(--text-primary);
   display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;flex-shrink:0;
-  margin-top:1px;line-height:1
+  margin-top:0;line-height:1;box-shadow:0 4px 12px rgba(35,45,58,.04)
 }
 .hello-subline{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px;color:#42515c;font-size:13px;font-weight:700}
 .hello-subline .status-inline{display:inline-flex;align-items:center;gap:8px}
@@ -894,27 +923,31 @@ strong{font-weight:900}
   display:flex;align-items:center;justify-content:center;font-size:18px
 }
 .add-option-text{line-height:1.15}
-.field-suggestion-chips{
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
-  margin-top:8px;
-}
-.field-suggestion-chip{
+.field-history-wrap{position:relative}
+.field-history-list{
+  display:none;
+  margin-top:6px;
+  background:#fff;
   border:1px solid var(--border);
-  background:#f8faf8;
-  color:var(--text-secondary);
-  border-radius:999px;
-  padding:6px 10px;
-  font-size:11px;
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.field-history-list.on{display:block}
+.field-history-option{
+  width:100%;
+  border:0;
+  border-bottom:1px solid #f3f1ec;
+  background:#fff;
+  color:var(--text);
+  padding:10px 12px;
+  text-align:left;
+  font-size:13px;
   font-weight:800;
   cursor:pointer;
-  max-width:100%;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
 }
-.field-suggestion-chip:active{transform:translateY(1px)}
+.field-history-option:last-child{border-bottom:0}
+.field-history-option:active{background:#f6faf6}
 .add-amount-field{
   display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);
   border-radius:18px;padding:14px 16px
@@ -1895,10 +1928,18 @@ strong{font-weight:900}
     margin-top:6px;
   }
   .hello-edit-btn{
-    width:26px;
-    height:26px;
+    width:38px;
+    height:38px;
     font-size:12px;
     margin-top:0;
+  }
+  .hello-name-input{
+    width:100%;
+    padding:13px 62px 13px 18px;
+    font-size:19px;
+  }
+  .hello-name-edit{
+    width:min(326px,66vw);
   }
   .dash-hero{
     border-radius:28px;
@@ -2148,6 +2189,7 @@ strong{font-weight:900}
   .topbar{align-items:flex-start}
   .topbar-left{gap:10px}
   .topbar-actions{gap:6px}
+  .hello-name-edit{width:min(326px,58vw)}
   .hello-title{font-size:18px}
   .hello-subline{font-size:11px}
   .dash-hero{padding:14px 12px 12px}
@@ -2261,9 +2303,15 @@ strong{font-weight:900}
         <span class="material-symbols-rounded">settings</span>
       </button>
       <div class="topbar-copy">
-        <div class="hello-title-row">
-          <div class="hello-title">Hi, <span id="homeGreetingName">Varun</span> <span class="material-symbols-rounded" aria-hidden="true">waving_hand</span></div>
-          <button class="hello-edit-btn" type="button" onclick="editProfileName()" aria-label="Edit your name"><span class="material-symbols-rounded" aria-hidden="true">edit</span></button>
+        <div class="hello-title-row" id="helloTitleRow">
+          <div class="hello-name-view">
+            <div class="hello-title">Hi, <span id="homeGreetingName">Varun</span></div>
+            <button class="hello-edit-btn" type="button" onclick="editProfileName()" aria-label="Edit your name"><span class="material-symbols-rounded" aria-hidden="true">edit</span></button>
+          </div>
+          <div class="hello-name-edit" id="helloNameEdit">
+            <input id="homeGreetingInput" class="hello-name-input" type="text" value="Varun" autocomplete="name" aria-label="Your name"/>
+            <button class="hello-name-save" type="button" onclick="saveProfileNameInline()">Save</button>
+          </div>
         </div>
         <div class="hello-subline">
           <span class="status-inline"><span class="dot" id="dot"></span><span id="hsub">Loading…</span></span>
@@ -2869,7 +2917,22 @@ const CATS=['Baby','Bakery','Beverages','Dairy','Dry Fruits','Frozen','Fruits','
 const PAYS=['Cash','UPI','Debit Card','Credit Card','Rupay Credit UPI'];
 const TRANSFER_CHANNELS=['Account','Cash','UPI','Credit Card','Rupay Credit UPI'];
 const INCOME_CATEGORIES=['Salary','Business','Interest','Dividends','Gifts','Refunds','Rewards','Coupons'];
-const UNITS=['pcs','kg','g','ltr','ml','pack','box','dozen'];
+const UNIT_LABELS={
+  pcs:'Pieces',
+  kg:'Kilogram',
+  g:'Gram',
+  ltr:'Litre',
+  ml:'Millilitre',
+  rs:'Rupees',
+  dozen:'Dozen',
+  pack:'Pack',
+  box:'Box',
+  bottle:'Bottle'
+};
+const UNITS=Object.keys(UNIT_LABELS);
+function unitOptionLabel(unit){
+  return UNIT_LABELS[unit]?`${unit} - ${UNIT_LABELS[unit]}`:unit;
+}
 
 const EXPENSE_TREE={
   "Bills":{icon:"receipt_long",sub:{
@@ -3122,8 +3185,16 @@ function unitPrice(price,qty,unit){
   if(unit==='ml') return `₹${(pu*1000).toFixed(0)}/L`;
   if(unit==='dozen') return `₹${(pu/12).toFixed(1)}/pc`;
   if(unit==='kg') return `₹${pu.toFixed(1)}/kg`;
-  if(unit==='L') return `₹${pu.toFixed(1)}/L`;
+  if(unit==='ltr') return `₹${pu.toFixed(1)}/L`;
   return `₹${pu.toFixed(1)}/${unit}`;
+}
+function positiveNumber(value){
+  const number=Number(value);
+  return Number.isFinite(number)&&number>0?number:0;
+}
+function isValidPositiveNumber(value){
+  const number=Number(value);
+  return Number.isFinite(number)&&number>0;
 }
 function lastPrice(itemName){
   // O(1) lookup using pre-built cache instead of O(n×m) scan on every call
@@ -3439,7 +3510,7 @@ function queuePendingUpsert(type,record){
   return normalizeRecord(type,{...record,updatedAt:Date.now()});
 }
 function persistLocalChange(){
-  saveLocal();
+  return saveLocal();
 }
 function refreshAllViews(){
   _buildPriceCache();
@@ -3481,6 +3552,14 @@ function bindStaticEventHandlers(){
   if(restoreBackupInput && restoreBackupInput.dataset.bound!=='1'){
     restoreBackupInput.dataset.bound='1';
     restoreBackupInput.addEventListener('change',handleRestoreBackup);
+  }
+  const greetingInput=document.getElementById('homeGreetingInput');
+  if(greetingInput && greetingInput.dataset.bound!=='1'){
+    greetingInput.dataset.bound='1';
+    greetingInput.addEventListener('keydown',event=>{
+      if(event.key==='Enter') saveProfileNameInline();
+      if(event.key==='Escape') closeProfileNameInline();
+    });
   }
 }
 function startFreshSetup(){
@@ -4080,6 +4159,74 @@ function getFieldInitialValue(field){
   return '';
 }
 
+function splitSuggestionText(value){
+  return String(value||'')
+    .split(/[\n,;|]/)
+    .map(item=>item.trim())
+    .filter(item=>item.length>=2);
+}
+function uniqueSuggestions(items){
+  const seen=new Set();
+  return items.map(item=>String(item||'').trim()).filter(item=>{
+    const key=item.toLowerCase();
+    if(!key||seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+function isSameExpensePath(record, meta){
+  if(!record||!meta) return false;
+  const recordPath=normalizeExpensePathParts(record.category,record.subcategory,record.leaf);
+  const metaCategory=meta.l1||meta.category;
+  const metaSubcategory=meta.l2||meta.groceryCategory||meta.subcategory;
+  const metaLeaf=meta.l3||meta.leaf;
+  if(metaCategory&&recordPath.category!==metaCategory) return false;
+  if(metaSubcategory&&recordPath.subcategory!==metaSubcategory) return false;
+  if(metaLeaf&&recordPath.leaf!==metaLeaf) return false;
+  return true;
+}
+function isSamePurchasePath(record, meta){
+  if(!record||!meta) return false;
+  const itemCategory=record.items?.[0]?.category||record.sourceLeaf||meta.groceryCategory||'Other';
+  const recordPath=getPurchasePath(record,itemCategory);
+  if(meta.l1&&recordPath.category!==meta.l1) return false;
+  if((meta.l2||meta.groceryCategory)&&recordPath.subcategory!==(meta.l2||meta.groceryCategory)) return false;
+  if(meta.l3&&recordPath.leaf!==meta.l3) return false;
+  return true;
+}
+function getPastExpenseSuggestions(field, meta){
+  const exact=[];
+  const fallback=[];
+  const textFields=['notes','itemName','customName','recipient','hospital','medicine','warranty'];
+  if(!textFields.includes(field)) return [];
+  const add=(target,...values)=>values.flat().forEach(value=>splitSuggestionText(value).forEach(item=>target.push(item)));
+  purchases.forEach(purchase=>{
+    const target=isSamePurchasePath(purchase,meta)?exact:fallback;
+    const itemNames=(purchase.items||[]).map(item=>item.name);
+    if(field==='itemName') add(target,itemNames,purchase.notes);
+    else if(field==='notes') add(target,purchase.notes,itemNames);
+    else add(target,purchase.notes,itemNames);
+  });
+  expenses.forEach(expense=>{
+    const target=isSameExpensePath(expense,meta)?exact:fallback;
+    if(field==='notes') add(target,expense.notes,expense.customName,expense.recipient,expense.hospital,expense.medicine,expense.warranty);
+    else if(['customName','recipient','hospital','medicine','warranty'].includes(field)) add(target,expense[field],expense.notes);
+    else if(field==='itemName') add(target,expense.notes,expense.customName,expense.recipient,expense.hospital,expense.medicine);
+  });
+  return uniqueSuggestions([...exact,...fallback]).slice(0,10);
+}
+function buildSuggestionOptions(id, suggestions){
+  if(!suggestions.length) return '';
+  return `<datalist id="${id}">${suggestions.map(item=>`<option value="${safeText(item)}"></option>`).join('')}</datalist>`;
+}
+function encodeSuggestionsAttr(suggestions){
+  return safeText(encodeURIComponent(JSON.stringify(suggestions||[])));
+}
+function buildHistorySuggestionList(field, suggestions){
+  if(!suggestions.length) return '';
+  return `<div class="field-history-list" data-history-list-for="${safeText(field)}"></div>`;
+}
+
 function getEntryOptionIcon(field, value){
   const channelIcons={
     'Account':'account_balance',
@@ -4295,12 +4442,16 @@ function buildFieldHtml(field, meta){
     }
     const opts=(def.options||[]).map(opt=>{
       const selected=(currentValue?opt===currentValue:opt===def.options?.[0])?' selected':'';
-      return `<option${selected}>${safeText(opt)}</option>`;
+      return `<option value="${safeText(opt)}"${selected}>${safeText(field==='unit'?unitOptionLabel(opt):opt)}</option>`;
     }).join('');
     return `<div class="f"><label>${def.label}</label><select id="${id}" class="fi">${opts}</select></div>`;
   }
   if(def.type==='textarea'){
-    return `<div class="f"><label>${def.label}</label><textarea id="${id}" class="fi" rows="${def.rows||3}" placeholder="${safeText(def.placeholder||'')}">${safeText(getFieldInitialValue(field))}</textarea></div>`;
+    const suggestions=getPastExpenseSuggestions(field,meta);
+    const suggestAttrs=suggestions.length
+      ?` autocomplete="off" data-history-suggest="1" data-history-suggestions="${encodeSuggestionsAttr(suggestions)}"`
+      :'';
+    return `<div class="f field-history-wrap"><label>${def.label}</label><textarea id="${id}" class="fi" rows="${def.rows||3}" placeholder="${safeText(def.placeholder||'')}"${suggestAttrs}>${safeText(getFieldInitialValue(field))}</textarea>${buildHistorySuggestionList(field,suggestions)}</div>`;
   }
   const value=getFieldInitialValue(field);
   const inputAttrs=[
@@ -4309,22 +4460,27 @@ function buildFieldHtml(field, meta){
     `class="fi"`
   ];
   let extraMarkup='';
+  const historySuggestions=getPastExpenseSuggestions(field,meta);
   if(value) inputAttrs.push(`value="${value}"`);
   if(def.placeholder) inputAttrs.push(`placeholder="${safeText(def.placeholder)}"`);
   if(def.min!==undefined) inputAttrs.push(`min="${def.min}"`);
   if(def.step!==undefined) inputAttrs.push(`step="${def.step}"`);
-  if(field==='itemName'&&meta?.groceryCategory){
-    const suggestions=SUGG[meta.groceryCategory]||[];
+  if(['itemName','customName','recipient','hospital','medicine','warranty'].includes(field)){
+    const suggestions=uniqueSuggestions([
+      ...historySuggestions,
+      ...(field==='itemName'&&meta?.groceryCategory?(SUGG[meta.groceryCategory]||[]):[])
+    ]).slice(0,20);
     if(suggestions.length){
-      const listId=`ef_itemName_list`;
-      inputAttrs.push(`list="${listId}"`);
-      extraMarkup=`<datalist id="${listId}">${suggestions.map(item=>`<option value="${safeText(item)}"></option>`).join('')}</datalist>`;
+      inputAttrs.push('autocomplete="off"');
+      inputAttrs.push('data-history-suggest="1"');
+      inputAttrs.push(`data-history-suggestions="${encodeSuggestionsAttr(suggestions)}"`);
+      extraMarkup=buildHistorySuggestionList(field,suggestions);
     }
   }
   const totalHook=(field==='amount'||(field==='price'&&meta?.isGrocery))
     ?` oninput="document.getElementById('expTotal').textContent='₹'+(parseFloat(this.value)||0).toLocaleString('en-IN')"`
     :'';
-  return `<div class="f"><label>${def.label}</label><input ${inputAttrs.join(' ')}${totalHook}/>${extraMarkup}</div>`;
+  return `<div class="f${extraMarkup?' field-history-wrap':''}"><label>${def.label}</label><input ${inputAttrs.join(' ')}${totalHook}/>${extraMarkup}</div>`;
 }
 
 function getFormValue(field){
@@ -4427,11 +4583,15 @@ function changeEntryCategory(){
 function parseBulkGroceryItems(text, category){
   return String(text||'').split('\n').map(line=>line.trim()).filter(Boolean).map(line=>{
     const parts=line.split(',').map(part=>part.trim());
+    const price=positiveNumber(parts[parts.length-1]);
+    const unit=parts.length>=3?parts[parts.length-2]:'pcs';
+    const qty=parts.length>=4?parts[parts.length-3]:'1';
+    const name=parts.length>=4?parts.slice(0,-3).join(', ').trim():parts[0]||'';
     return {
-      name:parts[0]||'',
-      qty:parts[1]||'1',
-      unit:parts[2]||'pcs',
-      price:parseFloat(parts[3]||0)||0,
+      name,
+      qty:isValidPositiveNumber(qty)?qty:'1',
+      unit:UNITS.includes(unit)?unit:'pcs',
+      price,
       category
     };
   }).filter(item=>item.name&&item.price>0);
@@ -4444,14 +4604,13 @@ function getBulkGroceryDraftItems(meta){
 }
 
 function buildBulkGroceryRow(item={}){
-  const units=['pcs','kg','g','ltr','ml','pack','box','dozen'];
   const activeUnit=String(item.unit||'pcs');
   return `
     <div class="bulk-grocery-row" data-bulk-row>
       <input class="bulk-name" type="text" placeholder="Item name" value="${safeText(item.name||'')}" list="bulkGrocerySuggestions" oninput="updateGroceryBulkAmount()"/>
       <input class="bulk-qty" type="number" min="0" step="0.01" placeholder="Qty" value="${safeText(item.qty||'1')}" oninput="updateGroceryBulkAmount()"/>
       <select class="bulk-unit" onchange="updateGroceryBulkAmount()">
-        ${units.map(unit=>`<option value="${unit}"${activeUnit===unit?' selected':''}>${unit}</option>`).join('')}
+        ${UNITS.map(unit=>`<option value="${safeText(unit)}"${activeUnit===unit?' selected':''}>${safeText(unitOptionLabel(unit))}</option>`).join('')}
       </select>
       <input class="bulk-price" type="number" min="0" step="0.01" placeholder="₹ Price" value="${safeText(item.price||'')}" oninput="updateGroceryBulkAmount()"/>
       <button type="button" class="bulk-row-remove" onclick="removeBulkGroceryRow(this)" aria-label="Remove item"><span class="material-symbols-rounded">close</span></button>
@@ -4465,9 +4624,9 @@ function buildBulkGroceryRows(meta){
 function readBulkGroceryRows(){
   return [...document.querySelectorAll('[data-bulk-row]')].map(row=>({
     name:row.querySelector('.bulk-name')?.value.trim()||'',
-    qty:row.querySelector('.bulk-qty')?.value||'1',
+    qty:isValidPositiveNumber(row.querySelector('.bulk-qty')?.value)?row.querySelector('.bulk-qty')?.value:'1',
     unit:row.querySelector('.bulk-unit')?.value||'pcs',
-    price:parseFloat(row.querySelector('.bulk-price')?.value||0)||0
+    price:positiveNumber(row.querySelector('.bulk-price')?.value)
   })).filter(item=>item.name||item.price>0);
 }
 
@@ -4598,7 +4757,7 @@ function showExpForm(){
             </div>
             <button type="button" class="bulk-add-row" onclick="addBulkGroceryRow()">+ Add Item</button>
             <textarea id="ef_bulkItems" style="display:none">${safeText(editingDraft?.bulkItems||'')}</textarea>
-            ${(SUGG[meta.groceryCategory]||[]).length?`<datalist id="bulkGrocerySuggestions">${(SUGG[meta.groceryCategory]||[]).map(item=>`<option value="${safeText(item)}"></option>`).join('')}</datalist>`:''}
+            ${buildSuggestionOptions('bulkGrocerySuggestions',uniqueSuggestions([...getPastExpenseSuggestions('itemName',meta),...(SUGG[meta.groceryCategory]||[])]).slice(0,20))}
             <div class="bulk-grocery-helper">Enter item name, quantity, unit and price. Total updates automatically.</div>
           </div>
         </div>`
@@ -4660,8 +4819,8 @@ async function saveUnifiedEntry(){
     return acc;
   },{});
   let amount=meta.isGrocery&&groceryEntryMode!=='bulk'
-    ?parseFloat(getFormValue('price'))||0
-    :parseFloat(getFormValue('amount'))||0;
+    ?positiveNumber(getFormValue('price'))
+    :positiveNumber(getFormValue('amount'));
 
   if(meta.type==='income'){
     if(!amount){toast('Enter an amount');return;}
@@ -4706,6 +4865,7 @@ async function saveUnifiedEntry(){
       const itemName=extraFields.itemName||meta.leafName;
       const qty=extraFields.qty||'1';
       const unit=extraFields.unit||'pcs';
+      if(!isValidPositiveNumber(qty)){toast('Enter a valid quantity');return;}
       items=[{
         id:uid(),
         name:itemName,
@@ -4762,10 +4922,10 @@ async function saveUnifiedEntry(){
   }
 
   const actionLabel=editingEntry?'Entry updated':'Entry saved';
+  if(!persistLocalChange()) return;
   editingDraft=null;
   resetExpPath();
   document.getElementById('expTotal').textContent='₹0';
-  persistLocalChange();
   _buildPriceCache();
   renderDash();
   renderHist();
@@ -4837,7 +4997,7 @@ function addRow(n='',cat='Vegetables',qty='1',unit='pcs',price=''){
     <div>
       <div class="flbl">Unit</div>
       <select id="u-${id}" style="width:100%;border:1px solid #dfe6df;border-radius:12px;padding:9px 5px;font-size:12px;font-family:inherit;outline:none;background:#fff">
-        ${UNITS.map(u=>`<option${u===unit?' selected':''}>${u}</option>`).join('')}
+        ${UNITS.map(u=>`<option value="${safeText(u)}"${u===unit?' selected':''}>${safeText(unitOptionLabel(u))}</option>`).join('')}
       </select>
     </div>
     <div>
@@ -4949,19 +5109,24 @@ async function savePurchase(){
   if(curMd==='bulk'){
     items=document.getElementById('bText').value.trim().split('\n').filter(l=>l.trim()).map(l=>{
       const p=l.split(',').map(s=>s.trim());
-      return{id:uid(),name:p[0]||'',category:p[1]||'Vegetables',qty:p[2]||'1',unit:p[3]||'pcs',price:p[4]||''};
+      const price=positiveNumber(p[p.length-1]);
+      const unit=p.length>=4&&UNITS.includes(p[p.length-2])?p[p.length-2]:'pcs';
+      const qty=p.length>=5&&isValidPositiveNumber(p[p.length-3])?p[p.length-3]:'1';
+      const category=p.length>=5?p[p.length-4]:'Vegetables';
+      const name=p.length>=5?p.slice(0,-4).join(', ').trim():p[0]||'';
+      return{id:uid(),name,category:CATS.includes(category)?category:'Vegetables',qty,unit,price:String(price)};
     });
   }else{
     items=iRows.map(id=>({
       id:uid(),
       name:document.getElementById('n-'+id)?.value||'',
       category:document.getElementById('c-'+id)?.value||'Vegetables',
-      qty:document.getElementById('q-'+id)?.value||'1',
+      qty:isValidPositiveNumber(document.getElementById('q-'+id)?.value)?document.getElementById('q-'+id)?.value:'1',
       unit:document.getElementById('u-'+id)?.value||'pcs',
-      price:document.getElementById('p-'+id)?.value||''
+      price:String(positiveNumber(document.getElementById('p-'+id)?.value))
     }));
   }
-  items=items.filter(it=>it.name&&it.price);
+  items=items.filter(it=>it.name&&positiveNumber(it.price)>0);
   if(!items.length){toast('Add at least one item with name and price');return;}
   const total=items.reduce((s,it)=>s+parseFloat(it.price||0),0);
   const dt=document.getElementById('aDt').value||toLocalDateTimeValue(new Date());
@@ -4971,11 +5136,13 @@ async function savePurchase(){
     const existing=purchases.find(p=>p.id===editingId);
     const purchaseRecord=queuePendingUpsert('purchase',{...existing,datetime:dt,store:selSt,payMode:selPy,items,total,notes});
     purchases=purchases.map(p=>p.id===editingId?purchaseRecord:p);
+    if(!persistLocalChange()) return;
     editingId=null;
     document.getElementById('editBanner').style.display='none';
     toast('Purchase updated');
   }else{
     purchases.push(queuePendingUpsert('purchase',{id:uid(),datetime:dt,store:selSt,payMode:selPy,items,total,notes}));
+    if(!persistLocalChange()) return;
     toast('Purchase saved');
   }
 
@@ -4989,7 +5156,6 @@ async function savePurchase(){
   const btn=document.getElementById('saveBtn');
   btn.textContent='Saved';
   setTimeout(()=>{btn.textContent='Save Purchase';},1400);
-  persistLocalChange();
   _buildPriceCache();
   renderDash();
   renderHist();
@@ -5127,6 +5293,57 @@ function iAC(){
   if(!hits.length){l.style.display='none';return;}
   renderAutocompleteItems(l,hits.map(x=>({label:x,value:x})),loadIns);
 }
+function getFieldHistorySuggestions(input){
+  try{
+    return JSON.parse(decodeURIComponent(input.dataset.historySuggestions||'[]'));
+  }catch(_err){
+    return [];
+  }
+}
+function getFieldHistoryList(input){
+  return input.closest('.field-history-wrap')?.querySelector('.field-history-list');
+}
+function hideFieldHistorySuggestions(exceptInput=null){
+  document.querySelectorAll('.field-history-list').forEach(list=>{
+    if(exceptInput && list===getFieldHistoryList(exceptInput)) return;
+    list.classList.remove('on');
+    list.replaceChildren();
+  });
+}
+function renderFieldHistorySuggestions(input){
+  const list=getFieldHistoryList(input);
+  if(!list) return;
+  const query=String(input.value||'').trim().toLowerCase();
+  list.replaceChildren();
+  if(!query){
+    list.classList.remove('on');
+    return;
+  }
+  const matches=getFieldHistorySuggestions(input)
+    .filter(item=>String(item).toLowerCase().includes(query))
+    .slice(0,6);
+  if(!matches.length){
+    list.classList.remove('on');
+    return;
+  }
+  matches.forEach(value=>{
+    const option=document.createElement('button');
+    option.type='button';
+    option.className='field-history-option';
+    option.dataset.suggestValue=value;
+    option.textContent=value;
+    list.appendChild(option);
+  });
+  list.classList.add('on');
+}
+function selectFieldHistorySuggestion(button){
+  const input=button.closest('.field-history-wrap')?.querySelector('[data-history-suggest="1"]');
+  if(!input) return;
+  input.value=button.dataset.suggestValue||'';
+  input.dispatchEvent(new Event('input',{bubbles:true}));
+  hideFieldHistorySuggestions();
+  input.focus();
+}
 document.addEventListener('click',e=>{
   document.querySelectorAll('.acl').forEach(l=>{
     if(!l.parentElement?.contains(e.target)) l.style.display='none';
@@ -5135,6 +5352,22 @@ document.addEventListener('click',e=>{
   if(chipBtn){
     setEntryChip(chipBtn.dataset.field||'',chipBtn.dataset.value||'',chipBtn.dataset.group||'');
   }
+  const historyOption=e.target.closest('.field-history-option');
+  if(historyOption){
+    selectFieldHistorySuggestion(historyOption);
+    return;
+  }
+  if(!e.target.closest('.field-history-wrap')){
+    hideFieldHistorySuggestions();
+  }
+});
+document.addEventListener('input',e=>{
+  const input=e.target.closest('[data-history-suggest="1"]');
+  if(input) renderFieldHistorySuggestions(input);
+});
+document.addEventListener('focusin',e=>{
+  const input=e.target.closest('[data-history-suggest="1"]');
+  if(input) renderFieldHistorySuggestions(input);
 });
 
 function wrapSwipeCard(id, editAction, deleteAction, innerHtml){
@@ -6127,7 +6360,10 @@ function validateNestedNumericMap(value){
 Object.assign(window,{
   startFreshSetup,
   triggerWelcomeRestore,
-  handleRestoreBackup
+  handleRestoreBackup,
+  editProfileName,
+  saveProfileNameInline,
+  closeProfileNameInline
 });
 
 function toggleAppLockUi(toggle){
@@ -6389,9 +6625,13 @@ function renderCalendarView(){
   monthly.forEach(entry=>{
     const day=new Date(entry.datetime).getDate();
     if(!byDay[day]) byDay[day]={income:0,expense:0,total:0};
-    if(entry.type==='income') byDay[day].income+=entry.amount;
-    else if(entry.type==='purchase' || entry.type==='expense') byDay[day].expense+=entry.amount;
-    byDay[day].total+=entry.amount;
+    if(entry.type==='income'){
+      byDay[day].income+=entry.amount;
+      byDay[day].total+=entry.amount;
+    }else if(entry.type==='purchase' || entry.type==='expense'){
+      byDay[day].expense+=entry.amount;
+      byDay[day].total+=entry.amount;
+    }
   });
   title.textContent=first.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
   count.textContent=`${monthly.length} transactions`;

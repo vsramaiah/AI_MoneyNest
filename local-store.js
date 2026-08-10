@@ -74,16 +74,21 @@
 
   function saveLocalState(state, deps) {
     const deletedIds = deps.uniq(state.deletedIds);
-    localStorage.setItem("gt_p", JSON.stringify(state.purchases));
-    localStorage.setItem("gt_e", JSON.stringify(state.expenses));
-    localStorage.setItem("gt_i", JSON.stringify(state.incomes));
-    localStorage.setItem("gt_t", JSON.stringify(state.transfers));
-    localStorage.setItem("gt_bm", JSON.stringify(state.monthlyBudgets));
-    localStorage.setItem("gt_cbm", JSON.stringify(state.catBudgetsByMonth));
-    localStorage.removeItem("gt_b");
-    localStorage.removeItem("gt_cb");
-    localStorage.setItem("gt_del", JSON.stringify(deletedIds));
-    localStorage.setItem("gt_cl", JSON.stringify(state.categoryLabels));
+    try {
+      localStorage.setItem("gt_p", JSON.stringify(state.purchases));
+      localStorage.setItem("gt_e", JSON.stringify(state.expenses));
+      localStorage.setItem("gt_i", JSON.stringify(state.incomes));
+      localStorage.setItem("gt_t", JSON.stringify(state.transfers));
+      localStorage.setItem("gt_bm", JSON.stringify(state.monthlyBudgets));
+      localStorage.setItem("gt_cbm", JSON.stringify(state.catBudgetsByMonth));
+      localStorage.removeItem("gt_b");
+      localStorage.removeItem("gt_cb");
+      localStorage.setItem("gt_del", JSON.stringify(deletedIds));
+      localStorage.setItem("gt_cl", JSON.stringify(state.categoryLabels));
+    } catch (error) {
+      console.warn("MoneyNest local save failed", error);
+      throw new Error("MoneyNest local save failed. Export a backup and free browser storage.");
+    }
     return deletedIds;
   }
 

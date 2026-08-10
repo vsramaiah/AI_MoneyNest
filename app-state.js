@@ -30,17 +30,24 @@ function applyCloudState(data){
   renderHist();
 }
 function saveLocal(){
-  deletedIds=window.MoneyNestLocalStore.saveLocalState({
-    purchases,
-    expenses,
-    incomes,
-    transfers,
-    monthlyBudgets,
-    catBudgetsByMonth,
-    deletedIds,
-    categoryLabels
-  },{uniq});
-  serverVersion=Math.max(0,Number(serverVersion)||0);
+  try{
+    deletedIds=window.MoneyNestLocalStore.saveLocalState({
+      purchases,
+      expenses,
+      incomes,
+      transfers,
+      monthlyBudgets,
+      catBudgetsByMonth,
+      deletedIds,
+      categoryLabels
+    },{uniq});
+    serverVersion=Math.max(0,Number(serverVersion)||0);
+    return true;
+  }catch(err){
+    console.warn(err);
+    toast(err.message||'Local save failed. Export a backup and free browser storage.',4500);
+    return false;
+  }
 }
 function getProfileName(){
   return (localStorage.getItem(PROFILE_NAME_KEY) || 'Varun').trim() || 'Varun';
@@ -50,18 +57,39 @@ function setProfileName(name){
 }
 function renderProfileName(){
   const greetingNameEl=document.getElementById('homeGreetingName');
-  if(greetingNameEl) greetingNameEl.textContent=getProfileName();
+  const greetingInputEl=document.getElementById('homeGreetingInput');
+  const profileName=getProfileName();
+  if(greetingNameEl) greetingNameEl.textContent=profileName;
+  if(greetingInputEl) greetingInputEl.value=profileName;
 }
 function editProfileName(){
-  const nextName=window.prompt('Enter your name', getProfileName());
-  if(nextName===null) return;
-  const cleaned=nextName.trim();
+  const titleRow=document.getElementById('helloTitleRow');
+  const editRow=document.getElementById('helloNameEdit');
+  const input=document.getElementById('homeGreetingInput');
+  if(!titleRow||!editRow||!input) return;
+  input.value=getProfileName();
+  titleRow.classList.add('editing');
+  editRow.classList.add('on');
+  setTimeout(()=>{
+    input.focus();
+    input.select();
+  },0);
+}
+function closeProfileNameInline(){
+  document.getElementById('helloTitleRow')?.classList.remove('editing');
+  document.getElementById('helloNameEdit')?.classList.remove('on');
+}
+function saveProfileNameInline(){
+  const input=document.getElementById('homeGreetingInput');
+  const cleaned=(input?.value||'').trim();
   if(!cleaned){
     toast('Name cannot be empty');
+    input?.focus();
     return;
   }
   setProfileName(cleaned);
   renderProfileName();
+  closeProfileNameInline();
   toast('Name updated');
 }
 function getLastBackupAt(){
