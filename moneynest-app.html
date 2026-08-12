@@ -562,6 +562,228 @@ strong{font-weight:900}
   margin-top:16px;
 }
 .welcome-footnote strong{color:var(--primary)}
+#setup{
+  background:linear-gradient(180deg,#F8FBF7 0%,#EEF5EF 100%);
+  align-content:start;
+  align-items:start;
+  padding:22px 14px 30px;
+}
+.welcome-hero{
+  max-width:430px;
+  min-height:auto;
+  margin-bottom:10px;
+}
+.welcome-hero::before{content:none}
+.welcome-illustration{
+  max-width:430px;
+  height:auto;
+  justify-content:flex-start;
+  gap:8px;
+  padding:12px;
+  border-radius:24px;
+  background:#fff;
+  border:1px solid var(--border);
+  box-shadow:0 14px 34px rgba(37,72,44,.07);
+}
+.welcome-float{
+  position:relative;
+  inset:auto!important;
+  width:36px;
+  height:36px;
+  border-radius:13px;
+  background:#F5FAF6;
+  border:1px solid #E2EEE4;
+  box-shadow:none;
+  transform:none!important;
+}
+.welcome-float.left-top{order:2}
+.welcome-float.right-top{order:3}
+.welcome-float.left-bottom{order:4}
+.welcome-float.right-bottom{order:5}
+.welcome-core{
+  order:1;
+  width:56px;
+  height:56px;
+  margin-right:auto;
+  border-radius:18px;
+  background:linear-gradient(135deg,#EAF7ED 0%,#FFFFFF 100%);
+  border:1px solid #DCEBDD;
+  box-shadow:none;
+}
+.welcome-core::before,.welcome-core::after{content:none}
+.welcome-rupee{
+  width:auto;
+  height:auto;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  font-size:34px;
+}
+.welcome-brand{
+  max-width:430px;
+  text-align:left;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:16px 18px;
+  margin-bottom:10px;
+  box-shadow:0 14px 34px rgba(37,72,44,.055);
+}
+.welcome-brandline{
+  min-height:23px;
+  padding:0 10px;
+  background:#EEF8EF;
+  font-size:10px;
+  margin-bottom:10px;
+}
+.welcome-wordmark{font-size:31px}
+.welcome-subcopy{
+  width:100%;
+  max-width:430px;
+  margin:0 0 12px;
+  padding:0 4px;
+  text-align:left;
+  font-size:13px;
+  line-height:1.4;
+}
+.welcome-features{
+  max-width:430px;
+  gap:8px;
+  margin-bottom:10px;
+}
+.welcome-feature{
+  gap:8px;
+  padding:9px;
+  border-radius:16px;
+  background:#fff;
+  box-shadow:0 8px 18px rgba(59,89,59,.04);
+}
+.welcome-feature-icon{
+  width:34px;
+  height:34px;
+  border-radius:12px;
+}
+.welcome-feature strong{
+  font-size:11.5px;
+  line-height:1.25;
+}
+.welcome-actions{
+  max-width:430px;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.welcome-action{
+  min-height:96px;
+  align-items:flex-start;
+  flex-direction:column;
+  gap:8px;
+  border-radius:18px;
+  padding:12px;
+  box-shadow:0 10px 22px rgba(27,27,27,.055);
+}
+.welcome-action-icon{
+  width:38px;
+  height:38px;
+  border-radius:14px;
+}
+.welcome-action-title{
+  font-size:14px;
+  margin-bottom:2px;
+}
+.welcome-action-desc{
+  font-size:10.5px;
+  line-height:1.35;
+}
+.welcome-action-arrow{display:none}
+.welcome-footnote{
+  width:100%;
+  max-width:430px;
+  margin-top:10px;
+  padding:0 4px;
+  text-align:left;
+  font-size:11.5px;
+  line-height:1.5;
+}
+/* Reference-style welcome layout */
+#setup{
+  display:block;
+  padding:16px 12px 28px;
+  background:#F7FAF8;
+}
+.welcome-topbar,.welcome-hero,.welcome-features,.welcome-actions,.welcome-footnote{
+  width:100%;
+  max-width:472px;
+  margin-left:auto;
+  margin-right:auto;
+}
+.welcome-topbar{
+  min-height:70px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:14px 18px;
+  margin-bottom:12px;
+  background:#fff;
+  border:1px solid #E4EDE6;
+  border-radius:22px;
+  box-shadow:0 14px 34px rgba(33,54,43,.08);
+}
+.welcome-menu{width:34px;border:0;background:transparent;display:grid;gap:6px;padding:4px 0;flex-shrink:0}
+.welcome-menu span{display:block;height:3px;border-radius:999px;background:#0E6B34}
+.welcome-menu span:nth-child(2){width:78%}
+.welcome-menu span:nth-child(3){width:58%}
+.welcome-logo{width:58px;height:58px;border-radius:50%;background:#EAF4EC;display:grid;place-items:center;color:#137138;font-size:40px;font-weight:900;margin-right:auto}
+.welcome-top-icons{display:flex;gap:9px}
+.welcome-top-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:14px;background:#F5FAF6;border:1px solid #E1ECE4;color:#0D7135;box-shadow:0 8px 18px rgba(29,77,41,.04)}
+.welcome-hero{min-height:142px;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(128px,.85fr);overflow:hidden;margin-bottom:12px;border:1px solid #DDE8E0;border-radius:20px;background:#fff;box-shadow:0 14px 34px rgba(33,54,43,.08)}
+.welcome-brand{max-width:none;margin:0;padding:22px 26px;border:0;border-radius:0 70px 70px 0;box-shadow:none;background:#fff;position:relative;z-index:2}
+.welcome-brandline{min-height:24px;margin-bottom:14px;padding:0 14px;border:0;background:#16823B;color:#fff;box-shadow:0 7px 14px rgba(22,130,59,.16);letter-spacing:4px;font-size:10px}
+.welcome-wordmark{font-size:35px;letter-spacing:-1.4px}
+.welcome-subcopy{max-width:none;margin:12px 0 0;padding:0;color:#647383;font-size:13px}
+.welcome-shield-panel{position:relative;display:grid;place-items:center;min-height:100%;background:radial-gradient(circle at 80% 22%,rgba(255,255,255,.10),transparent 24%),repeating-radial-gradient(circle at 100% 72%,rgba(255,255,255,.09) 0 1px,transparent 1px 14px),linear-gradient(135deg,#16823B 0%,#0D6F33 100%)}
+.welcome-shield-panel::before{content:"";width:92px;height:98px;border:3px solid rgba(139,230,151,.7);border-radius:22px 22px 34px 34px;clip-path:polygon(50% 0,100% 18%,100% 68%,50% 100%,0 68%,0 18%);opacity:.9}
+.welcome-shield-panel .welcome-core{position:absolute;width:64px;height:64px;margin:0;border-radius:50%;background:#fff;border:0;box-shadow:0 16px 28px rgba(2,38,18,.2)}
+.welcome-shield-panel .welcome-rupee{font-size:36px;color:#16823B}
+.welcome-features{gap:12px;margin:0 auto 12px}
+.welcome-feature{min-height:104px;padding:18px 16px;gap:16px;border-radius:20px;background:#fff;border:1px solid #E2EBE5;box-shadow:0 12px 28px rgba(33,54,43,.07)}
+.welcome-feature-icon{width:54px;height:54px;border-radius:17px}
+.welcome-feature-icon .material-symbols-rounded{font-size:30px}
+.welcome-feature-copy{display:block;min-width:0}
+.welcome-feature strong{font-size:16px;line-height:1.25;margin-bottom:8px}
+.welcome-feature small{display:block;color:#647383;font-size:12.5px;line-height:1.5}
+.welcome-actions{gap:12px;margin:0 auto 12px}
+.welcome-action{min-height:132px;padding:18px;border-radius:20px;box-shadow:0 12px 28px rgba(33,54,43,.07)}
+.welcome-action-icon{width:50px;height:50px;border-radius:50%}
+.welcome-action.primary{position:relative;overflow:hidden;border-color:#127935;background:radial-gradient(circle at 88% 88%,rgba(255,255,255,.12),transparent 34%),linear-gradient(135deg,#15803D 0%,#0D7135 100%)}
+.welcome-action.primary::after{content:"";position:absolute;right:20px;bottom:0;width:86px;height:96px;opacity:.22;background:linear-gradient(150deg,transparent 42%,rgba(255,255,255,.45) 43% 45%,transparent 46%);border-radius:50%}
+.welcome-action.secondary{position:relative;overflow:hidden;background:#fff}
+.welcome-action-title{font-size:19px;line-height:1.2;margin-bottom:8px}
+.welcome-action-desc{max-width:150px;font-size:13px;line-height:1.55}
+.welcome-restore-art{position:absolute;right:18px;bottom:18px;width:54px;height:48px;display:grid;place-items:center;border-radius:14px;background:#F2F7F4;color:#15803D;box-shadow:0 12px 20px rgba(33,54,43,.14)}
+.welcome-footnote{display:flex;align-items:center;gap:12px;margin-top:0;padding:13px 18px;border-radius:16px;border:1px solid #BEE6C8;background:#F7FCF8;color:#4B5967;font-size:13px}
+.welcome-footnote .material-symbols-rounded{color:#0D7135;font-size:22px}
+.welcome-footnote strong{color:#0D7135}
+@media (max-width:420px){
+  #setup{padding:12px 8px 24px}
+  .welcome-topbar{min-height:58px;padding:10px 12px;border-radius:20px}
+  .welcome-logo{width:48px;height:48px;font-size:34px}
+  .welcome-top-icon{width:34px;height:34px;border-radius:12px}
+  .welcome-top-icons{gap:6px}
+  .welcome-hero{grid-template-columns:1.05fr .75fr;min-height:128px}
+  .welcome-brand{padding:18px 16px;border-radius:0 56px 56px 0}
+  .welcome-brandline{letter-spacing:2px;font-size:9px;padding:0 10px}
+  .welcome-wordmark{font-size:28px}
+  .welcome-subcopy{font-size:12px}
+  .welcome-shield-panel::before{width:72px;height:76px}
+  .welcome-shield-panel .welcome-core{width:52px;height:52px}
+  .welcome-shield-panel .welcome-rupee{font-size:30px}
+  .welcome-feature{min-height:96px;padding:14px 12px;gap:12px}
+  .welcome-feature-icon{width:46px;height:46px}
+  .welcome-feature strong{font-size:14px}
+  .welcome-feature small{font-size:11px}
+  .welcome-action{min-height:120px;padding:15px}
+  .welcome-action-title{font-size:17px}
+}
 .hidden{display:none !important}
 .topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px}
 .topbar-left{display:flex;align-items:flex-start;gap:14px;min-width:0;flex:1}
@@ -1677,6 +1899,19 @@ strong{font-weight:900}
   margin-top:4px;
   line-height:1.5;
 }
+.built-with-line{
+  display:inline-flex!important;
+  align-items:center;
+  gap:5px;
+  white-space:nowrap;
+}
+.built-with-line .material-symbols-rounded{
+  display:inline-flex!important;
+  margin-top:0;
+  color:#DC2626;
+  font-size:16px;
+  line-height:1;
+}
 .toggle{
   position:relative;
   width:48px;
@@ -2174,15 +2409,16 @@ strong{font-weight:900}
 }
 @media (max-width:360px){
   #setup{padding:20px 12px 28px;align-content:start}
-  .welcome-hero{min-height:150px;margin-bottom:10px}
-  .welcome-illustration{height:150px;max-width:230px}
-  .welcome-core{width:116px;height:116px}
-  .welcome-core::after{inset:31px}
-  .welcome-rupee{width:60px;height:60px;border-radius:20px;font-size:32px}
-  .welcome-float{width:42px;height:42px;border-radius:14px}
-  .welcome-wordmark{font-size:34px}
+  .welcome-hero{min-height:auto;margin-bottom:10px}
+  .welcome-illustration{height:auto;max-width:430px;gap:6px;padding:10px}
+  .welcome-core{width:52px;height:52px;border-radius:17px}
+  .welcome-core::after{content:none}
+  .welcome-rupee{width:auto;height:auto;border-radius:0;font-size:31px}
+  .welcome-float{width:32px;height:32px;border-radius:12px}
+  .welcome-wordmark{font-size:29px}
   .welcome-features{grid-template-columns:1fr;gap:8px}
-  .welcome-action{padding:14px;border-radius:20px}
+  .welcome-actions{grid-template-columns:1fr}
+  .welcome-action{min-height:auto;padding:12px;border-radius:18px}
   .hero-grid,.grid-2,.quick-grid,.tool-grid,.mgrid{grid-template-columns:1fr}
   .balance-box{flex-direction:column;align-items:flex-start;gap:6px}
   .dash-hero-bottom,.home-mini-grid,.trend-metrics,.insight-strip{flex-direction:column}
@@ -2212,61 +2448,965 @@ strong{font-weight:900}
   .add-panel-head{flex-direction:column}
   .analysis-grid{grid-template-columns:1fr}
 }
+/* Final welcome redesign matching the clean reference */
+#setup{
+  display:block;
+  padding:28px 26px 30px;
+  background:#F8FAF9;
+}
+.welcome-topbar,.welcome-hero,.welcome-features,.welcome-actions,.welcome-footnote{
+  width:100%;
+  max-width:968px;
+  margin-left:auto;
+  margin-right:auto;
+}
+.welcome-topbar{
+  min-height:140px;
+  display:flex;
+  align-items:center;
+  gap:28px;
+  padding:28px 48px;
+  margin-bottom:34px;
+  background:#fff;
+  border:1px solid #E7ECE9;
+  border-radius:24px;
+  box-shadow:0 24px 56px rgba(20,31,26,.08);
+}
+.welcome-menu{
+  width:36px;
+  display:grid;
+  gap:9px;
+  padding:0;
+  border:0;
+  background:transparent;
+  flex-shrink:0;
+}
+.welcome-menu span{
+  display:block;
+  width:36px;
+  height:3px;
+  border-radius:999px;
+  background:#172434;
+}
+.welcome-menu span:nth-child(2),
+.welcome-menu span:nth-child(3){width:36px}
+.welcome-logo{
+  width:96px;
+  height:86px;
+  display:grid;
+  place-items:center;
+  margin-right:auto;
+  border-radius:0;
+  background:transparent;
+  color:#15793A;
+  font-size:86px;
+  line-height:1;
+  font-weight:900;
+}
+.welcome-top-icons{
+  display:flex;
+  gap:28px;
+}
+.welcome-top-icon{
+  width:76px;
+  height:76px;
+  display:grid;
+  place-items:center;
+  border-radius:20px;
+  background:#F8FBF9;
+  border:1px solid #DFE9E2;
+  color:#0C7434;
+  box-shadow:0 10px 22px rgba(24,65,39,.05);
+}
+.welcome-top-icon .material-symbols-rounded{font-size:34px}
+.welcome-hero{
+  min-height:318px;
+  display:grid;
+  grid-template-columns:minmax(0,1.48fr) minmax(300px,.92fr);
+  overflow:hidden;
+  margin-bottom:34px;
+  border:1px solid #DEE7E1;
+  border-radius:28px;
+  background:#fff;
+  box-shadow:0 20px 48px rgba(29,47,39,.07);
+}
+.welcome-brand{
+  max-width:none;
+  margin:0;
+  padding:68px 40px;
+  border:0;
+  border-radius:0;
+  background:#fff;
+  box-shadow:none;
+  text-align:left;
+  position:relative;
+  z-index:2;
+}
+.welcome-brandline{
+  display:block;
+  width:auto;
+  min-height:0;
+  margin:0 0 28px;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  color:#0D7434;
+  font-size:20px;
+  font-weight:800;
+  line-height:1;
+  letter-spacing:0;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.welcome-wordmark{
+  margin:0;
+  color:#111D2D;
+  font-size:68px;
+  line-height:1;
+  font-weight:900;
+  letter-spacing:0;
+  text-shadow:0 6px 12px rgba(17,29,45,.08);
+}
+.welcome-wordmark span{color:#147B39}
+.welcome-subcopy{
+  max-width:none;
+  margin:26px 0 0;
+  padding:0;
+  color:#5F6F80;
+  font-size:25px;
+  line-height:1.25;
+  text-align:left;
+  letter-spacing:0;
+}
+.welcome-shield-panel{
+  position:relative;
+  display:grid;
+  place-items:center;
+  min-height:100%;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 56% 50%, transparent 0 96px, rgba(22,128,61,.11) 97px 98px, transparent 99px 142px, rgba(22,128,61,.08) 143px 144px, transparent 145px 192px, rgba(22,128,61,.06) 193px 194px, transparent 195px),
+    linear-gradient(135deg,#FFFFFF 0%,#E5F7EA 100%);
+}
+.welcome-shield-panel::before{
+  content:"";
+  width:174px;
+  height:194px;
+  border:0;
+  border-radius:36px 36px 58px 58px;
+  clip-path:polygon(50% 0,100% 18%,100% 67%,50% 100%,0 67%,0 18%);
+  background:linear-gradient(145deg,#2E9655 0%,#087135 100%);
+  box-shadow:0 30px 60px rgba(13,113,53,.20);
+  opacity:1;
+}
+.welcome-shield-panel::after{
+  content:"";
+  position:absolute;
+  inset:auto -20px -42px auto;
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(36,145,72,.12),transparent 66%);
+}
+.welcome-shield-panel .welcome-core{
+  position:absolute;
+  width:100px;
+  height:100px;
+  margin:0;
+  display:grid;
+  place-items:center;
+  border:0;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 20px 38px rgba(15,80,39,.18);
+}
+.welcome-shield-panel .welcome-core::before,
+.welcome-shield-panel .welcome-core::after,
+.welcome-shield-line{display:none}
+.welcome-shield-panel .welcome-rupee{
+  width:auto;
+  height:auto;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  color:#16783A;
+  font-size:58px;
+  line-height:1;
+}
+.welcome-features{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:22px;
+  margin-bottom:26px;
+}
+.welcome-feature{
+  min-height:192px;
+  display:flex;
+  align-items:center;
+  gap:34px;
+  padding:30px 24px;
+  border:1px solid #E0E7E3;
+  border-radius:24px;
+  background:#fff;
+  box-shadow:0 16px 38px rgba(28,45,37,.07);
+}
+.welcome-feature-icon{
+  width:96px;
+  height:96px;
+  display:grid;
+  place-items:center;
+  flex-shrink:0;
+  border-radius:26px;
+}
+.welcome-feature-icon .material-symbols-rounded{font-size:48px}
+.welcome-feature-copy{display:block;min-width:0}
+.welcome-feature strong{
+  display:block;
+  color:#122033;
+  font-size:28px;
+  font-weight:900;
+  line-height:1.22;
+  letter-spacing:0;
+}
+.welcome-feature small{display:none}
+.welcome-actions{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:22px;
+  margin-bottom:26px;
+}
+.welcome-action{
+  min-height:280px;
+  display:block;
+  position:relative;
+  overflow:hidden;
+  padding:40px 34px;
+  border:1px solid #E0E7E3;
+  border-radius:24px;
+  box-shadow:0 16px 38px rgba(28,45,37,.07);
+  text-align:left;
+}
+.welcome-action.primary{
+  color:#fff;
+  border-color:#13793B;
+  background:
+    radial-gradient(circle at 86% 92%,rgba(255,255,255,.16),transparent 30%),
+    linear-gradient(135deg,#279552 0%,#0E7D39 100%);
+}
+.welcome-action.primary::after{
+  content:"";
+  position:absolute;
+  right:28px;
+  bottom:-8px;
+  width:140px;
+  height:180px;
+  opacity:.16;
+  background:
+    radial-gradient(ellipse at 50% 12%, transparent 0 28px, rgba(255,255,255,.75) 29px 32px, transparent 33px),
+    linear-gradient(145deg,transparent 37%,rgba(255,255,255,.72) 38% 40%,transparent 41%);
+  border-radius:50%;
+  transform:rotate(-10deg);
+}
+.welcome-action.secondary{
+  color:#122033;
+  background:#fff;
+}
+.welcome-action-icon{
+  width:70px;
+  height:70px;
+  display:grid;
+  place-items:center;
+  margin:0 0 32px;
+  border-radius:50%;
+}
+.welcome-action-icon .material-symbols-rounded{font-size:40px}
+.welcome-action.primary .welcome-action-icon{
+  color:#11813A;
+  background:#fff;
+}
+.welcome-action.secondary .welcome-action-icon{
+  color:#0F7A37;
+  background:#EFF8F1;
+}
+.welcome-action-copy{display:block}
+.welcome-action-title{
+  display:block;
+  margin:0 0 12px;
+  color:inherit;
+  font-size:30px;
+  font-weight:900;
+  line-height:1.15;
+  letter-spacing:0;
+}
+.welcome-action-desc{
+  display:block;
+  max-width:260px;
+  color:inherit;
+  font-size:22px;
+  line-height:1.45;
+  opacity:.9;
+  letter-spacing:0;
+}
+.welcome-restore-art{display:none}
+.welcome-footnote{
+  min-height:78px;
+  display:flex;
+  align-items:center;
+  gap:22px;
+  margin-bottom:26px;
+  padding:20px 34px;
+  border:1px solid #D8EFE0;
+  border-radius:20px;
+  background:#F8FFFA;
+  color:#4F5F70;
+  font-size:23px;
+  line-height:1.35;
+  letter-spacing:0;
+  box-shadow:0 14px 34px rgba(26,65,42,.05);
+}
+.welcome-footnote .material-symbols-rounded{
+  color:#0D7434;
+  font-size:34px;
+  flex-shrink:0;
+}
+.welcome-footnote strong{color:#0D7434}
+.update-banner{
+  left:26px;
+  right:26px;
+  bottom:26px;
+  max-width:968px;
+  min-height:116px;
+  padding:26px 30px;
+  border:1px solid #E0E7E3;
+  border-radius:24px;
+  background:#fff;
+  color:#122033;
+  box-shadow:0 18px 44px rgba(28,45,37,.08);
+}
+.update-banner strong{
+  font-size:25px;
+  line-height:1.2;
+  letter-spacing:0;
+}
+.update-banner span{
+  display:block;
+  margin-top:8px;
+  color:#5F6F80;
+  font-size:20px;
+  line-height:1.35;
+}
+.update-banner div::before{
+  content:"NEW";
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:80px;
+  height:50px;
+  margin-right:26px;
+  border-radius:10px;
+  background:#11813A;
+  color:#fff;
+  font-size:20px;
+  font-weight:800;
+  vertical-align:middle;
+}
+.update-banner button{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  border:0;
+  border-radius:999px;
+  padding:0;
+  background:transparent;
+  color:#0D7434;
+  font-size:23px;
+  font-weight:800;
+  white-space:nowrap;
+}
+.update-banner button::after{
+  content:"chevron_right";
+  font-family:'Material Symbols Rounded';
+  font-variation-settings:'FILL' 0,'wght' 600,'GRAD' 0,'opsz' 24;
+  font-size:34px;
+  line-height:1;
+}
+@media (max-width:620px){
+  #setup{padding:14px 40px 14px}
+  .welcome-topbar{
+    min-height:86px;
+    gap:12px;
+    padding:18px 24px;
+    margin-bottom:14px;
+    border-radius:18px;
+  }
+  .welcome-menu{width:30px;gap:7px}
+  .welcome-menu span,
+  .welcome-menu span:nth-child(2),
+  .welcome-menu span:nth-child(3){width:30px;height:2.5px}
+  .welcome-logo{width:54px;height:54px;font-size:54px}
+  .welcome-top-icons{gap:10px}
+  .welcome-top-icon{width:38px;height:38px;border-radius:13px}
+  .welcome-top-icon .material-symbols-rounded{font-size:23px}
+  .welcome-hero{
+    min-height:150px;
+    grid-template-columns:minmax(0,1.45fr) minmax(150px,.9fr);
+    margin-bottom:12px;
+    border-radius:18px;
+  }
+  .welcome-brand{padding:28px 26px}
+  .welcome-brandline{margin-bottom:16px;font-size:12px}
+  .welcome-wordmark{font-size:28px}
+  .welcome-subcopy{margin-top:16px;font-size:13px}
+  .welcome-shield-panel::before{width:86px;height:96px;border-radius:22px 22px 30px 30px}
+  .welcome-shield-panel .welcome-core{width:64px;height:64px}
+  .welcome-shield-panel .welcome-rupee{font-size:38px}
+  .welcome-features{gap:12px;margin-bottom:12px}
+  .welcome-feature{
+    min-height:124px;
+    gap:18px;
+    padding:16px 20px;
+    border-radius:18px;
+  }
+  .welcome-feature-icon{width:56px;height:56px;border-radius:16px}
+  .welcome-feature-icon .material-symbols-rounded{font-size:32px}
+  .welcome-feature strong{font-size:18px}
+  .welcome-actions{gap:12px;margin-bottom:12px}
+  .welcome-action{
+    min-height:158px;
+    padding:22px 18px;
+    border-radius:18px;
+  }
+  .welcome-action-icon{width:56px;height:56px;margin-bottom:24px}
+  .welcome-action-icon .material-symbols-rounded{font-size:34px}
+  .welcome-action-title{font-size:20px;margin-bottom:8px}
+  .welcome-action-desc{max-width:170px;font-size:14px;line-height:1.45}
+  .welcome-footnote{
+    min-height:50px;
+    gap:14px;
+    margin-bottom:0;
+    padding:14px 20px;
+    border-radius:14px;
+    font-size:14px;
+  }
+  .welcome-footnote .material-symbols-rounded{font-size:24px}
+  .update-banner{
+    left:40px;
+    right:40px;
+    bottom:14px;
+    min-height:74px;
+    padding:16px 20px;
+    border-radius:16px;
+  }
+  .update-banner div::before{min-width:58px;height:36px;margin-right:16px;font-size:14px}
+  .update-banner strong{font-size:16px}
+  .update-banner span{font-size:13px;margin-top:4px}
+  .update-banner button{font-size:16px}
+  .update-banner button::after{font-size:24px}
+}
+@media (max-width:430px){
+  #setup{padding:12px 16px}
+  .welcome-topbar{padding:14px 16px}
+  .welcome-top-icons{gap:7px}
+  .welcome-top-icon{width:34px;height:34px}
+  .welcome-hero{grid-template-columns:minmax(0,1.3fr) minmax(116px,.8fr)}
+  .welcome-brand{padding:22px 16px}
+  .welcome-brandline{font-size:10px}
+  .welcome-wordmark{font-size:26px}
+  .welcome-subcopy{font-size:12px}
+  .welcome-feature{gap:12px;padding:14px 12px}
+  .welcome-feature-icon{width:50px;height:50px}
+  .welcome-feature strong{font-size:16px}
+  .welcome-action{min-height:150px;padding:18px 16px}
+  .welcome-action-title{font-size:18px}
+  .welcome-action-desc{font-size:13px}
+  .welcome-footnote{font-size:13px;padding:12px 16px}
+  .update-banner{left:16px;right:16px}
+}
+/* Keep setup screen in mobile layout on every viewport */
+#setup{
+  padding:12px 16px 18px;
+  background:#F8FAF9;
+}
+.welcome-topbar,.welcome-hero,.welcome-features,.welcome-actions,.welcome-footnote{
+  max-width:472px;
+}
+.welcome-topbar{
+  min-height:86px;
+  gap:12px;
+  padding:14px 18px;
+  margin-bottom:14px;
+  border-radius:18px;
+}
+.welcome-menu{
+  width:30px;
+  gap:7px;
+}
+.welcome-menu span,
+.welcome-menu span:nth-child(2),
+.welcome-menu span:nth-child(3){
+  width:30px;
+  height:2.5px;
+}
+.welcome-logo{
+  width:54px;
+  height:54px;
+  font-size:54px;
+}
+.welcome-top-icons{
+  gap:8px;
+}
+.welcome-top-icon{
+  width:36px;
+  height:36px;
+  border-radius:13px;
+}
+.welcome-top-icon .material-symbols-rounded{
+  font-size:23px;
+}
+.welcome-hero{
+  min-height:150px;
+  grid-template-columns:minmax(0,1.34fr) minmax(116px,.8fr);
+  margin-bottom:12px;
+  border-radius:18px;
+}
+.welcome-brand{
+  padding:22px 16px;
+}
+.welcome-brandline{
+  margin-bottom:14px;
+  font-size:10px;
+}
+.welcome-wordmark{
+  font-size:26px;
+}
+.welcome-subcopy{
+  margin-top:14px;
+  font-size:12px;
+}
+.welcome-shield-panel::before{
+  width:82px;
+  height:92px;
+  border-radius:22px 22px 30px 30px;
+}
+.welcome-shield-panel .welcome-core{
+  width:60px;
+  height:60px;
+}
+.welcome-shield-panel .welcome-rupee{
+  font-size:36px;
+}
+.welcome-features{
+  gap:12px;
+  margin-bottom:12px;
+}
+.welcome-feature{
+  min-height:124px;
+  gap:12px;
+  padding:14px 12px;
+  border-radius:18px;
+}
+.welcome-feature-icon{
+  width:50px;
+  height:50px;
+  border-radius:16px;
+}
+.welcome-feature-icon .material-symbols-rounded{
+  font-size:30px;
+}
+.welcome-feature strong{
+  font-size:16px;
+}
+.welcome-actions{
+  gap:12px;
+  margin-bottom:12px;
+}
+.welcome-action{
+  min-height:150px;
+  padding:18px 16px;
+  border-radius:18px;
+}
+.welcome-action-icon{
+  width:52px;
+  height:52px;
+  margin-bottom:22px;
+}
+.welcome-action-icon .material-symbols-rounded{
+  font-size:32px;
+}
+.welcome-action-title{
+  font-size:18px;
+  margin-bottom:8px;
+}
+.welcome-action-desc{
+  max-width:170px;
+  font-size:13px;
+  line-height:1.45;
+}
+.welcome-footnote{
+  min-height:50px;
+  gap:12px;
+  padding:12px 16px;
+  border-radius:14px;
+  font-size:13px;
+}
+.welcome-footnote .material-symbols-rounded{
+  font-size:24px;
+}
+.update-banner{
+  left:16px;
+  right:16px;
+  bottom:16px;
+  max-width:472px;
+  min-height:74px;
+  padding:16px 18px;
+  border-radius:16px;
+}
+.update-banner div::before{
+  min-width:58px;
+  height:36px;
+  margin-right:14px;
+  font-size:14px;
+}
+.update-banner strong{
+  font-size:16px;
+}
+.update-banner span{
+  margin-top:4px;
+  font-size:13px;
+}
+.update-banner button{
+  font-size:16px;
+}
+.update-banner button::after{
+  font-size:24px;
+}
+/* Reference-style transactions list */
+#sub-sess{
+  padding-bottom:10px;
+}
+#sessContainer{
+  display:grid;
+  gap:0;
+}
+.session-date-divider{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:10px 6px 8px;
+  color:#172033;
+  text-transform:uppercase;
+  letter-spacing:0;
+  font-size:13px;
+  font-weight:900;
+}
+.session-date-divider .material-symbols-rounded{
+  color:#2D8B2F;
+  font-size:21px;
+  flex-shrink:0;
+}
+.session-date-divider strong{
+  white-space:nowrap;
+}
+.session-date-divider::after{
+  content:"";
+  flex:1;
+  height:1px;
+  margin-left:6px;
+  background:#C9D2D4;
+}
+.session-date-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#61B958;
+  flex-shrink:0;
+}
+#sessContainer .swipe-wrap{
+  margin-bottom:9px;
+  border-radius:16px;
+}
+#sessContainer .swipe-card{
+  border-radius:16px;
+}
+.session-tx-card{
+  position:relative;
+  min-height:76px;
+  overflow:hidden;
+  border:1px solid #E5ECE7;
+  border-radius:16px;
+  background:#fff;
+  box-shadow:0 8px 18px rgba(25,45,35,.06);
+}
+.session-tx-card::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:4px;
+  background:var(--tx-accent);
+}
+.session-tx-content{
+  min-height:76px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:8px;
+  padding:10px 12px 10px 16px;
+  cursor:pointer;
+}
+.session-tx-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+.session-tx-icon{
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  flex-shrink:0;
+  border-radius:14px;
+  background:var(--tx-icon-bg);
+  color:var(--tx-icon-color);
+}
+.session-tx-icon .material-symbols-rounded{
+  font-size:24px;
+  color:inherit;
+}
+.session-tx-copy{
+  min-width:0;
+}
+.session-tx-title{
+  max-width:100%;
+  overflow:hidden;
+  color:#101828;
+  font-size:15px;
+  font-weight:900;
+  line-height:1.16;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  letter-spacing:0;
+}
+.session-tx-meta-row{
+  min-height:24px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-top:6px;
+}
+.session-tx-meta{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:24px;
+  border-radius:9px;
+  background:#F0ECFF;
+  color:#6D4AFF;
+  font-size:11.5px;
+  font-weight:700;
+  line-height:1;
+}
+.session-tx-pay{
+  width:30px;
+}
+.session-tx-pay .material-symbols-rounded{
+  font-size:19px;
+}
+.session-tx-route,
+.session-tx-note{
+  max-width:108px;
+  padding:0 8px;
+  overflow:hidden;
+  color:#4F5F70;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.session-tx-right{
+  display:grid;
+  justify-items:end;
+  gap:8px;
+  flex-shrink:0;
+}
+.session-tx-amount{
+  color:#D71920;
+  font-size:20px;
+  font-weight:900;
+  line-height:1;
+  white-space:nowrap;
+  letter-spacing:0;
+}
+.session-tx-amount.income{
+  color:#15803D;
+}
+.session-tx-amount.transfer{
+  color:#101828;
+}
+.session-tx-time{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  color:#3E4A5D;
+  font-size:11px;
+  font-weight:600;
+  white-space:nowrap;
+}
+.session-tx-time .material-symbols-rounded{
+  width:20px;
+  height:20px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:#E8F5E9;
+  color:#2A8D2E;
+  font-size:14px;
+}
+@media (max-width:420px){
+  .session-date-divider{
+    gap:10px;
+    margin:9px 4px 7px;
+    font-size:12px;
+  }
+  .session-date-divider .material-symbols-rounded{
+    font-size:20px;
+  }
+  #sessContainer .swipe-wrap{
+    margin-bottom:8px;
+    border-radius:14px;
+  }
+  .session-tx-card{
+    min-height:72px;
+    border-radius:14px;
+  }
+  .session-tx-content{
+    min-height:72px;
+    gap:7px;
+    padding:9px 10px 9px 14px;
+  }
+  .session-tx-left{
+    gap:8px;
+  }
+  .session-tx-icon{
+    width:38px;
+    height:38px;
+    border-radius:13px;
+  }
+  .session-tx-icon .material-symbols-rounded{
+    font-size:23px;
+  }
+  .session-tx-title{
+    font-size:14px;
+  }
+  .session-tx-meta-row{
+    min-height:22px;
+    margin-top:5px;
+  }
+  .session-tx-meta{
+    min-height:22px;
+    border-radius:10px;
+    font-size:11px;
+  }
+  .session-tx-pay{
+    width:28px;
+  }
+  .session-tx-pay .material-symbols-rounded{
+    font-size:18px;
+  }
+  .session-tx-route,
+  .session-tx-note{
+    max-width:94px;
+    padding:0 7px;
+  }
+  .session-tx-right{
+    gap:7px;
+  }
+  .session-tx-amount{
+    font-size:19px;
+  }
+  .session-tx-time{
+    gap:5px;
+    font-size:10.5px;
+  }
+  .session-tx-time .material-symbols-rounded{
+    width:19px;
+    height:19px;
+    font-size:13px;
+  }
+}
 </style>
 </head>
 <body>
 
 <div id="setup">
-  <div class="welcome-hero">
-    <div class="welcome-illustration">
-      <div class="welcome-float left-top">
-        <span class="material-symbols-rounded" aria-hidden="true">monitoring</span>
-      </div>
-      <div class="welcome-float right-top">
-        <span class="material-symbols-rounded" aria-hidden="true">account_balance_wallet</span>
-      </div>
-      <div class="welcome-float left-bottom">
-        <span class="material-symbols-rounded" aria-hidden="true">trending_up</span>
-      </div>
-      <div class="welcome-float right-bottom">
-        <span class="material-symbols-rounded" aria-hidden="true">lock</span>
-      </div>
-      <div class="welcome-core">
-        <div class="welcome-rupee">₹</div>
-      </div>
+  <div class="welcome-topbar">
+    <button type="button" class="welcome-menu" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="welcome-logo">
+      <span>₹</span>
+    </div>
+    <div class="welcome-top-icons">
+      <span class="welcome-top-icon"><span class="material-symbols-rounded" aria-hidden="true">monitoring</span></span>
+      <span class="welcome-top-icon"><span class="material-symbols-rounded" aria-hidden="true">account_balance_wallet</span></span>
+      <span class="welcome-top-icon"><span class="material-symbols-rounded" aria-hidden="true">trending_up</span></span>
+      <span class="welcome-top-icon"><span class="material-symbols-rounded" aria-hidden="true">lock</span></span>
     </div>
   </div>
 
-  <div class="welcome-brand">
-    <div class="welcome-brandline">Private Money Tracker</div>
-    <h2 class="welcome-wordmark">Money<span>Nest</span></h2>
+  <div class="welcome-hero">
+    <div class="welcome-brand">
+      <div class="welcome-brandline">Private Money Tracker</div>
+      <h2 class="welcome-wordmark">Money<span>Nest</span></h2>
+      <p class="welcome-subcopy">Save Today . Secure Tomorrow</p>
+    </div>
+    <div class="welcome-shield-panel">
+      <div class="welcome-core">
+        <div class="welcome-rupee">₹</div>
+      </div>
+      <span class="welcome-shield-line"></span>
+    </div>
   </div>
-  <p class="welcome-subcopy">Save Today . Secure Tomorrow</p>
 
   <div class="welcome-features">
     <div class="welcome-feature">
       <div class="welcome-feature-icon">
         <span class="material-symbols-rounded" aria-hidden="true">lock</span>
       </div>
-      <strong>Private<br/>by design</strong>
+      <span class="welcome-feature-copy">
+        <strong>Private<br/>by design</strong>
+        <small>Your data stays only on your device</small>
+      </span>
     </div>
     <div class="welcome-feature">
       <div class="welcome-feature-icon">
         <span class="material-symbols-rounded" aria-hidden="true">backup</span>
       </div>
-      <strong>Backup<br/>ready</strong>
+      <span class="welcome-feature-copy">
+        <strong>Backup<br/>ready</strong>
+        <small>Keep your data safe with backups</small>
+      </span>
     </div>
     <div class="welcome-feature">
       <div class="welcome-feature-icon">
         <span class="material-symbols-rounded" aria-hidden="true">monitoring</span>
       </div>
-      <strong>Monthly<br/>insights</strong>
+      <span class="welcome-feature-copy">
+        <strong>Monthly<br/>insights</strong>
+        <small>Understand your money with smart reports</small>
+      </span>
     </div>
     <div class="welcome-feature">
       <div class="welcome-feature-icon">
         <span class="material-symbols-rounded" aria-hidden="true">payments</span>
       </div>
-      <strong>All spends<br/>in one place</strong>
+      <span class="welcome-feature-copy">
+        <strong>All spends<br/>in one place</strong>
+        <small>Track everything effortlessly</small>
+      </span>
     </div>
   </div>
 
@@ -2279,7 +3419,6 @@ strong{font-weight:900}
         <span class="welcome-action-title">Start Fresh</span>
         <span class="welcome-action-desc">Create a clean local account on this device</span>
       </span>
-      <span class="welcome-action-arrow"><span class="material-symbols-rounded">keyboard_arrow_right</span></span>
     </button>
     <button type="button" id="welcomeRestoreBtn" class="welcome-action secondary" onclick="triggerWelcomeRestore()">
       <span class="welcome-action-icon">
@@ -2289,11 +3428,11 @@ strong{font-weight:900}
         <span class="welcome-action-title">Restore Backup</span>
         <span class="welcome-action-desc">Bring back your saved MoneyNest data</span>
       </span>
-      <span class="welcome-action-arrow"><span class="material-symbols-rounded">keyboard_arrow_right</span></span>
+      <span class="welcome-restore-art"><span class="material-symbols-rounded fill">verified_user</span></span>
     </button>
   </div>
 
-  <p class="welcome-footnote"><span class="material-symbols-rounded" aria-hidden="true">lock</span> Your data stays on this device unless you export a backup.</p>
+  <p class="welcome-footnote"><span class="material-symbols-rounded" aria-hidden="true">lock</span> Your data stays on this device <strong>unless you export a backup.</strong></p>
 </div>
 
 <div id="wrap" style="display:none">
@@ -2813,7 +3952,7 @@ strong{font-weight:900}
         <div class="more-list">
           <div class="more-item">
             <div class="more-item-main">
-              <strong>Built with <span class="material-symbols-rounded fill" aria-hidden="true">favorite</span> by VISIRA</strong>
+              <strong class="built-with-line">Built with <span class="material-symbols-rounded fill" aria-hidden="true">favorite</span> by VISIRA</strong>
             </div>
           </div>
         </div>
@@ -3315,6 +4454,47 @@ function paymentIconName(value){
 function paymentMetaLine(value){
   const payMode=value||'NA';
   return `<span style="display:inline-flex;align-items:center" title="${safeText(payMode)}" aria-label="${safeText(payMode)}">${coloredIconBadge(paymentIconName(payMode),{label:payMode,size:'xs'})}</span>`;
+}
+function getSessionPurchaseTitle(record, fallbackTitle){
+  const storeName=String(record.store||'').trim();
+  const firstItem=(record.items||[]).find(item=>String(item.name||'').trim());
+  if(storeName && !['Local Shop','Other'].includes(storeName)) return storeName;
+  if(firstItem?.name) return firstItem.name;
+  if(record.notes) return record.notes;
+  return fallbackTitle||'Expense';
+}
+function getSessionExpenseTitle(record, fallbackTitle){
+  return record.customName||record.recipient||record.hospital||record.medicine||record.notes||fallbackTitle||'Expense';
+}
+function sessionPaymentChip(value){
+  const payMode=value||'NA';
+  return `<span class="session-tx-meta session-tx-pay" title="${safeText(payMode)}" aria-label="${safeText(payMode)}">${iconHtml(paymentIconName(payMode))}</span>`;
+}
+function sessionRouteChip(record){
+  const route=transactionSummary('transfer',record);
+  return `<span class="session-tx-meta session-tx-route">${safeText(route)}</span>`;
+}
+function sessionTimeChip(datetime){
+  return `<span class="session-tx-time"><span class="material-symbols-rounded" aria-hidden="true">schedule</span><span>${safeText(fmtT(datetime))}</span></span>`;
+}
+function sessionTransactionCard({kind,id,title,icon,label,amount,datetime,metaHtml,amountPrefix='',amountTone='expense',detailType}){
+  const colors=getIconColors(label||title||kind);
+  const accent=amountTone==='income'?'#15803D':amountTone==='transfer'?'#6D4AFF':colors.fg;
+  return `<div class="session-tx-card session-tx-${kind}" style="--tx-accent:${accent};--tx-icon-bg:${colors.bg};--tx-icon-color:${colors.fg}">
+    <div class="session-tx-content" onclick="openTransactionDetails('${detailType||kind}','${id}')">
+      <div class="session-tx-left">
+        <span class="session-tx-icon">${iconHtml(icon)}</span>
+        <div class="session-tx-copy">
+          <div class="session-tx-title">${safeText(title)}</div>
+          <div class="session-tx-meta-row">${metaHtml||''}</div>
+        </div>
+      </div>
+      <div class="session-tx-right">
+        <div class="session-tx-amount ${amountTone}">${amountPrefix}${fmt(amount)}</div>
+        ${sessionTimeChip(datetime)}
+      </div>
+    </div>
+  </div>`;
 }
 function transactionSummary(type,record){
   if(type==='purchase'){
@@ -5544,7 +6724,7 @@ function renderSessions(){
     groups[dk].push(entry);
   });
   c.innerHTML=Object.entries(groups).map(([date,ps])=>`
-    <div class="sdate">${safeText(date)}</div>
+    <div class="sdate session-date-divider"><span class="material-symbols-rounded" aria-hidden="true">calendar_month</span><strong>${safeText(date)}</strong><span class="session-date-dot"></span></div>
     ${ps.map(entry=>entry.type==='purchase'?(()=>{
       const p=entry.record;
       const purchasePath=getPurchasePath(p,p.items?.[0]?.category);
@@ -5552,76 +6732,67 @@ function renderSessions(){
       const categoryLabel=getCategoryLabel(purchasePath.category);
       const subcategoryLabel=getCategoryLabel(purchasePath.category,purchasePath.subcategory);
       const leafLabel=getCategoryLabel(purchasePath.category,purchasePath.subcategory,purchasePath.leaf);
-      const storeLabel=getValidStoreName(p.store);
-      return wrapSwipeCard(`sess-${p.id}`,`startEdit('${p.id}')`,`delPurch('${p.id}')`,`<div class="hi" style="padding:12px 14px;border-radius:18px">
-        <div class="row" style="cursor:pointer" onclick="openTransactionDetails('purchase','${p.id}')">
-          <div style="display:flex;align-items:center;gap:10px;min-width:0">
-            <span style="display:inline-flex;flex:0 0 auto">${coloredIconBadge(purchaseIcon,{label:leafLabel||subcategoryLabel||categoryLabel,size:'sm'})}</span>
-            <div style="min-width:0">
-              <div style="font-size:14px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(leafLabel)}</div>
-              <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${paymentMetaLine(p.payMode)}</div>
-            </div>
-          </div>
-          <div style="text-align:right;flex:0 0 auto">
-            <div style="font-size:18px;font-weight:900;color:var(--expense);white-space:nowrap">${fmt(p.total)}</div>
-            <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${fmtT(p.datetime)}</div>
-          </div>
-        </div>
-      </div>`);
+      const title=getSessionPurchaseTitle(p,leafLabel||subcategoryLabel||categoryLabel);
+      return wrapSwipeCard(`sess-${p.id}`,`startEdit('${p.id}')`,`delPurch('${p.id}')`,sessionTransactionCard({
+        kind:'purchase',
+        detailType:'purchase',
+        id:p.id,
+        title,
+        icon:purchaseIcon,
+        label:leafLabel||subcategoryLabel||categoryLabel||title,
+        amount:p.total,
+        datetime:p.datetime,
+        metaHtml:sessionPaymentChip(p.payMode),
+        amountTone:'expense'
+      }));
     })():entry.type==='expense'?(()=>{
       const e=entry.record;
       const labels=getExpenseDisplayPath(e);
       const icon=getExpenseIcon(e.category,e.subcategory,e.leaf);
       const titleLabel=labels.leaf||labels.subcategory||labels.category;
-      return wrapSwipeCard(`sess-${e.id}`,`startEdit('${e.id}','expense')`,`delExpense('${e.id}')`,`<div class="hi" style="padding:12px 14px;border-radius:18px">
-        <div class="row" style="cursor:pointer" onclick="openTransactionDetails('expense','${e.id}')">
-          <div style="display:flex;align-items:center;gap:10px;min-width:0">
-            <span style="display:inline-flex;flex:0 0 auto">${coloredIconBadge(icon,{label:titleLabel,size:'sm'})}</span>
-            <div style="min-width:0">
-              <div style="font-size:14px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(titleLabel)}</div>
-              <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${paymentMetaLine(e.payMode)}</div>
-            </div>
-          </div>
-          <div style="text-align:right;flex:0 0 auto">
-            <div style="font-size:18px;font-weight:900;color:var(--expense);white-space:nowrap">${fmt(e.amount)}</div>
-            <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${fmtT(e.datetime)}</div>
-          </div>
-        </div>
-      </div>`);
+      const title=getSessionExpenseTitle(e,titleLabel);
+      return wrapSwipeCard(`sess-${e.id}`,`startEdit('${e.id}','expense')`,`delExpense('${e.id}')`,sessionTransactionCard({
+        kind:'expense',
+        detailType:'expense',
+        id:e.id,
+        title,
+        icon,
+        label:titleLabel||title,
+        amount:e.amount,
+        datetime:e.datetime,
+        metaHtml:sessionPaymentChip(e.payMode),
+        amountTone:'expense'
+      }));
     })():entry.type==='income'?(()=>{
       const i=entry.record;
-      return wrapSwipeCard(`sess-${i.id}`,`startEdit('${i.id}','income')`,`delIncome('${i.id}')`,`<div class="hi" style="padding:12px 14px;border-radius:18px">
-        <div class="row" style="cursor:pointer" onclick="openTransactionDetails('income','${i.id}')">
-          <div style="display:flex;align-items:center;gap:10px;min-width:0">
-            <span style="display:inline-flex;flex:0 0 auto">${coloredIconBadge(INCOME_ICONS[i.category]||'account_balance_wallet',{label:i.category,size:'sm'})}</span>
-            <div style="min-width:0">
-              <div style="font-size:14px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(i.category)}</div>
-              <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(transactionSummary('income',i))}</div>
-            </div>
-          </div>
-          <div style="text-align:right;flex:0 0 auto">
-            <div style="font-size:18px;font-weight:900;color:var(--income);white-space:nowrap">+${fmt(i.amount)}</div>
-            <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${fmtT(i.datetime)}</div>
-          </div>
-        </div>
-      </div>`);
+      const incomeMeta=i.notes?`<span class="session-tx-meta session-tx-note">${safeText(i.notes)}</span>`:'';
+      return wrapSwipeCard(`sess-${i.id}`,`startEdit('${i.id}','income')`,`delIncome('${i.id}')`,sessionTransactionCard({
+        kind:'income',
+        detailType:'income',
+        id:i.id,
+        title:i.category||'Income',
+        icon:INCOME_ICONS[i.category]||'account_balance_wallet',
+        label:i.category||'Income',
+        amount:i.amount,
+        datetime:i.datetime,
+        metaHtml:incomeMeta,
+        amountPrefix:'+',
+        amountTone:'income'
+      }));
     })():(()=>{
       const t=entry.record;
-      return wrapSwipeCard(`sess-${t.id}`,`startEdit('${t.id}','transfer')`,`delTransfer('${t.id}')`,`<div class="hi" style="padding:12px 14px;border-radius:18px">
-        <div class="row" style="cursor:pointer" onclick="openTransactionDetails('transfer','${t.id}')">
-          <div style="display:flex;align-items:center;gap:10px;min-width:0">
-            <span style="display:inline-flex;flex:0 0 auto">${coloredIconBadge('swap_horiz',{label:'Transfer',size:'sm'})}</span>
-            <div style="min-width:0">
-              <div style="font-size:14px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(t.direction)} ${safeText(t.personName||'Transfer')}</div>
-              <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(transactionSummary('transfer',t))}</div>
-            </div>
-          </div>
-          <div style="text-align:right;flex:0 0 auto">
-            <div style="font-size:18px;font-weight:900;color:var(--text-secondary);white-space:nowrap">${fmt(t.amount)}</div>
-            <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${fmtT(t.datetime)}</div>
-          </div>
-        </div>
-      </div>`);
+      return wrapSwipeCard(`sess-${t.id}`,`startEdit('${t.id}','transfer')`,`delTransfer('${t.id}')`,sessionTransactionCard({
+        kind:'transfer',
+        detailType:'transfer',
+        id:t.id,
+        title:`${t.direction||'Transfer'} ${t.personName||'Transfer'}`.trim(),
+        icon:'swap_horiz',
+        label:t.direction||'Transfer',
+        amount:t.amount,
+        datetime:t.datetime,
+        metaHtml:sessionRouteChip(t),
+        amountTone:'transfer'
+      }));
     })()).join('')}
   `).join('');
   initSwipeCards(c);
