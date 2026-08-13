@@ -3337,6 +3337,392 @@ strong{font-weight:900}
     font-size:13px;
   }
 }
+/* Compact Insights tab to match the other app tabs */
+#v-hist .analysis-shell{
+  gap:12px;
+}
+#v-hist .analysis-panel,
+#v-hist .insights-card{
+  border-radius:20px;
+  padding:14px;
+  margin-bottom:10px;
+  box-shadow:0 10px 24px rgba(16,24,40,.06);
+}
+#v-hist .insights-hero{
+  margin-bottom:0;
+}
+#v-hist .section-title h2{
+  font-size:22px;
+}
+#v-hist .insights-tabbar{
+  gap:6px;
+  margin:12px 0;
+  padding:5px;
+  border:1px solid var(--border);
+  border-radius:16px;
+  background:#F3F6F4;
+}
+#v-hist .insights-tabchip{
+  flex:1;
+  min-width:max-content;
+  padding:9px 10px;
+  border:0;
+  border-radius:12px;
+  background:transparent;
+  box-shadow:none;
+  font-size:12px;
+  font-weight:800;
+}
+#v-hist .insights-tabchip.active{
+  background:#fff;
+  color:var(--text-primary);
+  box-shadow:0 8px 16px rgba(35,45,58,.08);
+}
+#v-hist .insights-card-head{
+  gap:10px;
+  margin-bottom:12px;
+}
+#v-hist .insights-card-title{
+  font-size:16px;
+  font-weight:900;
+}
+#v-hist .insights-card-meta{
+  font-size:11px;
+}
+#v-hist .insights-month-switch{
+  gap:6px;
+  font-size:11px;
+}
+#v-hist .insights-month-switch span{
+  min-width:76px;
+}
+#v-hist .insights-overview-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+}
+#v-hist .insights-stat,
+#v-hist .insights-net{
+  min-width:0;
+  padding:10px;
+  border:1px solid var(--border);
+  border-radius:16px;
+  background:#F7FAF8;
+}
+#v-hist .insights-stat .label,
+#v-hist .insights-net .label{
+  margin-bottom:5px;
+  color:var(--text-secondary);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+#v-hist .insights-stat .value,
+#v-hist .insights-net .value{
+  overflow:hidden;
+  font-size:16px;
+  font-weight:900;
+  line-height:1.1;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#v-hist .insights-net{
+  grid-column:auto;
+  padding-top:10px;
+}
+#v-hist .insights-net .delta{
+  display:none;
+}
+#v-hist .insights-breakdown-wrap{
+  gap:12px;
+}
+#v-hist .insights-donut-shell{
+  padding:0;
+}
+#v-hist .insights-donut-shell svg{
+  width:126px;
+  height:126px;
+}
+#v-hist .insights-donut-list{
+  gap:6px;
+}
+#v-hist .insights-donut-row{
+  grid-template-columns:36px minmax(0,1fr) auto;
+  gap:9px;
+  padding:8px 0;
+}
+#v-hist .insights-donut-icon,
+#v-hist .insights-topcat-icon{
+  width:34px;
+  height:34px;
+  border-radius:12px;
+}
+#v-hist .insights-donut-icon .icon-badge-md,
+#v-hist .insights-topcat-icon .icon-badge-md{
+  width:34px;
+  height:34px;
+  border-radius:12px;
+}
+#v-hist .insights-donut-title{
+  font-size:13px;
+}
+#v-hist .insights-donut-sub,
+#v-hist .insights-topcat-sub{
+  font-size:10.5px;
+}
+#v-hist .insights-donut-amount strong{
+  font-size:13px;
+}
+#v-hist .insights-donut-amount span{
+  font-size:10px;
+}
+#v-hist .insights-breakdown-footer{
+  margin-top:10px;
+  padding-top:10px;
+  font-size:12px;
+}
+#v-hist .insights-topcat{
+  gap:10px;
+  padding:10px 12px;
+  border-radius:16px;
+  background:#F7FAF8;
+  border:1px solid var(--border);
+}
+#v-hist .insights-topcat-main{
+  gap:10px;
+  min-width:0;
+}
+#v-hist .insights-topcat-title{
+  overflow:hidden;
+  font-size:14px;
+  font-weight:900;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#v-hist .insights-topcat-value{
+  font-size:20px;
+}
+#v-hist .insights-pay-list{
+  gap:8px;
+}
+#v-hist .insights-pay-row{
+  grid-template-columns:64px minmax(0,1fr) 36px 46px;
+  gap:8px;
+}
+#v-hist .insights-pay-name,
+#v-hist .insights-pay-pct,
+#v-hist .insights-pay-amt{
+  font-size:11px;
+}
+#v-hist .trend-card-v2{
+  padding:14px;
+}
+#v-hist #schart{
+  height:86px;
+}
+#v-hist .trend-metrics{
+  gap:8px;
+  margin-top:10px;
+}
+#v-hist .trend-chip{
+  padding:10px;
+  border-radius:14px;
+}
+#v-hist .trend-chip .v{
+  font-size:15px;
+}
+#v-hist #smartInsights .hi,
+#v-hist #expenseList .hi{
+  padding:10px 12px;
+  border-radius:16px;
+  box-shadow:0 8px 18px rgba(16,24,40,.05);
+}
+@media (max-width:420px){
+  #v-hist .analysis-panel,
+  #v-hist .insights-card{
+    padding:12px;
+    border-radius:18px;
+  }
+  #v-hist .section-title h2{
+    font-size:20px;
+  }
+  #v-hist .insights-tabchip{
+    padding:8px 9px;
+    font-size:11px;
+  }
+  #v-hist .insights-card-title{
+    font-size:15px;
+  }
+  #v-hist .insights-overview-grid{
+    gap:7px;
+  }
+  #v-hist .insights-stat,
+  #v-hist .insights-net{
+    padding:9px 8px;
+    border-radius:14px;
+  }
+  #v-hist .insights-stat .value,
+  #v-hist .insights-net .value{
+    font-size:14px;
+  }
+  #v-hist .insights-donut-shell svg{
+    width:112px;
+    height:112px;
+  }
+  #v-hist .insights-pay-row{
+    grid-template-columns:58px minmax(0,1fr) 32px 42px;
+    gap:7px;
+  }
+}
+/* Shared app typography scale across all tabs */
+#wrap .view{
+  font-size:13px;
+}
+#wrap .section-title{
+  margin-bottom:14px;
+}
+#wrap .section-title h2,
+#wrap .add-panel-head h2{
+  font-size:20px!important;
+  line-height:1.15;
+  font-weight:900;
+  letter-spacing:0;
+}
+#wrap .card,
+#wrap .tx-panel,
+#wrap .analysis-panel,
+#wrap .more-panel,
+#wrap .add-panel,
+#wrap .insights-card,
+#wrap .settings-card,
+#wrap .tool-card,
+#wrap .quick-card,
+#wrap .stat-card,
+#wrap .home-mini-card{
+  font-size:13px;
+}
+#wrap .insights-card-title,
+#wrap .settings-card strong,
+#wrap .tool-card h3,
+#wrap .quick-card h3,
+#wrap .home-action h3,
+#wrap .tx-main strong{
+  font-size:15px!important;
+  line-height:1.25;
+  font-weight:900;
+  letter-spacing:0;
+}
+#wrap .mc .l,
+#wrap .stat-card small,
+#wrap .home-mini-card small,
+#wrap .hero-metric-card .label,
+#wrap .insights-stat .label,
+#wrap .insights-net .label,
+#wrap .trend-chip .l,
+#wrap .flbl,
+#wrap .sbox label{
+  font-size:10px!important;
+  line-height:1.25;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+#wrap .small-note,
+#wrap .tx-intro,
+#wrap .panel-note,
+#wrap .stat-card .note,
+#wrap .home-mini-card .note,
+#wrap .quick-card p,
+#wrap .tool-card p,
+#wrap .settings-card span,
+#wrap .tx-sub,
+#wrap .tx-amt span,
+#wrap .insights-card-meta,
+#wrap .insights-donut-sub,
+#wrap .insights-topcat-sub,
+#wrap .trend-chip .s,
+#wrap .field-history-option small{
+  font-size:11px!important;
+  line-height:1.45;
+}
+#wrap .mc .v,
+#wrap .hero-metric-card .value,
+#wrap .insights-stat .value,
+#wrap .insights-net .value,
+#wrap .trend-chip .v{
+  font-size:16px!important;
+  line-height:1.15;
+  font-weight:900;
+}
+#wrap .stat-card .big,
+#wrap .home-mini-card .big,
+#wrap .tx-amt strong,
+#wrap .insights-topcat-value{
+  font-size:19px!important;
+  line-height:1.1;
+  font-weight:900;
+}
+#wrap .f input,
+#wrap .f select,
+#wrap .f textarea,
+#wrap input.fi,
+#wrap select.fi,
+#wrap textarea.fi{
+  font-size:13px!important;
+  line-height:1.35;
+}
+#wrap .gbtn,
+#wrap .obtn,
+#wrap .rbtn,
+#wrap .sbtn,
+#wrap .ebtn,
+#wrap .section-title button,
+#wrap .txt-link,
+#wrap .chip,
+#wrap .chip-filter,
+#wrap .stab,
+#wrap .insights-tabchip{
+  font-size:12px!important;
+  line-height:1.2;
+  font-weight:800;
+}
+#wrap .nav button{
+  font-size:10px!important;
+  line-height:1.15;
+  font-weight:800;
+}
+#wrap .session-tx-title{
+  font-size:15px!important;
+}
+#wrap .session-tx-amount{
+  font-size:20px!important;
+}
+#wrap .session-tx-time,
+#wrap .session-tx-meta{
+  font-size:11px!important;
+}
+@media (max-width:420px){
+  #wrap .section-title h2,
+  #wrap .add-panel-head h2{
+    font-size:19px!important;
+  }
+  #wrap .insights-card-title,
+  #wrap .settings-card strong,
+  #wrap .tool-card h3,
+  #wrap .quick-card h3,
+  #wrap .home-action h3,
+  #wrap .tx-main strong,
+  #wrap .session-tx-title{
+    font-size:14px!important;
+  }
+  #wrap .stat-card .big,
+  #wrap .home-mini-card .big,
+  #wrap .tx-amt strong,
+  #wrap .insights-topcat-value,
+  #wrap .session-tx-amount{
+    font-size:18px!important;
+  }
+}
 </style>
 </head>
 <body>
@@ -6657,8 +7043,13 @@ function renderSessions(){
   const c=document.getElementById('sessContainer');
   const raw=getCombinedEntriesForMonth(sessionCursor);
   const q=(document.getElementById('txSearch')?.value||'').trim().toLowerCase();
-  const filter=(document.getElementById('txFilter')?.value||'all').toLowerCase();
+  const filterEl=document.getElementById('txFilter');
+  let filter=(filterEl?.value||'all').toLowerCase();
   const categoryFilterType=sessionCategoryFilter?getSessionCategoryFilterType(sessionCategoryFilter.mode):'';
+  if(sessionCategoryFilter && categoryFilterType && filter==='all'){
+    filter=categoryFilterType;
+    if(filterEl) filterEl.value=categoryFilterType;
+  }
   if(sessionCategoryFilter && (filter==='all' || (categoryFilterType && filter!==categoryFilterType))){
     sessionCategoryFilter=null;
   }
@@ -6849,13 +7240,15 @@ function openInsightCategory(encodedKey, encodedLabel, mode='Expense'){
   const key=decodeURIComponent(encodedKey||'');
   const label=decodeURIComponent(encodedLabel||'');
   const listFilter=getSessionCategoryFilterType(mode);
-  sessionCategoryFilter={key,label,mode};
   sessionCursor=new Date(budgetCursor.getFullYear(),budgetCursor.getMonth(),1);
-  openListSessions();
   const filterEl=document.getElementById('txFilter');
   const searchEl=document.getElementById('txSearch');
   if(filterEl) filterEl.value=listFilter;
   if(searchEl) searchEl.value='';
+  sessionCategoryFilter={key,label,mode};
+  openListSessions();
+  if(filterEl) filterEl.value=listFilter;
+  sessionCategoryFilter={key,label,mode};
   renderSessions();
 }
 function clearInsightCategoryFilter(){
