@@ -4468,7 +4468,8 @@ function getSessionExpenseTitle(record, fallbackTitle){
 }
 function sessionPaymentChip(value){
   const payMode=value||'NA';
-  return `<span class="session-tx-meta session-tx-pay" title="${safeText(payMode)}" aria-label="${safeText(payMode)}">${iconHtml(paymentIconName(payMode))}</span>`;
+  const colors=getIconColors(payMode);
+  return `<span class="session-tx-meta session-tx-pay" style="background:${colors.bg};color:${colors.fg}" title="${safeText(payMode)}" aria-label="${safeText(payMode)}">${iconHtml(paymentIconName(payMode))}</span>`;
 }
 function sessionRouteChip(record){
   const route=transactionSummary('transfer',record);
@@ -6987,10 +6988,11 @@ const ICON_FG={
 };
 const OPTION_ICON_COLORS={
   Account:{bg:'#eef4ff',fg:'#2563eb'},
-  Cash:{bg:'#fff7ed',fg:'#ea580c'},
+  Cash:{bg:'#eaf7ef',fg:'#15803d'},
   UPI:{bg:'#f5f3ff',fg:'#7c3aed'},
-  'Credit Card':{bg:'#ecfdf5',fg:'#059669'},
-  'Rupay Credit UPI':{bg:'#eff6ff',fg:'#1d4ed8'},
+  'Debit Card':{bg:'#eff6ff',fg:'#2563eb'},
+  'Credit Card':{bg:'#fdf2f8',fg:'#9f1239'},
+  'Rupay Credit UPI':{bg:'#fff7ed',fg:'#c2410c'},
   Sent:{bg:'#fff1f1',fg:'#dc2626'},
   Receive:{bg:'#eaf7ef',fg:'#16a34a'}
 };
