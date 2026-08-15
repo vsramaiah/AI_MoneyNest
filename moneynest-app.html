@@ -3762,6 +3762,331 @@ strong{font-weight:900}
     font-size:10.5px!important;
   }
 }
+/* Simple unique Home hero redesign */
+#v-dash .dash-hero{
+  padding:20px 18px 18px;
+  border:0;
+  border-radius:30px;
+  background:
+    radial-gradient(circle at 78% 10%,rgba(116,211,128,.28),transparent 30%),
+    radial-gradient(circle at 8% 88%,rgba(5,87,48,.42),transparent 38%),
+    linear-gradient(135deg,#064A31 0%,#0B6E3D 45%,#269147 74%,#48AE4E 100%);
+  box-shadow:0 18px 38px rgba(18,95,50,.20);
+}
+#v-dash .dash-hero::before{
+  right:42px;
+  top:50px;
+  width:112px;
+  height:70px;
+  border-radius:50%;
+  background:repeating-linear-gradient(0deg,transparent 0 9px,rgba(255,255,255,.12) 10px,transparent 11px);
+  opacity:.55;
+}
+#v-dash .dash-hero::after{
+  left:42px;
+  bottom:-82px;
+  width:220px;
+  height:148px;
+  background:radial-gradient(circle,rgba(255,255,255,.08),transparent 70%);
+}
+#v-dash .dash-hero-top{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 158px;
+  align-items:start;
+  gap:14px;
+  min-height:148px;
+  margin-bottom:10px;
+}
+#v-dash .dash-hero-summary{
+  display:flex;
+  min-width:0;
+  flex-direction:column;
+  align-items:flex-start;
+}
+#v-dash .dash-month-switch{
+  order:0;
+  display:inline-grid;
+  grid-template-columns:30px minmax(92px,1fr) 30px;
+  align-items:center;
+  gap:8px;
+  min-height:48px;
+  margin-bottom:14px;
+  padding:5px 8px;
+  border:1px solid rgba(255,255,255,.20);
+  border-radius:999px;
+  background:rgba(255,255,255,.16);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12);
+  backdrop-filter:blur(8px);
+}
+#v-dash .dash-month-switch button{
+  width:30px;
+  height:30px;
+  display:grid;
+  place-items:center;
+  border:0;
+  border-radius:50%;
+  background:rgba(255,255,255,.16);
+  color:#fff;
+}
+#v-dash .dash-month-switch button .material-symbols-rounded{
+  font-size:21px;
+}
+#v-dash .dash-month-meta strong{
+  min-width:0;
+  color:#fff;
+  font-size:14px!important;
+  line-height:1;
+  text-align:center;
+}
+#v-dash .dash-month-meta span{
+  display:none;
+}
+#v-dash .dash-balance-label{
+  margin-top:0;
+  color:rgba(255,255,255,.78);
+  font-size:12px!important;
+  font-weight:900;
+  line-height:1;
+  letter-spacing:.08em;
+}
+#v-dash .dash-balance-value{
+  margin:10px 0 0;
+  color:#fff;
+  font-size:42px!important;
+  line-height:.95;
+  font-weight:900;
+  letter-spacing:-1px;
+  text-shadow:0 8px 18px rgba(0,0,0,.10);
+}
+#v-dash .hero-ring{
+  width:158px;
+  height:158px;
+  border-radius:28px;
+  border:1px solid rgba(255,255,255,.12);
+  background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.05));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12);
+}
+#v-dash .hero-ring::before{
+  inset:12px;
+  border-radius:24px;
+  background:radial-gradient(circle at 72% 18%,rgba(255,238,155,.22),transparent 42%);
+}
+#v-dash .wallet-illustration{
+  right:0;
+  top:4px;
+  width:150px;
+  height:150px;
+}
+#v-dash .wallet-shell{
+  right:22px;
+  bottom:20px;
+  width:84px;
+  height:74px;
+  border-radius:20px;
+  background:linear-gradient(145deg,#326E37 0%,#58A342 100%);
+  box-shadow:10px 14px 22px rgba(15,73,31,.20), inset -8px -9px 18px rgba(255,255,255,.08);
+}
+#v-dash .wallet-shell::before{
+  inset:14px 12px;
+  border-color:rgba(250,217,75,.30);
+}
+#v-dash .wallet-note{
+  top:22px;
+  right:42px;
+  width:50px;
+  height:62px;
+}
+#v-dash .wallet-note.back{
+  right:16px;
+  top:28px;
+}
+#v-dash .coin-stack{
+  left:22px;
+  bottom:16px;
+  transform:scale(.86);
+}
+#v-dash .coin-stack.small{
+  left:58px;
+  bottom:12px;
+  transform:scale(.72);
+}
+#v-dash .sparkle{
+  right:24px;
+  top:18px;
+}
+#v-dash .dash-wave{
+  left:158px;
+  right:154px;
+  bottom:206px;
+  height:52px;
+  opacity:.16;
+}
+#v-dash .dash-budget-inputs{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 78px 96px;
+  gap:10px;
+  margin:0 0 10px;
+}
+#v-dash .dash-budget-inputs input{
+  min-width:0;
+  height:48px;
+  border:1px solid rgba(255,255,255,.20);
+  border-radius:18px;
+  background:rgba(255,255,255,.16);
+  color:#fff;
+  font-size:13px!important;
+  font-weight:800;
+}
+#v-dash .dash-budget-inputs .obtn{
+  min-height:48px;
+  border:1px solid rgba(255,255,255,.20);
+  border-radius:18px;
+  background:rgba(255,255,255,.18);
+  color:#fff;
+  box-shadow:none;
+  font-size:12px!important;
+}
+#v-dash .dash-hero-bottom{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:0;
+  margin-top:10px;
+  padding-top:16px;
+  border-top:1px solid rgba(255,255,255,.18);
+}
+#v-dash .hero-metric-card,
+#v-dash .hero-metric-card + .hero-metric-card{
+  min-width:0;
+  margin:0;
+  padding:0 12px;
+  border:0;
+}
+#v-dash .hero-metric-card + .hero-metric-card{
+  border-left:1px solid rgba(255,255,255,.18);
+}
+#v-dash .hero-metric-row{
+  width:max-content;
+  max-width:100%;
+  margin:0 auto;
+  gap:10px;
+}
+#v-dash .hero-metric-icon{
+  width:48px;
+  height:48px;
+  border-radius:18px;
+  box-shadow:none;
+}
+#v-dash .hero-metric-icon .material-symbols-rounded{
+  font-size:25px;
+}
+#v-dash .hero-metric-card .label{
+  color:rgba(255,255,255,.78);
+  font-size:11px!important;
+  line-height:1;
+  font-weight:900;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+#v-dash .hero-metric-card .value{
+  margin-top:5px;
+  color:#fff;
+  font-size:18px!important;
+  line-height:1.05;
+  font-weight:900;
+}
+@media (max-width:420px){
+  #v-dash .dash-hero{
+    padding:18px 16px 16px;
+    border-radius:28px;
+  }
+  #v-dash .dash-hero-top{
+    grid-template-columns:minmax(0,1fr) 106px;
+    min-height:118px;
+    gap:10px;
+  }
+  #v-dash .dash-month-switch{
+    grid-template-columns:28px minmax(84px,1fr) 28px;
+    min-height:44px;
+    margin-bottom:13px;
+  }
+  #v-dash .dash-month-switch button{
+    width:28px;
+    height:28px;
+  }
+  #v-dash .dash-month-meta strong{
+    font-size:13px!important;
+  }
+  #v-dash .dash-balance-label{
+    font-size:11px!important;
+  }
+  #v-dash .dash-balance-value{
+    font-size:36px!important;
+  }
+  #v-dash .hero-ring{
+    width:106px;
+    height:106px;
+    border-radius:24px;
+  }
+  #v-dash .wallet-illustration{
+    width:102px;
+    height:102px;
+    top:2px;
+  }
+  #v-dash .wallet-shell{
+    right:14px;
+    bottom:14px;
+    width:58px;
+    height:50px;
+    border-radius:17px;
+  }
+  #v-dash .wallet-note{
+    width:34px;
+    height:43px;
+    right:28px;
+    top:16px;
+  }
+  #v-dash .wallet-note.back{
+    right:10px;
+    top:20px;
+  }
+  #v-dash .coin-stack{
+    left:14px;
+    bottom:12px;
+    transform:scale(.68);
+  }
+  #v-dash .coin-stack.small{
+    left:40px;
+    bottom:9px;
+    transform:scale(.56);
+  }
+  #v-dash .dash-budget-inputs{
+    grid-template-columns:minmax(0,1fr) 62px 76px;
+    gap:8px;
+  }
+  #v-dash .dash-budget-inputs input,
+  #v-dash .dash-budget-inputs .obtn{
+    min-height:42px;
+    height:42px;
+    border-radius:16px;
+    padding-left:12px;
+    padding-right:12px;
+  }
+  #v-dash .hero-metric-icon{
+    width:42px;
+    height:42px;
+    border-radius:16px;
+  }
+  #v-dash .hero-metric-card,
+  #v-dash .hero-metric-card + .hero-metric-card{
+    padding:0 8px;
+  }
+  #v-dash .hero-metric-row{
+    gap:8px;
+  }
+  #v-dash .hero-metric-card .value{
+    font-size:16px!important;
+  }
+}
 </style>
 </head>
 <body>
