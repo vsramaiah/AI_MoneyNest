@@ -3734,6 +3734,43 @@ strong{font-weight:900}
   font-size:11px!important;
   line-height:1.45;
 }
+#v-list .session-filter-banner{
+  display:none;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:10px;
+  padding:9px 10px 9px 12px;
+  border:1px solid #BFE7C9;
+  border-radius:14px;
+  background:#F3FBF5;
+  color:#24543A;
+  font-size:11px;
+  font-weight:800;
+}
+#v-list .session-filter-banner.on{
+  display:flex;
+}
+#v-list .session-filter-banner strong{
+  color:#0D7434;
+  font-size:12px;
+}
+#v-list .session-filter-banner button{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  border:0;
+  border-radius:999px;
+  padding:6px 9px;
+  background:#fff;
+  color:#0D7434;
+  font-size:11px;
+  font-weight:900;
+  box-shadow:0 6px 12px rgba(16,24,40,.06);
+}
+#v-list .session-filter-banner .material-symbols-rounded{
+  font-size:16px;
+}
 @media (max-width:420px){
   #wrap .section-title h2,
   #wrap .add-panel-head h2{
@@ -3760,6 +3797,10 @@ strong{font-weight:900}
   }
   #v-list .tx-intro{
     font-size:10.5px!important;
+  }
+  #v-list .session-filter-banner{
+    padding:8px 9px;
+    font-size:10.5px;
   }
 }
 /* Simple unique Home hero redesign */
@@ -4189,7 +4230,7 @@ strong{font-weight:900}
   <div class="topbar">
     <div class="topbar-left">
       <button class="icon-btn" onclick="openSett()" aria-label="Open settings">
-        <span class="material-symbols-rounded">settings</span>
+        <span class="material-symbols-rounded">clear_all</span>
       </button>
       <div class="topbar-copy">
         <div class="hello-title-row" id="helloTitleRow">
@@ -4467,6 +4508,7 @@ strong{font-weight:900}
             <button onclick="shiftSessionMonth(1)"><span class="material-symbols-rounded">keyboard_arrow_right</span></button>
           </div>
           <div class="tx-intro" style="margin-top:12px">Transactions are grouped by date. Use swipe actions to edit/delete, to manage entries quickly.</div>
+          <div class="session-filter-banner" id="sessionFilterBanner"></div>
         </div>
         <div id="sessContainer"></div>
       </div>
@@ -7452,6 +7494,13 @@ function renderSessions(){
   });
   const categoryLabel=activeCategoryFilter?.label||activeCategoryFilter?.key||'';
   const countSuffix=categoryLabel?` · ${categoryLabel}`:'';
+  const filterBannerEl=document.getElementById('sessionFilterBanner');
+  if(filterBannerEl){
+    filterBannerEl.classList.toggle('on',!!activeCategoryFilter);
+    filterBannerEl.innerHTML=activeCategoryFilter
+      ?`<span>Filtered by <strong>${safeText(categoryLabel)}</strong></span><button type="button" onclick="clearSessionCategoryFilter()"><span class="material-symbols-rounded" aria-hidden="true">close</span>Clear</button>`
+      :'';
+  }
   const countEl=document.getElementById('sessCount');
   if(countEl) countEl.textContent=`${filtered.length} transaction${filtered.length!==1?'s':''}${countSuffix}`;
   const titleEl=document.getElementById('sessionMonthTitle');
@@ -7614,6 +7663,13 @@ function openInsightCategory(encodedKey, encodedLabel, mode='Expense'){
   if(filterEl) filterEl.value=listFilter;
   sessionCategoryFilter={key,label,mode};
   renderSessions();
+}
+function clearSessionCategoryFilter(){
+  sessionCategoryFilter=null;
+  const filterEl=document.getElementById('txFilter');
+  if(filterEl) filterEl.value='all';
+  renderSessions();
+  toast('Category filter cleared');
 }
 function clearInsightCategoryFilter(){
   insightCategoryFilter=null;
