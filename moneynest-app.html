@@ -4845,8 +4845,8 @@ strong{font-weight:900}
 const APP_VERSION='2.1.1';
 const STORES=['Dmart','RelianceMart','Local Shop','Other'];
 const CATS=['Baby','Bakery','Beverages','Dairy','Dry Fruits','Frozen','Fruits','Household','Meat & Fish','Oils','Other','Pulses','Ready Mixes','Rice & Flour','Snacks','Spices','Toiletries','Vegetables'];
-const PAYS=['Cash','UPI','Debit Card','Credit Card','Rupay Credit UPI'];
-const TRANSFER_CHANNELS=['Account','Cash','UPI','Credit Card','Rupay Credit UPI'];
+const PAYS=['Cash','UPI','Debit Card','Credit Card','Rupay Credit Card'];
+const TRANSFER_CHANNELS=['Account','Cash','UPI','Credit Card','Rupay Credit Card'];
 const INCOME_CATEGORIES=['Salary','Business','Interest','Dividends','Gifts','Refunds','Rewards','Coupons'];
 const UNIT_LABELS={
   pcs:'Pieces',
@@ -5239,7 +5239,7 @@ function paymentIconName(value){
     UPI:'qr_code',
     'Debit Card':'credit_card',
     'Credit Card':'credit_card',
-    'Rupay Credit UPI':'payment_card'
+    'Rupay Credit Card':'payment_card'
   };
   return icons[value]||'payments';
 }
@@ -6206,7 +6206,7 @@ function getEntryOptionIcon(field, value){
     'Cash':'payments',
     'UPI':'qr_code',
     'Credit Card':'credit_card',
-    'Rupay Credit UPI':'payment_card'
+    'Rupay Credit Card':'payment_card'
   };
   if(field==='incomeCategory') return INCOME_ICONS[value]||'account_balance_wallet';
   if(field==='transferFrom' || field==='transferTo') return channelIcons[value]||'swap_horiz';
@@ -7805,7 +7805,7 @@ const OPTION_ICON_COLORS={
   UPI:{bg:'#f5f3ff',fg:'#7c3aed'},
   'Debit Card':{bg:'#eff6ff',fg:'#2563eb'},
   'Credit Card':{bg:'#fdf2f8',fg:'#9f1239'},
-  'Rupay Credit UPI':{bg:'#fff7ed',fg:'#c2410c'},
+  'Rupay Credit Card':{bg:'#fff7ed',fg:'#c2410c'},
   Sent:{bg:'#fff1f1',fg:'#dc2626'},
   Receive:{bg:'#eaf7ef',fg:'#16a34a'}
 };
