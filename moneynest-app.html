@@ -4939,16 +4939,18 @@ const EXPENSE_TREE={
     "Appliances":{icon:"kitchen",fields:["amount","warranty","date","notes"]},
     "Cleaning Help":{icon:"cleaning_services",fields:["amount","date","notes"]},
     "Decor":{icon:"wall_art",fields:["amount","date","notes"]},
+    "Electronics":{icon:"electrical_services",fields:["amount","warranty","date","notes"]},
     "Furniture":{icon:"chair",fields:["amount","date","notes"]},
     "Maintenance":{icon:"home_repair_service",fields:["amount","date","notes"]},
     "Repairs":{icon:"handyman",fields:["amount","date","notes"]}
   }},
-  "Leisure":{icon:"movie",sub:{
+  "Entertainment":{icon:"movie",sub:{
     "Entertainment":{icon:"movie",fields:["amount","date","notes"]},
+    "Subscriptions":{icon:"subscriptions",fields:["amount","date","notes"]},
     "Snacks":{icon:"fastfood",fields:["amount","date","notes"]}
   }},
   "Lifestyle":{icon:"shopping_bag",sub:{
-    "Electronics":{icon:"devices",fields:["amount","warranty","date","notes"]},
+    "Gadgets":{icon:"devices",fields:["amount","warranty","date","notes"]},
     "Gifts":{icon:"redeem",fields:["amount","recipient","date","notes"]},
     "Personal Care":{icon:"spa",fields:["amount","date","notes"]},
     "Shopping":{icon:"shopping_bag",fields:["amount","date","notes"]}
@@ -4959,7 +4961,7 @@ const EXPENSE_TREE={
   }},
   "Rent":{icon:"apartment",fields:["amount","date","notes"]},
   "Transport":{icon:"commute",sub:{
-    "Travel":{icon:"travel",fields:["amount","date","notes"]}
+    "Travel":{icon:"bus_railway",fields:["amount","date","notes"]}
   }},
   "Vehicle":{icon:"moped",sub:{
     "Fuel":{icon:"local_gas_station",fields:["amount","liters","odometer","date","notes"]},
@@ -5415,6 +5417,29 @@ function setCategoryBudgetsForMonth(cursor,budgets){
   if(Object.keys(clean).length) catBudgetsByMonth[key]=clean;
   else delete catBudgetsByMonth[key];
 }
+function isTransferReceive(record){
+  return String(record?.direction||'').toLowerCase()==='receive';
+}
+function isTransferSent(record){
+  return !isTransferReceive(record);
+}
+function sumTransferIncome(list){
+  return (list||[]).filter(isTransferReceive).reduce((sum,record)=>sum+(parseFloat(record.amount)||0),0);
+}
+function sumTransferExpense(list){
+  return (list||[]).filter(isTransferSent).reduce((sum,record)=>sum+(parseFloat(record.amount)||0),0);
+}
+function entryIncomeAmount(entry){
+  if(entry.type==='income') return parseFloat(entry.record?.amount||0)||0;
+  if(entry.type==='transfer'&&isTransferReceive(entry.record)) return parseFloat(entry.record?.amount||0)||0;
+  return 0;
+}
+function entryExpenseAmount(entry){
+  if(entry.type==='purchase') return parseFloat(entry.record?.total||0)||0;
+  if(entry.type==='expense') return parseFloat(entry.record?.amount||0)||0;
+  if(entry.type==='transfer'&&isTransferSent(entry.record)) return parseFloat(entry.record?.amount||0)||0;
+  return 0;
+}
 function getCombinedEntriesForMonth(cursor){
   const purchasesMonth=purchases.filter(p=>inMonth(p.datetime,cursor)).map(p=>({type:'purchase',datetime:p.datetime,amount:p.total,record:p}));
   const expensesMonth=expenses.filter(e=>inMonth(e.datetime,cursor)).map(e=>({type:'expense',datetime:e.datetime,amount:e.amount,record:e}));
@@ -5422,8 +5447,24 @@ function getCombinedEntriesForMonth(cursor){
   const transfersMonth=transfers.filter(t=>inMonth(t.datetime,cursor)).map(t=>({type:'transfer',datetime:t.datetime,amount:t.amount,record:t}));
   return [...purchasesMonth,...expensesMonth,...incomesMonth,...transfersMonth].sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
 }
-function getUiEntryType(type){
-  return type==='purchase'?'expense':type;
+function getUiEntryType(type,record=null){
+  if(type==='purchase') return 'expense';
+  if(type==='transfer') return isTransferReceive(record)?'income':'expense';
+  return type;
+}
+function entryMatchesUiFilter(entry,filter){
+  if(filter==='all') return true;
+  if(filter==='transfer') return entry.type==='transfer';
+  return getUiEntryType(entry.type,entry.record)===filter;
+}
+function transferCategoryKey(record,prefix='Transfer'){
+  const route=[record?.from,record?.to].filter(Boolean).join(' → ');
+  return route?`${prefix}: ${route}`:prefix;
+}
+function transferPaymentKey(record){
+  return isTransferReceive(record)
+    ? (record?.to||record?.direction||'Transfer Receive')
+    : (record?.from||record?.direction||'Transfer Sent');
 }
 function periodLabel(v){
   return v==='week'?'This Week':v==='month'?'This Month':v==='year'?'This Year':'All Time';
@@ -5684,10 +5725,13 @@ function renderDash(){
   const combinedEntries=getCombinedEntriesForMonth(budgetCursor);
   const groceryTotal=list.reduce((s,p)=>s+p.total,0);
   const expenseTotal=expList.reduce((s,e)=>s+e.amount,0);
-  const incomeTotal=incomeList.reduce((s,i)=>s+i.amount,0);
-  const total=groceryTotal+expenseTotal;
-  const allExpenseTotal=purchases.reduce((s,p)=>s+p.total,0)+expenses.reduce((s,e)=>s+e.amount,0);
-  const allIncomeTotal=incomes.reduce((s,i)=>s+i.amount,0);
+  const transferIncomeTotal=sumTransferIncome(transferList);
+  const transferExpenseTotal=sumTransferExpense(transferList);
+  const baseIncomeTotal=incomeList.reduce((s,i)=>s+i.amount,0);
+  const incomeTotal=baseIncomeTotal+transferIncomeTotal;
+  const total=groceryTotal+expenseTotal+transferExpenseTotal;
+  const allExpenseTotal=purchases.reduce((s,p)=>s+p.total,0)+expenses.reduce((s,e)=>s+e.amount,0)+sumTransferExpense(transfers);
+  const allIncomeTotal=incomes.reduce((s,i)=>s+i.amount,0)+sumTransferIncome(transfers);
   const allNet=allIncomeTotal-allExpenseTotal;
   const monthNet=incomeTotal-total;
   const activeBudget=getBudgetForMonth(budgetCursor);
@@ -5696,7 +5740,8 @@ function renderDash(){
   const today=new Date();
   const todaySpentTotal=
     purchases.filter(p=>sameDay(new Date(p.datetime),today)).reduce((s,p)=>s+p.total,0)+
-    expenses.filter(e=>sameDay(new Date(e.datetime),today)).reduce((s,e)=>s+e.amount,0);
+    expenses.filter(e=>sameDay(new Date(e.datetime),today)).reduce((s,e)=>s+e.amount,0)+
+    sumTransferExpense(transfers.filter(t=>sameDay(new Date(t.datetime),today)));
   const todayCount=
     purchases.filter(p=>sameDay(new Date(p.datetime),today)).length+
     expenses.filter(e=>sameDay(new Date(e.datetime),today)).length+
@@ -5715,12 +5760,14 @@ function renderDash(){
   const dmMirror=document.getElementById('dmMirror');
   if(dmMirror) dmMirror.textContent=fmt(total);
   document.getElementById('dv').textContent=`${list.length+expList.length} expense in ${budgetCursor.toLocaleDateString('en-IN',{month:'short',year:'numeric'})}`;
-  document.getElementById('da').textContent=incomeList.length?fmt(incomeTotal):'—';
-  document.getElementById('dc').textContent=incomeList.length?`${incomeList.length} income entr${incomeList.length!==1?'ies':'y'}`:'No income this month';
+  const incomeEntryCount=incomeList.length+transferList.filter(isTransferReceive).length;
+  const expenseEntryCount=list.length+expList.length+transferList.filter(isTransferSent).length;
+  document.getElementById('da').textContent=incomeEntryCount?fmt(incomeTotal):'—';
+  document.getElementById('dc').textContent=incomeEntryCount?`${incomeEntryCount} income entr${incomeEntryCount!==1?'ies':'y'}`:'No income this month';
   const expenseEl=document.getElementById('de');
-  if(expenseEl) expenseEl.textContent=(list.length||expList.length)?fmt(total):'—';
+  if(expenseEl) expenseEl.textContent=expenseEntryCount?fmt(total):'—';
   const expenseMetaEl=document.getElementById('dec');
-  if(expenseMetaEl) expenseMetaEl.textContent=(list.length||expList.length)?`${list.length+expList.length} expense entr${list.length+expList.length!==1?'ies':'y'}`:'No expenses this month';
+  if(expenseMetaEl) expenseMetaEl.textContent=expenseEntryCount?`${expenseEntryCount} expense entr${expenseEntryCount!==1?'ies':'y'}`:'No expenses this month';
   document.getElementById('ds').textContent=(allIncomeTotal||allExpenseTotal)?fmt(allNet):'—';
   document.getElementById('dsc').textContent=
     !heroBudget
@@ -7443,7 +7490,9 @@ function entryMatchesSessionCategoryFilter(entry, categoryFilter){
   }
   if(entry.type==='income') return matchesValue(entry.record?.category);
   const t=entry.record||{};
-  return matchesValue(`${t.from||''} → ${t.to||''}`.trim()) || matchesValue(t.direction);
+  return matchesValue(`${t.from||''} → ${t.to||''}`.trim())
+    || matchesValue(t.direction)
+    || matchesValue(transferCategoryKey(t,isTransferReceive(t)?'Transfer Receive':'Transfer Sent'));
 }
 function renderSessions(){
   const c=document.getElementById('sessContainer');
@@ -7463,7 +7512,7 @@ function renderSessions(){
     ?sessionCategoryFilter
     :null;
   const filtered=raw.filter(entry=>{
-    if(filter!=='all'&&getUiEntryType(entry.type)!==filter) return false;
+    if(!entryMatchesUiFilter(entry,filter)) return false;
     if(activeCategoryFilter&&!entryMatchesSessionCategoryFilter(entry,activeCategoryFilter)) return false;
     if(!q) return true;
     if(entry.type==='purchase'){
@@ -7507,10 +7556,8 @@ function renderSessions(){
   const countTopEl=document.getElementById('sessionMonthCount');
   if(titleEl) titleEl.textContent=sessionCursor.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
   if(countTopEl) countTopEl.textContent=`${filtered.length} transaction${filtered.length!==1?'s':''}${countSuffix}`;
-  const txIncome=filtered.filter(entry=>entry.type==='income').reduce((sum,entry)=>sum+(entry.record.amount||0),0);
-  const txExpense=
-    filtered.filter(entry=>entry.type==='purchase').reduce((sum,entry)=>sum+(entry.record.total||0),0)+
-    filtered.filter(entry=>entry.type==='expense').reduce((sum,entry)=>sum+(entry.record.amount||0),0);
+  const txIncome=filtered.reduce((sum,entry)=>sum+entryIncomeAmount(entry),0);
+  const txExpense=filtered.reduce((sum,entry)=>sum+entryExpenseAmount(entry),0);
   const txNet=txIncome-txExpense;
   const txIncomeEl=document.getElementById('txIncome');
   const txExpenseEl=document.getElementById('txExpense');
@@ -7596,7 +7643,8 @@ function renderSessions(){
         amount:t.amount,
         datetime:t.datetime,
         metaHtml:sessionRouteChip(t),
-        amountTone:'transfer'
+        amountPrefix:isTransferReceive(t)?'+':'',
+        amountTone:isTransferReceive(t)?'income':'expense'
       }));
     })()).join('')}
   `).join('');
@@ -7653,13 +7701,15 @@ function openInsightCategory(encodedKey, encodedLabel, mode='Expense'){
   const key=decodeURIComponent(encodedKey||'');
   const label=decodeURIComponent(encodedLabel||'');
   const listFilter=getSessionCategoryFilterType(mode);
-  sessionCursor=new Date(budgetCursor.getFullYear(),budgetCursor.getMonth(),1);
+  const selectedInsightMonth=new Date(budgetCursor.getFullYear(),budgetCursor.getMonth(),1);
+  sessionCursor=new Date(selectedInsightMonth);
   const filterEl=document.getElementById('txFilter');
   const searchEl=document.getElementById('txSearch');
   if(filterEl) filterEl.value=listFilter;
   if(searchEl) searchEl.value='';
   sessionCategoryFilter={key,label,mode};
   openListSessions();
+  sessionCursor=new Date(selectedInsightMonth);
   if(filterEl) filterEl.value=listFilter;
   sessionCategoryFilter={key,label,mode};
   renderSessions();
@@ -7696,7 +7746,7 @@ const INSIGHT_COLORS={
   Groceries:'#2E7D32',
   Health:'#eb1414',
   Home:'#92400E',
-  Leisure:'#490bda',
+  Entertainment:'#490bda',
   Lifestyle:'#008a99',
   Others:'#404a59',
   Transport:'#007580',
@@ -7721,7 +7771,7 @@ const INSIGHT_COLORS={
   DTH:'#9333EA',
   Gas:'#DC2626',
   Fuel:'#e60000',
-  Travel:'#14B8A6',
+  Travel:'#339966',
   Restaurant:'#EA580C',
   'Street Food':'#22C55E',
   'Tiffin Center':'#CA8A04',
@@ -7732,7 +7782,7 @@ const INSIGHT_COLORS={
   Beverages:'#10B981',
   Bakery:'#B45309',
   Shopping:'#AFB42B',
-  Electronics:'#2563EB',
+  Gadgets:'#2563EB',
   'Personal Care':'#F472B6',
   Gifts:'#e69100',
   Entertainment:'#490bda',
@@ -7789,14 +7839,14 @@ const ICON_FG={
   kebab_dining:'#C94B2C',sanitizer:'#D4537E',grocery:'#639922',medical_services:'#EF4444',
   favorite:'#DB2777',local_hospital:'#DC2626',kitchen:'#1D4ED8',cleaning_services:'#059669',
   wall_art:'#A855F7',chair:'#92400E',home_repair_service:'#65A30D',handyman:'#B91C1C',
-  movie:'#8B5CF6',shopping_bag:'#D946EF',devices:'#2563EB',redeem:'#DB2777',spa:'#F472B6',
-  edit_note:'#0F172A',more_horiz:'#64748B',apartment:'#7C3AED',commute:'#14B8A6',travel:'#14B8A6',
+  movie:'#8B5CF6',shopping_bag:'#D946EF',devices:'#2563EB',electrical_services:'#D97706',redeem:'#DB2777',spa:'#F472B6',
+  edit_note:'#0F172A',more_horiz:'#64748B',apartment:'#7C3AED',commute:'#14B8A6',bus_railway:'#339966',
   moped:'#F59E0B',local_gas_station:'#F59E0B',verified_user:'#0F766E',local_parking:'#475569',
   car_repair:'#B91C1C',build_circle:'#64748B',toll:'#0369A1',local_car_wash:'#06B6D4',
   payments:'#DC2626',business_center:'#1E40AF',percent:'#0891B2',currency_exchange:'#0D9488',
   workspace_premium:'#CA8A04',local_activity:'#EA580C',swap_horiz:'#4F46E5',lightbulb:'#CA8A04',
   lock:'#2563EB',backup:'#0D9488',monitoring:'#7C3AED',add:'#16A34A',restore:'#15803D',
-  dashboard:'#16A34A',settings:'#64748B',qr_code:'#3c0d8c',payment_card:'#BE123C',
+  dashboard:'#16A34A',settings:'#64748B',qr_code:'#3c0d8c',payment_card:'#BE123C',subscriptions:'#7C3AED',
   arrow_downward:'#16A34A',arrow_upward:'#DC2626',store:'#B45309'
 };
 const OPTION_ICON_COLORS={
@@ -7845,16 +7895,26 @@ function renderHist(){
   const expenseList=histSF==='Income'||histSF==='Transfer'?[]:expFiltered;
   const incomeListFiltered=histSF==='Expense'||histSF==='Transfer'?[]:incomeFiltered;
   const transferListFiltered=histSF==='Expense'||histSF==='Income'?[]:transferFiltered;
+  const transferExpenseList=transferFiltered.filter(isTransferSent);
+  const transferIncomeList=transferFiltered.filter(isTransferReceive);
+  const purchaseExpenseTotal=purchaseList.reduce((s,p)=>s+p.total,0);
+  const directExpenseTotal=expenseList.reduce((s,e)=>s+e.amount,0);
+  const filteredIncomeTotal=incomeListFiltered.reduce((s,i)=>s+i.amount,0);
+  const filteredTransferTotal=transferListFiltered.reduce((s,t)=>s+t.amount,0);
+  const transferExpenseTotal=transferExpenseList.reduce((s,t)=>s+t.amount,0);
+  const transferIncomeTotal=transferIncomeList.reduce((s,t)=>s+t.amount,0);
   const grandTotal=
-    purchaseList.reduce((s,p)=>s+p.total,0)+
-    expenseList.reduce((s,e)=>s+e.amount,0)+
-    incomeListFiltered.reduce((s,i)=>s+i.amount,0)+
-    transferListFiltered.reduce((s,t)=>s+t.amount,0);
+    purchaseExpenseTotal+
+    directExpenseTotal+
+    filteredIncomeTotal+
+    filteredTransferTotal+
+    (histSF==='Expense'?transferExpenseTotal:0)+
+    (histSF==='Income'?transferIncomeTotal:0);
   document.getElementById('hCnt').textContent=
     histSF==='Expense'
-      ?`${listCountLabel(purchaseList.length+expenseList.length,'expense')} · ${fmt(grandTotal)}`
+      ?`${listCountLabel(purchaseList.length+expenseList.length+transferExpenseList.length,'expense')} · ${fmt(grandTotal)}`
       :histSF==='Income'
-        ?`${incomeListFiltered.length} income · ${fmt(grandTotal)}`
+        ?`${incomeListFiltered.length+transferIncomeList.length} income · ${fmt(grandTotal)}`
         :histSF==='Transfer'
           ?`${transferListFiltered.length} transfer · ${fmt(grandTotal)}`
           :formatInsightCounts([
@@ -7867,8 +7927,8 @@ function renderHist(){
   const monthExpenses=expenses.filter(e=>inMonth(e.datetime,insightMonth));
   const monthIncomes=incomes.filter(i=>inMonth(i.datetime,insightMonth));
   const monthTransfers=transfers.filter(t=>inMonth(t.datetime,insightMonth));
-  const monthExpenseTotal=monthPurchases.reduce((s,p)=>s+p.total,0)+monthExpenses.reduce((s,e)=>s+e.amount,0);
-  const monthIncomeTotal=monthIncomes.reduce((s,i)=>s+i.amount,0);
+  const monthExpenseTotal=monthPurchases.reduce((s,p)=>s+p.total,0)+monthExpenses.reduce((s,e)=>s+e.amount,0)+sumTransferExpense(monthTransfers);
+  const monthIncomeTotal=monthIncomes.reduce((s,i)=>s+i.amount,0)+sumTransferIncome(monthTransfers);
   const monthNet=monthIncomeTotal-monthExpenseTotal;
   const insightMonthLabelEl=document.getElementById('insightMonthLabel');
   const insDeltaEl=document.getElementById('insDelta');
@@ -7910,6 +7970,10 @@ function renderHist(){
       const key=e.subcategory||e.category;
       cs[key]=(cs[key]||0)+e.amount;
     });
+    transferExpenseList.forEach(t=>{
+      const key=transferCategoryKey(t,'Transfer Sent');
+      cs[key]=(cs[key]||0)+t.amount;
+    });
     prevPurchases.flatMap(p=>p.items||[]).forEach((it)=>{
       const v=parseFloat(it.price||0);
       prevCs[it.category]=(prevCs[it.category]||0)+v;
@@ -7918,15 +7982,27 @@ function renderHist(){
       const key=e.subcategory||e.category;
       prevCs[key]=(prevCs[key]||0)+e.amount;
     });
+    prevTransfers.filter(isTransferSent).forEach(t=>{
+      const key=transferCategoryKey(t,'Transfer Sent');
+      prevCs[key]=(prevCs[key]||0)+t.amount;
+    });
   }
   if(histSF==='Income'){
     incomeListFiltered.forEach(i=>{
       const key=i.category||'Income';
       cs[key]=(cs[key]||0)+i.amount;
     });
+    transferIncomeList.forEach(t=>{
+      const key=transferCategoryKey(t,'Transfer Receive');
+      cs[key]=(cs[key]||0)+t.amount;
+    });
     prevIncomes.forEach(i=>{
       const key=i.category||'Income';
       prevCs[key]=(prevCs[key]||0)+i.amount;
+    });
+    prevTransfers.filter(isTransferReceive).forEach(t=>{
+      const key=transferCategoryKey(t,'Transfer Receive');
+      prevCs[key]=(prevCs[key]||0)+t.amount;
     });
   }
   if(histSF==='Transfer'){
@@ -8019,27 +8095,35 @@ function renderHist(){
   if(histSF==='All' || histSF==='Expense'){
     purchaseList.forEach(p=>{pyC[p.payMode]=(pyC[p.payMode]||0)+1;});
     expenseList.forEach(e=>{pyC[e.payMode]=(pyC[e.payMode]||0)+1;});
+    transferExpenseList.forEach(t=>{
+      const key=transferPaymentKey(t);
+      pyC[key]=(pyC[key]||0)+1;
+    });
   }
   if(histSF==='Income'){
     incomeListFiltered.forEach(i=>{pyC[i.category]=(pyC[i.category]||0)+1;});
+    transferIncomeList.forEach(t=>{
+      const key=transferPaymentKey(t);
+      pyC[key]=(pyC[key]||0)+1;
+    });
   }
   if(histSF==='Transfer'){
     transferListFiltered.forEach(t=>{pyC[t.from||t.direction||'Transfer']=(pyC[t.from||t.direction||'Transfer']||0)+1;});
   }
   const paymentCount=Object.values(pyC).reduce((sum,count)=>sum+count,0);
   const paymentKeys=histSF==='Income'
-    ? [...new Set(incomeListFiltered.map(i=>i.category).filter(Boolean))]
+    ? [...new Set([...incomeListFiltered.map(i=>i.category).filter(Boolean),...transferIncomeList.map(transferPaymentKey).filter(Boolean)])]
     : histSF==='Transfer'
       ? [...new Set(transferListFiltered.map(t=>t.from||t.direction||'Transfer').filter(Boolean))]
-      : PAYS;
+      : [...new Set([...PAYS,...transferExpenseList.map(transferPaymentKey).filter(Boolean)])];
   document.getElementById('paySp').innerHTML=paymentKeys.map(pm=>{
     const c=pyC[pm]||0,pct=paymentCount?Math.round(c/paymentCount*100):0;
     const amount=
       histSF==='Income'
-        ? incomeListFiltered.filter(i=>i.category===pm).reduce((sum,i)=>sum+i.amount,0)
+        ? incomeListFiltered.filter(i=>i.category===pm).reduce((sum,i)=>sum+i.amount,0)+transferIncomeList.filter(t=>transferPaymentKey(t)===pm).reduce((sum,t)=>sum+t.amount,0)
         : histSF==='Transfer'
           ? transferListFiltered.filter(t=>(t.from||t.direction||'Transfer')===pm).reduce((sum,t)=>sum+t.amount,0)
-          : purchaseList.filter(p=>p.payMode===pm).reduce((sum,p)=>sum+p.total,0)+expenseList.filter(e=>e.payMode===pm).reduce((sum,e)=>sum+e.amount,0);
+          : purchaseList.filter(p=>p.payMode===pm).reduce((sum,p)=>sum+p.total,0)+expenseList.filter(e=>e.payMode===pm).reduce((sum,e)=>sum+e.amount,0)+transferExpenseList.filter(t=>transferPaymentKey(t)===pm).reduce((sum,t)=>sum+t.amount,0);
     return `<div class="insights-pay-row">
       <div class="insights-pay-name">${safeText(pm)}</div>
       <div class="insights-pay-bar"><div class="insights-pay-fill" style="width:${pct}%"></div></div>
@@ -8517,10 +8601,8 @@ function renderCalendarDayTransactions(){
 
   const dayEntries=getTransactionsForDate(selectedCalendarDate);
   const total=dayEntries.reduce((sum,entry)=>sum+entry.amount,0);
-  const dayIncome=dayEntries.filter(entry=>entry.type==='income').reduce((sum,entry)=>sum+(entry.record.amount||0),0);
-  const dayExpense=
-    dayEntries.filter(entry=>entry.type==='purchase').reduce((sum,entry)=>sum+(entry.record.total||0),0)+
-    dayEntries.filter(entry=>entry.type==='expense').reduce((sum,entry)=>sum+(entry.record.amount||0),0);
+  const dayIncome=dayEntries.reduce((sum,entry)=>sum+entryIncomeAmount(entry),0);
+  const dayExpense=dayEntries.reduce((sum,entry)=>sum+entryExpenseAmount(entry),0);
   titleEl.textContent=selectedCalendarDate.toLocaleDateString('en-IN',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
   countEl.textContent=`${dayEntries.length} transaction${dayEntries.length!==1?'s':''} · In ${fmt(dayIncome)} · Out ${fmt(dayExpense)}`;
   emptyEl.style.display='none';
@@ -8583,13 +8665,15 @@ function renderCalendarDayTransactions(){
       </div>`;
     }
     const t=entry.record;
+    const transferTone=isTransferReceive(t)?'var(--income)':'var(--expense)';
+    const transferPrefix=isTransferReceive(t)?'+':'';
     return `<div class="hi" style="margin-bottom:0">
       <div class="row">
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
           <span>${coloredIconBadge('swap_horiz',{label:'Transfer',size:'sm'})}</span>
           <span style="font-size:11px;color:var(--text-secondary)">${fmtT(t.datetime)}</span>
         </div>
-        <div style="font-size:17px;font-weight:900;color:var(--text-secondary)">${fmt(t.amount)}</div>
+        <div style="font-size:17px;font-weight:900;color:${transferTone}">${transferPrefix}${fmt(t.amount)}</div>
       </div>
       <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">${safeText(t.direction)} · ${safeText(t.personName||'Transfer')} · ${safeText(t.from)} → ${safeText(t.to)}${t.notes?` · ${safeText(t.notes)}`:''}</div>
     </div>`;
@@ -8616,6 +8700,13 @@ function renderCalendarView(){
       byDay[day].total+=entry.amount;
     }else if(entry.type==='purchase' || entry.type==='expense'){
       byDay[day].expense+=entry.amount;
+      byDay[day].total+=entry.amount;
+    }else if(entry.type==='transfer'){
+      if(isTransferReceive(entry.record)){
+        byDay[day].income+=entry.amount;
+      }else{
+        byDay[day].expense+=entry.amount;
+      }
       byDay[day].total+=entry.amount;
     }
   });
