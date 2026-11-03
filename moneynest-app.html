@@ -3238,6 +3238,16 @@ strong{font-weight:900}
   text-overflow:ellipsis;
   white-space:nowrap;
 }
+.session-tx-paid-by{
+  min-width:0;
+  max-width:132px;
+  overflow:hidden;
+  color:#64748B;
+  font-size:11px;
+  font-weight:700;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
 .session-tx-right{
   display:grid;
   justify-items:end;
@@ -4128,31 +4138,147 @@ strong{font-weight:900}
     font-size:16px!important;
   }
 }
+/* Focused welcome screen */
+#setup{
+  min-height:100vh;
+  padding:22px 16px 28px;
+  background:linear-gradient(180deg,#FCFDFC 0%,#F0F7F2 100%);
+}
+#setup .welcome-topbar,
+#setup .welcome-hero,
+#setup .welcome-features,
+#setup .welcome-actions,
+#setup .welcome-footnote{max-width:440px}
+#setup .welcome-topbar{
+  min-height:54px;
+  margin-bottom:18px;
+  padding:0 2px;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+}
+.welcome-brand-lockup{display:flex;align-items:center;gap:10px;margin-right:auto}
+#setup .welcome-logo{width:42px;height:42px;margin:0;border-radius:14px;background:#E7F5EA;color:#11763A;font-size:32px}
+.welcome-top-name{font-size:17px;font-weight:900;letter-spacing:-.4px;color:#152333}
+.welcome-privacy-chip{display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border:1px solid #D6E9DB;border-radius:999px;background:#fff;color:#13743A;font-size:11px;font-weight:800}
+.welcome-privacy-chip .material-symbols-rounded{font-size:16px}
+#setup .welcome-hero{
+  min-height:174px;
+  margin-bottom:14px;
+  grid-template-columns:minmax(0,1fr) 112px;
+  border:1px solid #DDEBE0;
+  border-radius:24px;
+  background:#fff;
+  box-shadow:0 14px 32px rgba(36,75,48,.07);
+}
+#setup .welcome-brand{padding:24px 0 22px 22px;background:transparent;border:0;border-radius:0;box-shadow:none}
+#setup .welcome-brandline{min-height:auto;margin:0 0 10px;padding:0;background:transparent;color:#16813C;font-size:10px;letter-spacing:1.5px;box-shadow:none}
+#setup .welcome-wordmark{font-size:28px;line-height:1.12;letter-spacing:-.9px;color:#142235}
+#setup .welcome-wordmark span{color:inherit}
+#setup .welcome-subcopy{margin:10px 0 0;padding:0;max-width:210px;color:#637181;font-size:13px;line-height:1.55;text-align:left}
+#setup .welcome-shield-panel{background:radial-gradient(circle at 50% 42%,#E8F7EC 0 28%,transparent 29%),linear-gradient(150deg,#F4FBF5 0%,#DEF1E2 100%)}
+#setup .welcome-shield-panel::before{width:76px;height:82px;border-color:#16813C;border-width:2px;opacity:.9}
+#setup .welcome-shield-panel .welcome-core{width:50px;height:50px;box-shadow:0 10px 22px rgba(22,129,60,.15)}
+#setup .welcome-shield-panel .welcome-rupee{font-size:29px}
+#setup .welcome-features{grid-template-columns:1fr;gap:8px;margin-bottom:14px}
+#setup .welcome-feature{min-height:66px;padding:10px 12px;gap:12px;border-radius:16px;border:1px solid #E2ECE5;box-shadow:none}
+#setup .welcome-feature-icon{width:42px;height:42px;border-radius:13px}
+#setup .welcome-feature-icon .material-symbols-rounded{font-size:23px}
+#setup .welcome-feature strong{font-size:13px;line-height:1.15;margin:0 0 3px}
+#setup .welcome-feature small{font-size:11px;line-height:1.35}
+#setup .welcome-actions{grid-template-columns:1fr;gap:8px;margin-bottom:12px}
+#setup .welcome-action{min-height:68px;padding:10px 12px;flex-direction:row;align-items:center;border-radius:17px;box-shadow:none}
+#setup .welcome-action.primary{background:linear-gradient(135deg,#137A3B,#24944B)}
+#setup .welcome-action.primary::after{display:none}
+#setup .welcome-action-icon{width:42px;height:42px;margin:0 11px 0 0;border-radius:13px}
+#setup .welcome-action-icon .material-symbols-rounded{font-size:24px}
+#setup .welcome-action-title{font-size:14px;line-height:1.2;margin-bottom:2px}
+#setup .welcome-action-desc{max-width:none;font-size:11px;line-height:1.35}
+#setup .welcome-restore-art{display:none}
+#setup .welcome-footnote{justify-content:center;margin-top:0;padding:10px 14px;border:0;border-radius:14px;background:transparent;color:#657382;font-size:11px;line-height:1.4;text-align:center}
+#setup .welcome-footnote .material-symbols-rounded{font-size:18px}
+@media (max-width:360px){
+  #setup{padding:16px 12px 22px}
+  #setup .welcome-hero{grid-template-columns:minmax(0,1fr) 94px;min-height:160px}
+  #setup .welcome-brand{padding:20px 0 18px 18px}
+  #setup .welcome-wordmark{font-size:25px}
+  #setup .welcome-subcopy{font-size:12px}
+}
+/* Reference-style welcome layout */
+#setup{padding:22px 16px 30px;background:#FCFDFC}
+#setup .welcome-topbar{min-height:66px;margin-bottom:18px;padding:0;background:transparent;box-shadow:none;border:0}
+#setup .welcome-menu{width:32px;display:grid;gap:6px;padding:4px 0;margin-right:16px}
+#setup .welcome-menu span,#setup .welcome-menu span:nth-child(2),#setup .welcome-menu span:nth-child(3){width:30px;height:3px;background:#13223A}
+#setup .welcome-menu span:nth-child(2){width:24px}
+#setup .welcome-menu span:nth-child(3){width:30px}
+#setup .welcome-brand-lockup{gap:9px}
+#setup .welcome-logo{width:auto;height:auto;background:transparent;border-radius:0;font-size:50px;color:#11813B}
+#setup .welcome-top-name{font-size:30px;letter-spacing:-1.2px;color:#10203A}
+#setup .welcome-top-name span{color:#0F8B42}
+#setup .welcome-top-icons{display:flex;gap:8px;margin-left:auto}
+#setup .welcome-top-icon{width:42px;height:42px;border:0;border-radius:50%;background:#EAF8EF;color:#108342;box-shadow:none}
+#setup .welcome-top-icon .material-symbols-rounded{font-size:24px}
+#setup .welcome-hero{min-height:186px;grid-template-columns:minmax(0,1.35fr) minmax(112px,.65fr);margin-bottom:14px;border:0;border-radius:24px;background:linear-gradient(135deg,#F4FCF6,#E1F6E8);box-shadow:none}
+#setup .welcome-brand{padding:24px 0 20px 22px}
+#setup .welcome-brandline{margin-bottom:12px;color:#108342;font-size:10px;letter-spacing:1px}
+#setup .welcome-wordmark{font-size:28px;line-height:1.12;letter-spacing:-1.1px;color:#0F1F38}
+#setup .welcome-subcopy{max-width:none;margin-top:16px;font-size:12px;color:#64768D;white-space:nowrap}
+#setup .welcome-shield-panel{background:radial-gradient(circle at 52% 58%,rgba(40,179,87,.18) 0 41%,transparent 42%),transparent}
+#setup .welcome-shield-panel::before{width:82px;height:90px;border:0;background:linear-gradient(145deg,#25A75B,#0A7D38);box-shadow:0 16px 28px rgba(12,120,54,.18);opacity:1}
+#setup .welcome-shield-panel .welcome-core{width:54px;height:54px;background:#fff;box-shadow:none}
+#setup .welcome-shield-panel .welcome-rupee{font-size:32px;color:#0E863D}
+#setup .welcome-features{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px}
+#setup .welcome-feature{min-height:116px;padding:12px 10px;gap:9px;align-items:flex-start;position:relative;border:1px solid #D9E4ED;border-radius:20px;background:#fff;box-shadow:none}
+#setup .welcome-feature-icon{width:40px;height:40px;border-radius:50%;flex-shrink:0}
+#setup .welcome-feature-icon .material-symbols-rounded{font-size:23px}
+#setup .welcome-feature-copy{padding-top:2px}
+#setup .welcome-feature strong{font-size:13px;line-height:1.18;margin:0 15px 7px 0}
+#setup .welcome-feature small{font-size:10.5px;line-height:1.4;color:#687A91}
+.welcome-feature-arrow,.welcome-action-arrow{position:absolute;right:10px;top:15px;color:#8A9AAF;font-size:22px;line-height:1}
+#setup .welcome-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:14px}
+#setup .welcome-action{min-height:122px;padding:14px 12px;align-items:flex-start;flex-direction:column;position:relative;border-radius:20px;box-shadow:none}
+#setup .welcome-action.primary{color:#10203A;border-color:#C7E8D2;background:linear-gradient(135deg,#EAFBF0,#D8F6E4)}
+#setup .welcome-action.secondary{border-color:#D9E4ED;background:#fff}
+#setup .welcome-action-icon{width:42px;height:42px;margin:0 0 10px;border-radius:50%}
+#setup .welcome-action.primary .welcome-action-icon{background:#2FB55E;color:#fff}
+#setup .welcome-action.secondary .welcome-action-icon{background:#EAF8EF;color:#11813B}
+#setup .welcome-action-title{font-size:14px;color:#10203A;margin-bottom:5px}
+#setup .welcome-action-desc{font-size:10.5px;color:#62748A;line-height:1.4}
+#setup .welcome-action-arrow{top:20px}
+#setup .welcome-footnote{display:flex;justify-content:flex-start;gap:9px;min-height:58px;padding:10px 13px;border:1px solid #D7EEE0;border-radius:18px;background:#F5FCF7;color:#63758B;font-size:10.5px;text-align:left}
+#setup .welcome-footnote strong{color:#0C823A}
+@media (max-width:360px){
+  #setup{padding:16px 10px 24px}
+  #setup .welcome-top-name{font-size:26px}
+  #setup .welcome-top-icon{width:36px;height:36px}
+  #setup .welcome-hero{min-height:174px}
+  #setup .welcome-wordmark{font-size:25px}
+  #setup .welcome-feature{min-height:110px}
+  #setup .welcome-feature strong{font-size:12px}
+}
 </style>
 </head>
 <body>
 
 <div id="setup">
   <div class="welcome-topbar">
-    <button type="button" class="welcome-menu" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-    <div class="welcome-logo">
-      <span>₹</span>
+    <button type="button" class="welcome-menu" aria-label="Menu"><span></span><span></span><span></span></button>
+    <div class="welcome-brand-lockup">
+      <div class="welcome-logo"><span>₹</span></div>
+      <span class="welcome-top-name">Money<span>Nest</span></span>
     </div>
     <div class="welcome-top-icons">
       <span class="welcome-top-icon"><span class="material-symbols-rounded" aria-hidden="true">monitoring</span></span>
-      <span class="welcome-top-icon"><span class="material-symbols-rounded" aria-hidden="true">account_balance_wallet</span></span>
-      <span class="welcome-top-icon"><span class="material-symbols-rounded" aria-hidden="true">trending_up</span></span>
       <span class="welcome-top-icon"><span class="material-symbols-rounded" aria-hidden="true">lock</span></span>
     </div>
   </div>
 
   <div class="welcome-hero">
     <div class="welcome-brand">
-      <div class="welcome-brandline">Private Money Tracker</div>
-      <h2 class="welcome-wordmark">Money<span>Nest</span></h2>
-      <p class="welcome-subcopy">Save Today . Secure Tomorrow</p>
+      <div class="welcome-brandline">PERSONAL MONEY TRACKER</div>
+      <h2 class="welcome-wordmark">Save Today,<br/>Secure Tomorrow</h2>
+      <p class="welcome-subcopy">Track your money&nbsp;&nbsp;•&nbsp;&nbsp;Build your future</p>
     </div>
     <div class="welcome-shield-panel">
       <div class="welcome-core">
@@ -4169,8 +4295,9 @@ strong{font-weight:900}
       </div>
       <span class="welcome-feature-copy">
         <strong>Private<br/>by design</strong>
-        <small>Your data stays only on your device</small>
+        <small>Your data stays private</small>
       </span>
+      <span class="welcome-feature-arrow">›</span>
     </div>
     <div class="welcome-feature">
       <div class="welcome-feature-icon">
@@ -4178,8 +4305,9 @@ strong{font-weight:900}
       </div>
       <span class="welcome-feature-copy">
         <strong>Backup<br/>ready</strong>
-        <small>Keep your data safe with backups</small>
+        <small>Keep your data safe</small>
       </span>
+      <span class="welcome-feature-arrow">›</span>
     </div>
     <div class="welcome-feature">
       <div class="welcome-feature-icon">
@@ -4187,17 +4315,19 @@ strong{font-weight:900}
       </div>
       <span class="welcome-feature-copy">
         <strong>Monthly<br/>insights</strong>
-        <small>Understand your money with smart reports</small>
+        <small>Track your progress</small>
       </span>
+      <span class="welcome-feature-arrow">›</span>
     </div>
     <div class="welcome-feature">
       <div class="welcome-feature-icon">
-        <span class="material-symbols-rounded" aria-hidden="true">payments</span>
+        <span class="material-symbols-rounded" aria-hidden="true">account_balance_wallet</span>
       </div>
       <span class="welcome-feature-copy">
         <strong>All spends<br/>in one place</strong>
-        <small>Track everything effortlessly</small>
+        <small>View everything at a glance</small>
       </span>
+      <span class="welcome-feature-arrow">›</span>
     </div>
   </div>
 
@@ -4208,8 +4338,9 @@ strong{font-weight:900}
       </span>
       <span class="welcome-action-copy">
         <span class="welcome-action-title">Start Fresh</span>
-        <span class="welcome-action-desc">Create a clean local account on this device</span>
+        <span class="welcome-action-desc">Create a clean local account</span>
       </span>
+      <span class="welcome-action-arrow">›</span>
     </button>
     <button type="button" id="welcomeRestoreBtn" class="welcome-action secondary" onclick="triggerWelcomeRestore()">
       <span class="welcome-action-icon">
@@ -4217,9 +4348,9 @@ strong{font-weight:900}
       </span>
       <span class="welcome-action-copy">
         <span class="welcome-action-title">Restore Backup</span>
-        <span class="welcome-action-desc">Bring back your saved MoneyNest data</span>
+        <span class="welcome-action-desc">Bring back your saved data</span>
       </span>
-      <span class="welcome-restore-art"><span class="material-symbols-rounded fill">verified_user</span></span>
+      <span class="welcome-action-arrow">›</span>
     </button>
   </div>
 
@@ -4475,6 +4606,11 @@ strong{font-weight:900}
         <div class="f" style="margin-bottom:10px">
           <input type="search" id="txSearch" class="fi" placeholder="Search title, category, notes, person..." oninput="renderSessions()"/>
         </div>
+        <div class="f" style="margin-bottom:10px">
+          <select id="txPaidByFilter" class="fi" onchange="renderSessions()">
+            <option value="">All payers</option>
+          </select>
+        </div>
         <div class="row" style="gap:10px;align-items:stretch;margin-bottom:10px">
           <div class="f" style="flex:1;margin:0">
             <select id="txFilter" class="fi" onchange="renderSessions()">
@@ -4630,6 +4766,14 @@ strong{font-weight:900}
       <div id="paySp" class="insights-pay-list"></div>
     </div>
 
+    <div class="insights-card" id="insightsPaidBySection">
+      <div class="insights-card-head" style="margin-bottom:12px">
+        <div class="insights-card-title">Spending by Person</div>
+        <div class="insights-card-meta" id="paidBySpendMeta"></div>
+      </div>
+      <div id="paidBySpendList"></div>
+    </div>
+
     <div class="insights-card trend-card-v2" id="insightsTrendSection">
       <div class="insights-card-head" style="margin-bottom:12px">
         <div class="insights-card-title">Spending Trend</div>
@@ -4697,7 +4841,7 @@ strong{font-weight:900}
           <div class="more-item">
             <div class="more-item-main">
               <strong>Manage Categories</strong>
-              <span>Rename your categories, sub-categories, and item labels without changing transaction history.</span>
+              <span>Renamed categories and sub-categories update across all saved entries automatically.</span>
             </div>
             <button class="obtn" onclick="openCategoriesManager()">Open</button>
           </div>
@@ -4723,6 +4867,22 @@ strong{font-weight:900}
               <input type="checkbox" id="appLockToggle"/>
               <span class="toggle-slider"></span>
             </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="more-panel">
+        <div class="more-section-title">Expense Preferences</div>
+        <div class="more-list">
+          <div class="more-item" style="align-items:flex-end">
+            <div class="more-item-main">
+              <strong>Default Payer</strong>
+              <span>Prefill Paid By on new expense entries. You can always change it.</span>
+            </div>
+            <div style="display:flex;gap:8px;width:100%;margin-top:10px">
+              <input id="defaultPayerInput" class="fi" type="text" placeholder="Enter default name" autocomplete="name"/>
+              <button class="obtn" type="button" onclick="saveDefaultPayer()">Save</button>
+            </div>
           </div>
         </div>
       </div>
@@ -4824,7 +4984,7 @@ strong{font-weight:900}
 <div class="overlay" id="catMgrMod" onclick="if(event.target===this)closeCategoriesManager()">
   <div class="sheet">
     <h3>Categories</h3>
-    <p style="font-size:12px;color:#86939c;margin-bottom:14px">Rename categories and sub-categories without losing your saved data.</p>
+    <p style="font-size:12px;color:#86939c;margin-bottom:14px">Renamed labels update all saved entries while keeping their data safe.</p>
     <div id="catMgrFields" style="display:grid;gap:12px"></div>
     <button class="gbtn" style="width:100%;margin-top:10px;margin-bottom:8px" onclick="saveCategoryLabels()">Save Names</button>
     <button class="sbtn" style="width:100%;padding:11px" onclick="closeCategoriesManager()">Close</button>
@@ -4844,7 +5004,7 @@ strong{font-weight:900}
 <script>
 const APP_VERSION='2.1.1';
 const STORES=['Dmart','RelianceMart','Local Shop','Other'];
-const CATS=['Baby','Bakery','Beverages','Dairy','Dry Fruits','Frozen','Fruits','Household','Meat & Fish','Oils','Other','Pulses','Ready Mixes','Rice & Flour','Snacks','Spices','Toiletries','Vegetables'];
+const CATS=['Baby','Bakery','Beverages','Dairy','Dry Fruits','Frozen','Fruits','General Groceries','Household','Meat & Fish','Oils','Pulses','Ready Mixes','Rice & Flour','Snacks','Spices','Body Care','Vegetables'];
 const PAYS=['Cash','UPI','Debit Card','Credit Card','Rupay Credit Card'];
 const TRANSFER_CHANNELS=['Account','Cash','UPI','Credit Card','Rupay Credit Card'];
 const INCOME_CATEGORIES=['Salary','Business','Interest','Dividends','Gifts','Refunds','Rewards','Coupons'];
@@ -4920,12 +5080,13 @@ const EXPENSE_TREE={
     "Household":{icon:"household_supplies",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
     "Meat & Fish":{icon:"set_meal",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
     "Oils":{icon:"oil_barrel",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-    "Other":{icon:"category",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Personal Care":{icon:"spa",fields:["amount","date","notes"]},
+    "General Groceries":{icon:"shopping_basket",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
     "Pulses":{icon:"grain",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
     "Ready Mixes":{icon:"blender",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
     "Rice & Flour":{icon:"wheat",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
     "Spices":{icon:"kebab_dining",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
-    "Toiletries":{icon:"sanitizer",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
+    "Body Care":{icon:"sanitizer",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]},
     "Vegetables":{icon:"grocery",_grocery:true,fields:["itemName","qty","unit","price","date","notes"]}
   }},
   "Health":{icon:"medical_services",sub:{
@@ -4952,7 +5113,6 @@ const EXPENSE_TREE={
   "Lifestyle":{icon:"shopping_bag",sub:{
     "Gadgets":{icon:"devices",fields:["amount","warranty","date","notes"]},
     "Gifts":{icon:"redeem",fields:["amount","recipient","date","notes"]},
-    "Personal Care":{icon:"spa",fields:["amount","date","notes"]},
     "Shopping":{icon:"shopping_bag",fields:["amount","date","notes"]}
   }},
   "Others":{icon:"category",sub:{
@@ -4977,22 +5137,22 @@ const DASH_ORDER=['week','month','year','all'];
 const CATEGORY_ICONS={
   'Vegetables':'grocery','Fruits':'nutrition','Pulses':'grain','Dairy':'local_drink','Meat & Fish':'set_meal','Snacks':'cookie','Beverages':'local_bar',
   'Frozen':'ac_unit','Bakery':'bakery_dining','Spices':'kebab_dining','Oils':'oil_barrel','Rice & Flour':'wheat','Ready Mixes':'blender','Dry Fruits':'nutrition',
-  'Household':'household_supplies','Toiletries':'sanitizer','Baby':'child_care','Other':'category'
+  'Household':'household_supplies','Body Care':'sanitizer','Baby':'child_care','General Groceries':'shopping_basket'
 };
 
 const CCOLOR={
   'Vegetables':'#639922','Fruits':'#D85A30','Pulses':'#9A6B2F','Dairy':'#378ADD',
   'Meat & Fish':'#A32D2D','Snacks':'#EF9F27','Beverages':'#1D9E75','Bakery':'#C6854A',
   'Frozen':'#185FA5','Spices':'#C94B2C','Oils':'#D9A422','Rice & Flour':'#B9985B','Ready Mixes':'#B06F3B','Dry Fruits':'#8A5A2F',
-  'Household':'#888780','Toiletries':'#D4537E',
-  'Baby':'#E07B7B','Other':'#aaa'
+  'Household':'#888780','Body Care':'#D4537E',
+  'Baby':'#E07B7B','General Groceries':'#15803D'
 };
 const CTAG_BG={
   'Vegetables':'#EAF3DE','Fruits':'#FAECE7','Pulses':'#F5E8D7','Dairy':'#E6F1FB',
   'Meat & Fish':'#FCEBEB','Snacks':'#FAEEDA','Beverages':'#E1F5EE','Bakery':'#F7E9DA',
   'Frozen':'#E6F1FB','Spices':'#FCE8E1','Oils':'#FBF1D8','Rice & Flour':'#F5EDDE','Ready Mixes':'#F8E8DC','Dry Fruits':'#F4E6D7',
-  'Household':'#F1EFE8','Toiletries':'#FBEAF0',
-  'Baby':'#FFF0F0','Other':'#F4F5F0'
+  'Household':'#F1EFE8','Body Care':'#FBEAF0',
+  'Baby':'#FFF0F0','General Groceries':'#EAF7EF'
 };
 
 const SUGG={
@@ -5010,10 +5170,11 @@ const SUGG={
   'Rice & Flour':['Rice','Basmati Rice','Atta','Maida','Rava','Besan','Rice Flour','Jowar Flour'],
   'Ready Mixes':['Idli Mix','Dosa Mix','Gulab Jamun Mix','Pancake Mix','Soup Mix','Noodle Mix'],
   'Dry Fruits':['Almonds','Cashews','Raisins','Dates','Pistachios','Walnuts','Anjeer'],
-  'Household':['Toothpaste','Soap','Shampoo','Detergent Soap','Detergent Liquid','Dishwash Soap','Dishwash Liquid','Tissues','Garbage Bags','Floor Cleaner','Toilet Paper','Toilet Cleaner','Sponges','Scrubbers','Brushes','Cleaning Cloth','Disinfectant Spray','Surf Excel','Vim','Lizol','Phenyl','Mosquito Repellent'],
-  'Toiletries':['Face Wash','Moisturizer','Deodorant','Cotton','Lotion','Sunscreen','Lip Balm','Razor','Sanitary Pads'],
+  'Household':['Toothpaste','Soap','Shampoo','Detergent Soap','Detergent Liquid','Dishwash Soap','Dishwash Liquid','Tissues','Garbage Bags','Floor Cleaner','Sponges','Scrubbers','Brushes','Cleaning Cloth','Disinfectant Spray','Surf Excel','Vim','Lizol','Phenyl','Toilet Paper','Toilet Cleaner','Mosquito Repellent'],
+  'Body Care':['Face Wash','Moisturizer','Deodorant','Cotton','Lotion','Sunscreen','Lip Balm','Razor','Sanitary Pads'],
   'Baby':['Baby Soap','Baby Powder','Diapers','Baby Oil','Baby Shampoo','Baby Food','Baby Wipes','Rash Cream'],
-  'Other':[]
+  'Personal Care':['Salon'],
+  'General Groceries':[]
 };
 const ALL_ITEMS=Object.values(SUGG).flat();
 
@@ -5057,7 +5218,8 @@ function _buildPriceCache(){
 
 const uid=()=>window.crypto?.randomUUID?.()||Date.now().toString(36)+Math.random().toString(36).slice(2);
 const fmt=n=>'₹'+Math.round(n||0).toLocaleString('en-IN');
-const STANDARD_ENTRY_FIELDS=['date','amount','payMode','notes'];
+const STANDARD_ENTRY_FIELDS=['date','amount','payMode','paidBy','notes'];
+const DEFAULT_PAYER_KEY='gt_default_payer';
 const FIELD_DEFS={
   itemName:{label:'Item Name',type:'text',placeholder:'e.g. Tomatoes'},
   qty:{label:'Qty',type:'number',placeholder:'1',min:'0',step:'0.1'},
@@ -5066,6 +5228,7 @@ const FIELD_DEFS={
   date:{label:'Date & Time',type:'datetime-local'},
   amount:{label:'Amount (₹)',type:'number',placeholder:'0',min:'0',step:'0.5'},
   payMode:{label:'Payment Mode',type:'select',options:PAYS},
+  paidBy:{label:'PAID BY',type:'text',placeholder:'Enter name manually'},
   notes:{label:'Notes',type:'textarea',rows:'3',placeholder:'Optional note'},
   incomeCategory:{label:'Income Category',type:'select',options:INCOME_CATEGORIES},
   transferFrom:{label:'From',type:'select',options:TRANSFER_CHANNELS},
@@ -5150,12 +5313,16 @@ function normalizeCategoryName(name){
 }
 function normalizeGroceryCategoryName(name){
   const normalized=normalizeCategoryName(name);
-  return normalized==='Personal'?'Toiletries':normalized;
+  if(normalized==='Personal') return 'Body Care';
+  return normalized==='Other'?'General Groceries':normalized;
 }
 function normalizeExpensePathParts(category,subcategory,leaf){
   const normalizedCategory=normalizeCategoryName(category);
   const normalizedSubcategory=normalizeCategoryName(subcategory);
   const normalizedLeaf=normalizeGroceryCategoryName(leaf);
+  if(normalizedCategory==='Lifestyle'&&normalizedSubcategory==='Personal Care'){
+    return {category:'Groceries',subcategory:'Personal Care',leaf:null};
+  }
   if(EXPENSE_TREE[normalizedCategory]?.fields){
     return {category:normalizedCategory,subcategory:null,leaf:null};
   }
@@ -5163,7 +5330,7 @@ function normalizeExpensePathParts(category,subcategory,leaf){
     if(normalizedSubcategory==='Groceries'){
       return {
         category:'Groceries',
-        subcategory:CATS.includes(normalizedLeaf)?normalizedLeaf:'Other',
+        subcategory:CATS.includes(normalizedLeaf)?normalizedLeaf:'General Groceries',
         leaf:null
       };
     }
@@ -5184,11 +5351,17 @@ function normalizeExpensePathParts(category,subcategory,leaf){
     leaf:normalizedLeaf
   };
 }
+const DEFAULT_CATEGORY_LABELS={Groceries:'Essentials'};
 function getCategoryLabel(...parts){
   const normalizedParts=parts.map(normalizeCategoryName);
   const key=pathKey(normalizedParts);
   const fallback=normalizedParts.filter(Boolean).slice(-1)[0]||'';
-  return categoryLabels[key]||fallback;
+  return categoryLabels[key]||DEFAULT_CATEGORY_LABELS[key]||fallback;
+}
+function getSortedCategoryEntries(node,path=[]){
+  return Object.entries(node||{}).sort(([firstName],[secondName])=>
+    getCategoryLabel(...path,firstName).localeCompare(getCategoryLabel(...path,secondName),undefined,{sensitivity:'base'})
+  );
 }
 function getExpenseIcon(category,subcategory,leaf){
   const path=normalizeExpensePathParts(category,subcategory,leaf);
@@ -5218,6 +5391,10 @@ function getPurchasePath(p,itemCategory){
     p?.sourceSubcategory||itemCategory||'Other',
     p?.sourceLeaf||itemCategory||'Other'
   );
+}
+function getPurchaseItemCategoryLabel(purchase,item){
+  const path=getPurchasePath(purchase,item?.category);
+  return getCategoryLabel(path.category,path.subcategory,path.leaf);
 }
 function formatEntryPath(...parts){
   const clean=[];
@@ -5260,10 +5437,14 @@ function getSessionPurchaseTitle(record, fallbackTitle){
 function getSessionExpenseTitle(record, fallbackTitle){
   return record.customName||record.recipient||record.hospital||record.medicine||record.notes||fallbackTitle||'Expense';
 }
-function sessionPaymentChip(value){
+function sessionPaymentChip(value,paidBy=''){
   const payMode=value||'NA';
   const colors=getIconColors(payMode);
-  return `<span class="session-tx-meta session-tx-pay" style="background:${colors.bg};color:${colors.fg}" title="${safeText(payMode)}" aria-label="${safeText(payMode)}">${iconHtml(paymentIconName(payMode))}</span>`;
+  const paidByName=String(paidBy||'').trim();
+  const paymentChip=`<span class="session-tx-meta session-tx-pay" style="background:${colors.bg};color:${colors.fg}" title="${safeText(payMode)}" aria-label="${safeText(payMode)}">${iconHtml(paymentIconName(payMode))}</span>`;
+  return paidByName
+    ?`${paymentChip}<span class="session-tx-paid-by" title="Paid by ${safeText(paidByName)}">Paid by ${safeText(paidByName)}</span>`
+    :paymentChip;
 }
 function sessionRouteChip(record){
   const route=transactionSummary('transfer',record);
@@ -5308,7 +5489,7 @@ function detailRow(label,value){
 function closeTransactionDetails(){
   document.getElementById('txDetailMod')?.classList.remove('on');
 }
-function openTransactionDetails(type,id){
+function openTransactionDetails(type,id,itemIndex=null){
   const record=type==='purchase'
     ?purchases.find(p=>p.id===id)
     :type==='expense'
@@ -5321,24 +5502,31 @@ function openTransactionDetails(type,id){
   if(!content) return;
   let title='',icon='payments',amount=0,path='',meta='',body='',editAction='',deleteAction='';
   if(type==='purchase'){
-    const purchasePath=getPurchasePath(record,record.items?.[0]?.category);
+    const selectedItem=Number.isInteger(itemIndex)?record.items?.[itemIndex]:null;
+    const purchasePath=getPurchasePath(record,selectedItem?.category||record.items?.[0]?.category);
     icon=getExpenseIcon(purchasePath.category,purchasePath.subcategory,purchasePath.leaf);
-    title=getCategoryLabel(purchasePath.category,purchasePath.subcategory,purchasePath.leaf);
-    amount=record.total;
+    title=selectedItem?.name||getCategoryLabel(purchasePath.category,purchasePath.subcategory,purchasePath.leaf);
+    amount=selectedItem?parseFloat(selectedItem.price||0):record.total;
     path=formatEntryPath(getCategoryLabel(purchasePath.category),getCategoryLabel(purchasePath.category,purchasePath.subcategory));
     meta=entryMetaPills({type:'pay',text:record.payMode||'NA'},{type:'store',text:getValidStoreName(record.store)});
-    body=`
-      ${detailRow('Notes',record.notes)}
-      <div class="mlbl">Items</div>
-      <div style="display:grid;gap:8px;margin-bottom:12px">
-        ${(record.items||[]).map(it=>`<div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:#F3F6F4;border-radius:14px;padding:10px 12px">
-          <div>
-            <div style="font-size:13px;font-weight:900;color:var(--text)">${safeText(it.name)}</div>
-            <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${safeText(it.qty||'1')} ${safeText(it.unit||'pcs')} · ${safeText(it.category||'')}</div>
-          </div>
-          <div style="font-size:14px;font-weight:900;color:var(--expense)">${fmt(parseFloat(it.price||0))}</div>
-        </div>`).join('')||'<div class="mval">No items</div>'}
-      </div>`;
+    body=selectedItem
+      ?`${detailRow('Quantity',`${selectedItem.qty||'1'} ${selectedItem.unit||'pcs'}`)}
+        ${detailRow('Price per unit',unitPrice(selectedItem.price,selectedItem.qty,selectedItem.unit||'pcs'))}
+        ${detailRow('Category',getPurchaseItemCategoryLabel(record,selectedItem))}
+        ${detailRow('Paid By',record.paidBy)}
+        ${detailRow('Notes',record.notes)}`
+      :`${detailRow('Paid By',record.paidBy)}
+        ${detailRow('Notes',record.notes)}
+        <div class="mlbl">Items</div>
+        <div style="display:grid;gap:8px;margin-bottom:12px">
+          ${(record.items||[]).map(it=>`<div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:#F3F6F4;border-radius:14px;padding:10px 12px">
+            <div>
+              <div style="font-size:13px;font-weight:900;color:var(--text)">${safeText(it.name)}</div>
+              <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${safeText(it.qty||'1')} ${safeText(it.unit||'pcs')} · ${safeText(getPurchaseItemCategoryLabel(record,it))}</div>
+            </div>
+            <div style="font-size:14px;font-weight:900;color:var(--expense)">${fmt(parseFloat(it.price||0))}</div>
+          </div>`).join('')||'<div class="mval">No items</div>'}
+        </div>`;
     editAction=`startEdit('${record.id}')`;
     deleteAction=`delPurch('${record.id}')`;
   }else if(type==='expense'){
@@ -5348,7 +5536,7 @@ function openTransactionDetails(type,id){
     amount=record.amount;
     path=formatEntryPath(labels.category,labels.subcategory);
     meta=entryMetaPills({type:'pay',text:record.payMode||'NA'});
-    const extras={liters:'Liters',odometer:'Odometer',recipient:'Recipient',warranty:'Warranty',hospital:'Hospital',medicine:'Medicine',customName:'Name'};
+    const extras={paidBy:'Paid By',liters:'Liters',odometer:'Odometer',recipient:'Recipient',warranty:'Warranty',hospital:'Hospital',medicine:'Medicine',customName:'Name'};
     body=detailRow('Notes',record.notes)+Object.entries(extras).map(([key,label])=>detailRow(label,record[key])).join('');
     editAction=`startEdit('${record.id}','expense')`;
     deleteAction=`delExpense('${record.id}')`;
@@ -5499,7 +5687,7 @@ function categoryIcon(cat){
     'Beverages':'BV',
     'Frozen':'FZ',
     'Household':'HH',
-    'Toiletries':'TL',
+    'Body Care':'TL',
     'Baby':'BY',
     'Other':'OT'
   };
@@ -5509,7 +5697,7 @@ function recentIcon(p){
   const cat=p.items?.[0]?.category||'Other';
   if(cat==='Vegetables'||cat==='Fruits') return ['shopping_cart',''];
   if(cat==='Snacks'||cat==='Beverages') return ['restaurant','food'];
-  if(cat==='Household'||cat==='Toiletries'||cat==='Personal') return ['cleaning_services',''];
+  if(cat==='Household'||cat==='Body Care'||cat==='Personal') return ['cleaning_services',''];
   return ['shopping_bag',''];
 }
 
@@ -6101,7 +6289,7 @@ function renderExpDrillDown(){
     dd.innerHTML=`
       <div style="margin-bottom:10px;font-size:11px;font-weight:800;letter-spacing:.7px;color:#9ba5ad;text-transform:uppercase">${label}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        ${Object.entries(node).map(([name,val])=>`
+        ${getSortedCategoryEntries(node,[l1,l2].filter(Boolean)).map(([name,val])=>`
           <button onclick="selectExpLevel(${level},this.dataset.n)"
             data-n="${name.replace(/"/g,'&quot;')}"
             style="display:flex;align-items:center;gap:10px;padding:14px 12px;background:#FFFFFF;border:1px solid var(--border);border-radius:18px;cursor:pointer;text-align:left;box-shadow:var(--shadow);width:100%">
@@ -6125,7 +6313,7 @@ function getLeafFields(meta){
     ?meta.node.fields
     :(meta?.isGrocery?['itemName','qty','unit','price','date','notes']:[]);
   const seen=new Set();
-  const ordered=['date','amount','payMode',...leafFields.filter(field=>field!=='notes'),'notes'];
+  const ordered=['date','amount','payMode','paidBy',...leafFields.filter(field=>field!=='notes'),'notes'];
   return ordered.filter(field=>{
     if(!FIELD_DEFS[field]||seen.has(field)) return false;
     seen.add(field);
@@ -6155,6 +6343,7 @@ function getFieldInitialValue(field){
     if(field==='notes') return record.notes||'';
     if(field==='amount') return record.total??record.amount??'';
     if(field==='payMode') return record.payMode||selPy;
+    if(field==='paidBy') return record.paidBy||'';
     if(record.entryDetails&&record.entryDetails[field]!==undefined) return record.entryDetails[field];
     if(editingEntry?.type==='purchase'){
       const item=record.items?.[0]||{};
@@ -6172,6 +6361,7 @@ function getFieldInitialValue(field){
   }
   if(field==='date') return nowValue;
   if(field==='payMode') return selPy;
+  if(field==='paidBy') return getDefaultPayer();
   if(field==='incomeCategory') return INCOME_CATEGORIES[0];
   if(field==='transferFrom') return TRANSFER_CHANNELS[0];
   if(field==='transferTo') return TRANSFER_CHANNELS[1]||TRANSFER_CHANNELS[0];
@@ -6234,6 +6424,40 @@ function getPastExpenseSuggestions(field, meta){
     else if(field==='itemName') add(target,expense.notes,expense.customName,expense.recipient,expense.hospital,expense.medicine);
   });
   return uniqueSuggestions([...exact,...fallback]).slice(0,10);
+}
+function getDefaultPayer(){
+  return String(localStorage.getItem(DEFAULT_PAYER_KEY)||'').trim();
+}
+function saveDefaultPayer(){
+  const input=document.getElementById('defaultPayerInput');
+  const value=String(input?.value||'').trim();
+  if(value) localStorage.setItem(DEFAULT_PAYER_KEY,value);
+  else localStorage.removeItem(DEFAULT_PAYER_KEY);
+  if(input) input.value=value;
+  toast(value?'Default payer saved':'Default payer cleared');
+}
+function getPaidBySuggestions(){
+  const names=[getDefaultPayer()];
+  const add=record=>{
+    if(record?.paidBy) names.push(record.paidBy);
+  };
+  [...purchases,...expenses].sort((first,second)=>new Date(second.datetime)-new Date(first.datetime)).forEach(add);
+  return uniqueSuggestions(names).slice(0,12);
+}
+function entryMatchesPaidByFilter(entry, payer){
+  if(!payer) return true;
+  if(entry.type!=='purchase'&&entry.type!=='expense') return false;
+  const record=entry.record||{};
+  const normalized=String(payer).trim().toLowerCase();
+  return String(record.paidBy||'').trim().toLowerCase()===normalized;
+}
+function renderPaidByFilterOptions(){
+  const select=document.getElementById('txPaidByFilter');
+  if(!select) return;
+  const selected=select.value;
+  const names=getPaidBySuggestions();
+  select.innerHTML=`<option value="">All payers</option>${names.map(name=>`<option value="${safeText(name)}">${safeText(name)}</option>`).join('')}`;
+  if(names.some(name=>name===selected)) select.value=selected;
 }
 function buildSuggestionOptions(id, suggestions){
   if(!suggestions.length) return '';
@@ -6446,6 +6670,18 @@ function buildFieldHtml(field, meta){
       </div>
     </div>`;
   }
+  if(field==='paidBy'){
+    const suggestions=getPaidBySuggestions();
+    const suggestionAttrs=suggestions.length?` data-history-suggest="1" data-history-suggestions="${encodeSuggestionsAttr(suggestions)}" autocomplete="off"`:'';
+    return `<div class="f field-history-wrap">
+      <label>${def.label}</label>
+      <div style="display:flex;align-items:center;gap:9px;width:100%;padding:0 13px;border:1px solid #A7D9B4;border-radius:16px;background:#FFFFFF;box-shadow:0 3px 10px rgba(22,126,56,.04)">
+        <span class="material-symbols-rounded" aria-hidden="true" style="font-size:20px;color:#16813C">edit</span>
+        <input id="${id}" type="text" placeholder="${safeText(def.placeholder)}" value="${safeText(getFieldInitialValue(field))}"${suggestionAttrs} style="width:100%;min-width:0;height:46px;border:0;outline:0;background:transparent;color:var(--text);font:inherit"/>
+      </div>
+      ${buildHistorySuggestionList(field,suggestions)}
+    </div>`;
+  }
   if(def.type==='select'){
     const currentValue=getFieldInitialValue(field);
     if(meta && (meta.type==='income' || meta.type==='transfer')){
@@ -6578,7 +6814,7 @@ function setGroceryEntryMode(mode){
 function captureEditingDraft(){
   if(!editingEntry) return;
   const draft={...(editingDraft||{})};
-  const fields=['date','amount','payMode','notes','store','itemName','qty','unit','price','bulkItems','incomeCategory','transferFrom','transferTo','direction','personName','liters','odometer','recipient','warranty','hospital','medicine','customName'];
+  const fields=['date','amount','payMode','paidBy','notes','store','itemName','qty','unit','price','bulkItems','incomeCategory','transferFrom','transferTo','direction','personName','liters','odometer','recipient','warranty','hospital','medicine','customName'];
   fields.forEach(field=>{
     const fieldExists=field==='date'
       ?!!document.getElementById('ef_date_date')
@@ -6718,7 +6954,7 @@ function showExpForm(){
   const dateFieldHtml=!meta.isGrocery&&fields.includes('date')?buildFieldHtml('date',meta):'';
   const baseFields=meta.isGrocery
     ?fields.filter(field=>field==='date')
-    :fields.filter(field=>STANDARD_ENTRY_FIELDS.includes(field)&&field!=='date'&&field!=='notes'&&field!=='payMode');
+    :fields.filter(field=>STANDARD_ENTRY_FIELDS.includes(field)&&field!=='date'&&field!=='notes'&&field!=='payMode'&&field!=='paidBy');
   const notesField=fields.includes('notes')?['notes']:[];
   const groceryExtraFields=getGroceryExtraFields(meta);
   const groceryModeBlock=meta.isGrocery?`
@@ -6757,6 +6993,7 @@ function showExpForm(){
         ${PAYS.map(pm=>`<button type="button" class="chip py g-pay-chip entry-chip${pm===groceryPayment?' on':''}" data-field="payMode" data-group=".g-pay-chip" data-value="${safeText(pm)}">${safeText(pm)}</button>`).join('')}
       </div>
     </div>
+    ${buildFieldHtml('paidBy',meta)}
   `:'';
   const nonExpenseIntro='';
   const groceryFieldsBlock=meta.isGrocery?(
@@ -6795,7 +7032,7 @@ function showExpForm(){
     ${dateFieldHtml}
     ${groceryModeBlock}
     ${meta.isGrocery?'':baseFields.map(field=>buildFieldHtml(field,meta)).join('')}
-    ${(!meta.isGrocery&&meta.type==='expense')?buildFieldHtml('payMode',meta):''}
+    ${(!meta.isGrocery&&meta.type==='expense')?`${buildFieldHtml('payMode',meta)}${buildFieldHtml('paidBy',meta)}`:''}
     ${groceryFieldsBlock||(!meta.isGrocery?fields.filter(field=>!STANDARD_ENTRY_FIELDS.includes(field)&&field!=='notes').map(field=>buildFieldHtml(field,meta)).join(''):'')}
     ${notesField.map(field=>buildFieldHtml(field,meta)).join('')}
   `;
@@ -6831,6 +7068,7 @@ async function saveUnifiedEntry(){
     return;
   }
   const payMode=getFormValue('payMode')||PAYS[1]||'Cash';
+  const paidBy=getFormValue('paidBy').trim();
   const notes=getFormValue('notes');
   const extraFields=getLeafFields(meta).reduce((acc,field)=>{
     if(STANDARD_ENTRY_FIELDS.includes(field)) return acc;
@@ -6901,6 +7139,7 @@ async function saveUnifiedEntry(){
       datetime:date,
       store:getValidStoreName(getFormValue('store')||selSt),
       payMode,
+      paidBy,
       total:amount,
       notes,
       sourceCategory:meta.l1,
@@ -6928,6 +7167,7 @@ async function saveUnifiedEntry(){
       leaf:isTopLevelLeaf?'':(meta.l3||meta.l2||meta.leafName||'Misc'),
       amount,
       payMode,
+      paidBy,
       notes,
       ...extraFields
     });
@@ -7482,11 +7722,13 @@ function entryMatchesSessionCategoryFilter(entry, categoryFilter){
     return matchesValue(p.sourceLeaf)
       || matchesValue(p.sourceSubcategory)
       || matchesValue(p.sourceCategory)
-      || (p.items||[]).some(it=>matchesValue(it.category));
+      || (p.items||[]).some(it=>matchesValue(it.category)||matchesValue(getPurchaseItemCategoryLabel(p,it)));
   }
   if(entry.type==='expense'){
     const e=entry.record||{};
-    return matchesValue(e.leaf)||matchesValue(e.subcategory)||matchesValue(e.category);
+    const labels=getExpenseDisplayPath(e);
+    return matchesValue(e.leaf)||matchesValue(e.subcategory)||matchesValue(e.category)
+      || matchesValue(labels.leaf)||matchesValue(labels.subcategory)||matchesValue(labels.category);
   }
   if(entry.type==='income') return matchesValue(entry.record?.category);
   const t=entry.record||{};
@@ -7498,6 +7740,8 @@ function renderSessions(){
   const c=document.getElementById('sessContainer');
   const raw=getCombinedEntriesForMonth(sessionCursor);
   const q=(document.getElementById('txSearch')?.value||'').trim().toLowerCase();
+  renderPaidByFilterOptions();
+  const paidByFilter=document.getElementById('txPaidByFilter')?.value||'';
   const filterEl=document.getElementById('txFilter');
   let filter=(filterEl?.value||'all').toLowerCase();
   const categoryFilterType=sessionCategoryFilter?getSessionCategoryFilterType(sessionCategoryFilter.mode):'';
@@ -7514,12 +7758,14 @@ function renderSessions(){
   const filtered=raw.filter(entry=>{
     if(!entryMatchesUiFilter(entry,filter)) return false;
     if(activeCategoryFilter&&!entryMatchesSessionCategoryFilter(entry,activeCategoryFilter)) return false;
+    if(!entryMatchesPaidByFilter(entry,paidByFilter)) return false;
     if(!q) return true;
     if(entry.type==='purchase'){
       const p=entry.record;
       const hay=[
         p.store,
         p.payMode,
+        p.paidBy,
         p.notes,
         p.sourceCategory,
         p.sourceSubcategory,
@@ -7531,7 +7777,7 @@ function renderSessions(){
     if(entry.type==='expense'){
       const e=entry.record;
       const labels=getExpenseDisplayPath(e);
-      const hay=[e.category,e.subcategory,e.leaf,e.payMode,e.notes,labels.category,labels.subcategory,labels.leaf,e.recipient,e.customName,e.hospital,e.medicine].join(' ').toLowerCase();
+      const hay=[e.category,e.subcategory,e.leaf,e.payMode,e.paidBy,e.notes,labels.category,labels.subcategory,labels.leaf,e.recipient,e.customName,e.hospital,e.medicine].join(' ').toLowerCase();
       return hay.includes(q);
     }
     if(entry.type==='income'){
@@ -7594,7 +7840,7 @@ function renderSessions(){
         label:leafLabel||subcategoryLabel||categoryLabel||title,
         amount:p.total,
         datetime:p.datetime,
-        metaHtml:sessionPaymentChip(p.payMode),
+        metaHtml:sessionPaymentChip(p.payMode,p.paidBy),
         amountTone:'expense'
       }));
     })():entry.type==='expense'?(()=>{
@@ -7612,7 +7858,7 @@ function renderSessions(){
         label:titleLabel||title,
         amount:e.amount,
         datetime:e.datetime,
-        metaHtml:sessionPaymentChip(e.payMode),
+        metaHtml:sessionPaymentChip(e.payMode,e.paidBy),
         amountTone:'expense'
       }));
     })():entry.type==='income'?(()=>{
@@ -7876,6 +8122,26 @@ function coloredIconBadge(iconName, opts={}){
   const inner=iconHtml(iconName, filled);
   return `<span class="icon-badge icon-badge-${size} ${extraClass}" style="background:${colors.bg};color:${colors.fg}">${inner}</span>`;
 }
+function getPaidByShares(record, amount){
+  const name=String(record?.paidBy||'').trim();
+  return name?[{name,amount:positiveNumber(amount)}]:[];
+}
+function renderPaidByInsights(purchaseList, expenseList){
+  const list=document.getElementById('paidBySpendList');
+  const meta=document.getElementById('paidBySpendMeta');
+  if(!list) return;
+  const totals={};
+  purchaseList.forEach(purchase=>getPaidByShares(purchase,purchase.total).forEach(share=>{
+    totals[share.name]=(totals[share.name]||0)+share.amount;
+  }));
+  expenseList.forEach(expense=>getPaidByShares(expense,expense.amount).forEach(share=>{
+    totals[share.name]=(totals[share.name]||0)+share.amount;
+  }));
+  const people=Object.entries(totals).sort((first,second)=>second[1]-first[1]);
+  if(meta) meta.textContent=people.length?`${people.length} ${people.length===1?'person':'people'}`:'No payer data';
+  const max=people[0]?.[1]||0;
+  list.innerHTML=people.length?people.slice(0,6).map(([name,amount])=>`<div class="insights-pay-row"><div class="insights-pay-name">${safeText(name)}</div><div class="insights-pay-bar"><div class="insights-pay-fill" style="width:${max?Math.round((amount/max)*100):0}%"></div></div><div class="insights-pay-amt">${fmt(amount)}</div></div>`).join(''):'<div class="empty" style="padding:.5rem">Add Paid By names to see spending by person.</div>';
+}
 function renderHist(){
   if(!document.getElementById('hSrch')) return;
   const q=document.getElementById('hSrch').value.toLowerCase();
@@ -7962,24 +8228,28 @@ function renderHist(){
   const prevTransfers=transfers.filter(t=>inMonth(t.datetime,prevMonth));
   const prevCs={};
   if(histSF==='All' || histSF==='Expense'){
-    purchaseList.flatMap(p=>p.items||[]).forEach((it)=>{
+    purchaseList.forEach(p=>(p.items||[]).forEach(it=>{
+      const key=getPurchaseItemCategoryLabel(p,it);
       const v=parseFloat(it.price||0);
-      cs[it.category]=(cs[it.category]||0)+v;
-    });
+      cs[key]=(cs[key]||0)+v;
+    }));
     expenseList.forEach(e=>{
-      const key=e.subcategory||e.category;
+      const labels=getExpenseDisplayPath(e);
+      const key=labels.leaf||labels.subcategory||labels.category;
       cs[key]=(cs[key]||0)+e.amount;
     });
     transferExpenseList.forEach(t=>{
       const key=transferCategoryKey(t,'Transfer Sent');
       cs[key]=(cs[key]||0)+t.amount;
     });
-    prevPurchases.flatMap(p=>p.items||[]).forEach((it)=>{
+    prevPurchases.forEach(p=>(p.items||[]).forEach(it=>{
+      const key=getPurchaseItemCategoryLabel(p,it);
       const v=parseFloat(it.price||0);
-      prevCs[it.category]=(prevCs[it.category]||0)+v;
-    });
+      prevCs[key]=(prevCs[key]||0)+v;
+    }));
     prevExpenses.forEach(e=>{
-      const key=e.subcategory||e.category;
+      const labels=getExpenseDisplayPath(e);
+      const key=labels.leaf||labels.subcategory||labels.category;
       prevCs[key]=(prevCs[key]||0)+e.amount;
     });
     prevTransfers.filter(isTransferSent).forEach(t=>{
@@ -8131,6 +8401,7 @@ function renderHist(){
       <div class="insights-pay-amt">${fmt(amount)}</div>
     </div>`;
   }).join('');
+  renderPaidByInsights(purchaseList,expenseList);
 
   const smartInsightsEl=document.getElementById('smartInsights');
   if(smartInsightsEl){
@@ -8271,7 +8542,7 @@ async function delPurch(id){
 }
 function expCSV(){
   const esc=v=>`"${String(v??'').replace(/"/g,'""')}"`;
-  const rows=[['Type','Date','Category','Subcategory / Label','Store / From','To','Payment','Item','Qty','Unit','Amount','Notes']];
+  const rows=[['Type','Date','Category','Subcategory / Label','Store / From','To','Payment','Paid By','Item','Qty','Unit','Amount','Notes']];
   purchases.forEach(p=>(p.items||[]).forEach(it=>rows.push([
     'Expense',
     fmtS(p.datetime),
@@ -8280,6 +8551,7 @@ function expCSV(){
     p.store,
     '',
     p.payMode,
+    p.paidBy||'',
     it.name,
     it.qty,
     it.unit||'pcs',
@@ -8294,6 +8566,7 @@ function expCSV(){
     '',
     '',
     e.payMode||'',
+    e.paidBy||'',
     '',
     '',
     '',
@@ -8338,7 +8611,7 @@ function expCSV(){
 function loadIns(name){
   document.getElementById('iSrch').value=name;
   document.getElementById('iACl').style.display='none';
-  const allI=purchases.flatMap(p=>(p.items||[]).map(it=>({...it,datetime:p.datetime,store:p.store})));
+  const allI=purchases.flatMap(p=>(p.items||[]).map((it,itemIndex)=>({...it,datetime:p.datetime,store:p.store,purchaseId:p.id,itemIndex})));
   const items=allI.filter(it=>it.name.toLowerCase()===name.toLowerCase()).sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
   if(!items.length){
     document.getElementById('iRes').innerHTML='<div class="empty" style="padding:.5rem">No data found.</div>';
@@ -8366,7 +8639,7 @@ function loadIns(name){
     </div>
     <table style="width:100%;font-size:12px;border-collapse:collapse">
       <tr>${['Date','Store','Qty','Unit','Price','Per Unit'].map(h=>`<th style="text-align:${h==='Date'||h==='Store'?'left':'right'};padding:4px 0;color:var(--text-secondary);font-weight:700;border-bottom:1px solid var(--border)">${h}</th>`).join('')}</tr>
-      ${items.map(it=>`<tr>
+      ${items.map(it=>`<tr style="cursor:pointer" onclick="openTransactionDetails('purchase','${it.purchaseId}',${it.itemIndex})">
         <td style="padding:5px 0">${fmtS(it.datetime)}</td>
         <td style="font-size:11px">${tag('store',it.store)}</td>
         <td style="text-align:right">${it.qty}</td>
@@ -8387,6 +8660,8 @@ function renderIns(){
       ?'Reminder only. Marked on for this device, but no PIN, biometric lock, or encryption is enabled.'
       :'Reminder only. This does not add a PIN, biometric lock, or encryption.';
   }
+  const defaultPayerInput=document.getElementById('defaultPayerInput');
+  if(defaultPayerInput) defaultPayerInput.value=getDefaultPayer();
 }
 
 
@@ -8447,23 +8722,23 @@ function renderCategoryManager(){
   const wrap=document.getElementById('catMgrFields');
   if(!wrap) return;
   const rows=[];
-  Object.entries(EXPENSE_TREE).forEach(([cat,catNode])=>{
+  getSortedCategoryEntries(EXPENSE_TREE).forEach(([cat,catNode])=>{
     rows.push(`
       <div class="card" style="margin-bottom:0">
         <div class="row" style="margin-bottom:10px">
-          <div style="font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px">${coloredIconBadge(catNode.icon,{label:cat,size:'md'})}<span>${safeText(cat)}</span></div>
+          <div style="font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px">${coloredIconBadge(catNode.icon,{label:cat,size:'md'})}<span>${safeText(getCategoryLabel(cat))}</span></div>
         </div>
         <div class="f" style="margin-bottom:10px">
           <label>Category Name</label>
           <input class="fi" id="cl_${safeText(pathKey([cat]))}" value="${safeText(getCategoryLabel(cat))}" data-path="${safeText(pathKey([cat]))}"/>
         </div>
-        ${Object.entries(catNode.sub||{}).map(([sub,subNode])=>`
+        ${getSortedCategoryEntries(catNode.sub,[cat]).map(([sub,subNode])=>`
           <div style="padding:12px;border:1px solid var(--border);border-radius:16px;background:#FDFEFE;margin-bottom:10px">
             <div class="f" style="margin-bottom:${subNode.sub?10:0}px">
               <label>Sub-Category</label>
               <input class="fi" id="cl_${safeText(pathKey([cat,sub]))}" value="${safeText(getCategoryLabel(cat,sub))}" data-path="${safeText(pathKey([cat,sub]))}"/>
             </div>
-            ${(subNode.sub?Object.entries(subNode.sub).map(([leaf,leafNode])=>`
+            ${(subNode.sub?getSortedCategoryEntries(subNode.sub,[cat,sub]).map(([leaf,leafNode])=>`
               <div class="f" style="margin-bottom:0">
                 <label>${safeText(sub)} Item</label>
                 <input class="fi" id="cl_${safeText(pathKey([cat,sub,leaf]))}" value="${safeText(getCategoryLabel(cat,sub,leaf))}" data-path="${safeText(pathKey([cat,sub,leaf]))}"/>
@@ -8744,7 +9019,7 @@ function openSett(){return window.MoneyNestUI.openSett();}
 function closeSett(){return window.MoneyNestUI.closeSett();}
 function resetApp(){
   if(!confirm('Clear all local MoneyNest data on this device?'))return;
-  ['gt_p','gt_e','gt_i','gt_t','gt_b','gt_cb','gt_bm','gt_cbm','gt_del','gt_cl','gt_profile_name','gt_app_lock_ui',LAST_BACKUP_AT_KEY,ONBOARDED_KEY].forEach(k=>localStorage.removeItem(k));
+  ['gt_p','gt_e','gt_i','gt_t','gt_b','gt_cb','gt_bm','gt_cbm','gt_del','gt_cl','gt_profile_name','gt_app_lock_ui',DEFAULT_PAYER_KEY,LAST_BACKUP_AT_KEY,ONBOARDED_KEY].forEach(k=>localStorage.removeItem(k));
   location.reload();
 }
 

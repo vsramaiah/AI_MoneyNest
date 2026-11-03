@@ -11,6 +11,7 @@ function validateBackupShape(data){
   if(!validateNestedNumericMap(data.catBudgetsByMonth||{})) return {ok:false,message:'Backup category budgets are invalid.'};
   if(data.deletedIds!==undefined && (!Array.isArray(data.deletedIds) || !data.deletedIds.every(id=>typeof id==='string'))) return {ok:false,message:'Backup deleted IDs are invalid.'};
   if(data.categoryLabels!==undefined && !validateStringMap(data.categoryLabels)) return {ok:false,message:'Backup category labels are invalid.'};
+  if(data.defaultPayer!==undefined && typeof data.defaultPayer!=='string') return {ok:false,message:'Backup default payer is invalid.'};
   return {ok:true};
 }
 function buildBackupSnapshot(timestamp=new Date()){
@@ -25,7 +26,8 @@ function buildBackupSnapshot(timestamp=new Date()){
     monthlyBudgets,
     catBudgetsByMonth,
     deletedIds:uniq(deletedIds),
-    categoryLabels
+    categoryLabels,
+    defaultPayer:getDefaultPayer()
   };
 }
 function downloadBackupFile({timestamp=new Date(),silent=false,reason='manual'}={}){
@@ -58,6 +60,10 @@ async function handleRestoreBackup(event){
     if(!validation.ok){
       toast(validation.message || 'Invalid backup file');
       return;
+    }
+    if(typeof parsed.defaultPayer==='string'){
+      if(parsed.defaultPayer.trim()) localStorage.setItem(DEFAULT_PAYER_KEY,parsed.defaultPayer.trim());
+      else localStorage.removeItem(DEFAULT_PAYER_KEY);
     }
     applyCloudState(parsed);
     saveLocal();
