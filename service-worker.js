@@ -1,4 +1,4 @@
-const VERSION = "moneynest-v2.1.1-offline-r74";
+const VERSION = "moneynest-v2.1.1-offline-r79";
 const STATIC_CACHE = `${VERSION}-static`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const OFFLINE_FALLBACK_URL = "./offline.html";
@@ -13,8 +13,6 @@ const APP_SHELL = [
   "./pwa.js",
   "./manifest.json",
   OFFLINE_FALLBACK_URL,
-  "./icon.svg",
-  "./icon-maskable.svg",
   "./apple-touch-icon.png",
   "./icon-192.png",
   "./icon-512.png",
@@ -39,7 +37,6 @@ const APP_SHELL_PATTERNS = [
   /pwa\.js$/,
   /offline\.html$/,
   /apple-touch-icon\.png$/,
-  /icon(-maskable)?\.svg$/,
   /icon-(192|512)\.png$/,
   /screenshot-(wide|narrow)\.svg$/,
   /\.nojekyll$/
@@ -61,7 +58,6 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE).then((cache) => cache.addAll(APP_SHELL.map((asset) => new Request(asset, { cache: "reload" }))))
   );
-  self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {

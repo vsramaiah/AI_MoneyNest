@@ -10,7 +10,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
 <meta name="apple-mobile-web-app-title" content="MoneyNest"/>
-<link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1899,6 +1898,10 @@ strong{font-weight:900}
   margin-top:4px;
   line-height:1.5;
 }
+.default-payer-setting{display:block}
+.default-payer-form{display:flex;gap:8px;width:100%;margin-top:12px}
+.default-payer-form .fi{min-width:0;flex:1}
+.default-payer-form .obtn{flex:0 0 auto;white-space:nowrap}
 .built-with-line{
   display:inline-flex!important;
   align-items:center;
@@ -4874,12 +4877,12 @@ strong{font-weight:900}
       <div class="more-panel">
         <div class="more-section-title">Expense Preferences</div>
         <div class="more-list">
-          <div class="more-item" style="align-items:flex-end">
+          <div class="more-item default-payer-setting">
             <div class="more-item-main">
               <strong>Default Payer</strong>
               <span>Prefill Paid By on new expense entries. You can always change it.</span>
             </div>
-            <div style="display:flex;gap:8px;width:100%;margin-top:10px">
+            <div class="default-payer-form">
               <input id="defaultPayerInput" class="fi" type="text" placeholder="Enter default name" autocomplete="name"/>
               <button class="obtn" type="button" onclick="saveDefaultPayer()">Save</button>
             </div>
@@ -5193,8 +5196,8 @@ let DKEY='',SCODE='';
 let purchases=[],expenses=[],incomes=[],transfers=[],monthlyBudgets={},catBudgetsByMonth={},deletedIds=[],categoryLabels={};
 let addMode='expense',expPath=[],expState={l1:null,l2:null,l3:null};
 // Reference arrays for defaults so changes to STORES/PAYS propagate automatically
-let selSt=STORES[0],selPy=PAYS[1],curMd='normal',groceryEntryMode='normal';
-let iRows=[],histSF='All',insightCategoryFilter=null,sessionCategoryFilter=null;
+let selSt=STORES[0],selPy=PAYS[1],groceryEntryMode='normal';
+let histSF='All',insightCategoryFilter=null,sessionCategoryFilter=null;
 let autoT=null,editingId=null,editingEntry=null,editingDraft=null;
 let serverVersion=0;
 const PROFILE_NAME_KEY='gt_profile_name';
@@ -5428,9 +5431,10 @@ function paymentMetaLine(value){
 }
 function getSessionPurchaseTitle(record, fallbackTitle){
   const storeName=String(record.store||'').trim();
-  const firstItem=(record.items||[]).find(item=>String(item.name||'').trim());
+  const namedItems=(record.items||[]).filter(item=>String(item.name||'').trim());
+  const firstItem=namedItems[0];
+  if(firstItem?.name) return namedItems.length>1?`${firstItem.name} + ${namedItems.length-1} more`:firstItem.name;
   if(storeName && !['Local Shop','Other'].includes(storeName)) return storeName;
-  if(firstItem?.name) return firstItem.name;
   if(record.notes) return record.notes;
   return fallbackTitle||'Expense';
 }
@@ -5805,10 +5809,8 @@ function initApp(){
       pc.appendChild(c);
     });
   }
-  if(document.getElementById('aDt')&&!document.getElementById('aDt').value) document.getElementById('aDt').value=toLocalDateTimeValue(new Date());
   const activeBudget=getBudgetForMonth(budgetCursor);
   document.getElementById('binput').value=activeBudget>0?activeBudget:'';
-  if(document.getElementById('iCont')&&!iRows.length) addRow();
   if(document.getElementById('expDrillDown')) renderExpDrillDown();
   renderProfileName();
   const versionEl=document.getElementById('appVersionText');
@@ -6147,14 +6149,6 @@ async function saveCatBudgets(){
   renderDash();
   saveLocal();
   toast('Category budgets saved');
-}
-
-function swMode(m){
-  curMd=m;
-  document.getElementById('normMode').style.display=m==='normal'?'block':'none';
-  document.getElementById('bulkMode').style.display=m==='bulk'?'block':'none';
-  document.getElementById('mNorm').classList.toggle('on',m==='normal');
-  document.getElementById('mBulk').classList.toggle('on',m==='bulk');
 }
 
 function resetExpPath(){
@@ -7226,109 +7220,6 @@ async function delTransfer(id){
   updateHdr('off');
 }
 
-function addRow(n='',cat='Vegetables',qty='1',unit='pcs',price=''){
-  const id=uid();
-  iRows.push(id);
-  const w=document.getElementById('iCont');
-  const r=document.createElement('div');
-  r.id='r-'+id;
-  r.style.cssText='background:#fcfbf8;border:1px solid #ebe6dc;border-radius:18px;padding:12px;margin-bottom:8px';
-  r.innerHTML=`
-  <div style="display:grid;grid-template-columns:1fr auto;gap:5px;margin-bottom:7px;align-items:start">
-    <div class="acw"><input type="text" id="n-${id}" value="${safeText(n)}" placeholder="Item name"
-      autocomplete="off"
-      style="width:100%;border:1px solid #dfe6df;border-radius:14px;padding:10px 11px;font-size:14px;font-family:inherit;outline:none;background:#fff"/>
-    <div class="acl" id="ac-${id}" style="display:none"></div>
-    <div class="autofill-hint" id="af-${id}"></div></div>
-    <button type="button" class="row-remove-btn" data-row-id="${safeText(id)}" style="background:none;border:none;color:#c2c9ce;font-size:22px;cursor:pointer;padding:3px 7px;line-height:1"><span class="material-symbols-rounded">close</span></button>
-  </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px;margin-bottom:4px">
-    <div>
-      <div class="flbl">Category</div>
-      <select id="c-${id}" style="width:100%;border:1px solid #dfe6df;border-radius:12px;padding:9px 6px;font-size:12px;font-family:inherit;outline:none;background:#fff">
-        ${CATS.map(c=>`<option${c===cat?' selected':''}>${c}</option>`).join('')}
-      </select>
-    </div>
-    <div>
-      <div class="flbl">Qty</div>
-      <input type="number" id="q-${id}" value="${qty}" min="0" step="0.1"
-        style="width:100%;border:1px solid #dfe6df;border-radius:12px;padding:9px 10px;font-size:14px;font-family:inherit;outline:none;background:#fff"/>
-    </div>
-    <div>
-      <div class="flbl">Unit</div>
-      <select id="u-${id}" style="width:100%;border:1px solid #dfe6df;border-radius:12px;padding:9px 5px;font-size:12px;font-family:inherit;outline:none;background:#fff">
-        ${UNITS.map(u=>`<option value="${safeText(u)}"${u===unit?' selected':''}>${safeText(unitOptionLabel(u))}</option>`).join('')}
-      </select>
-    </div>
-    <div>
-      <div class="flbl">Price ?</div>
-      <input type="number" id="p-${id}" value="${price}" min="0" step="0.5" placeholder="0"
-        style="width:100%;border:1px solid #dfe6df;border-radius:12px;padding:9px 10px;font-size:14px;font-family:inherit;outline:none;background:#fff"/>
-    </div>
-  </div>
-  <div class="uphint" id="up-${id}"></div>`;
-  w.appendChild(r);
-  const nameInput=document.getElementById('n-'+id);
-  const qtyInput=document.getElementById('q-'+id);
-  const unitInput=document.getElementById('u-'+id);
-  const priceInput=document.getElementById('p-'+id);
-  const removeBtn=r.querySelector('.row-remove-btn');
-  if(nameInput){
-    nameInput.addEventListener('input',()=>rAC(id));
-    nameInput.addEventListener('focus',()=>rAC(id));
-    nameInput.addEventListener('blur',()=>autoFillPrice(id));
-  }
-  if(qtyInput){
-    qtyInput.addEventListener('input',()=>{calcT();updUP(id);});
-  }
-  if(unitInput){
-    unitInput.addEventListener('change',()=>updUP(id));
-  }
-  if(priceInput){
-    priceInput.addEventListener('input',()=>{calcT();updUP(id);});
-  }
-  if(removeBtn){
-    removeBtn.addEventListener('click',()=>removeRow(id));
-  }
-  if(price) updUP(id);
-  calcT();
-}
-function updUP(id){
-  const p=document.getElementById('p-'+id)?.value,q=document.getElementById('q-'+id)?.value,u=document.getElementById('u-'+id)?.value||'pcs';
-  document.getElementById('up-'+id).textContent=unitPrice(p,q,u);
-}
-function removeRow(id){
-  iRows=iRows.filter(r=>r!==id);
-  document.getElementById('r-'+id)?.remove();
-  calcT();
-}
-function calcT(){
-  let t=0;
-  iRows.forEach(id=>{
-    const p=parseFloat(document.getElementById('p-'+id)?.value||0);
-    t+=p;
-  });
-  document.getElementById('aTotal').textContent=fmt(t);
-}
-function autoFillPrice(id){
-  const name=document.getElementById('n-'+id)?.value||'';
-  if(!name.trim()) return;
-  const lp=lastPrice(name);
-  if(!lp) return;
-  const priceEl=document.getElementById('p-'+id);
-  const afEl=document.getElementById('af-'+id);
-  if(priceEl&&!priceEl.value){
-    priceEl.value=lp.price;
-    const unitEl=document.getElementById('u-'+id);
-    if(unitEl&&lp.unit) unitEl.value=lp.unit;
-    const qEl=document.getElementById('q-'+id);
-    if(qEl&&lp.qty) qEl.value=lp.qty;
-    updUP(id);
-    calcT();
-    if(afEl) afEl.textContent=`Auto-filled from ${lp.store} on ${fmtS(lp.datetime)}`;
-    setTimeout(()=>{if(afEl)afEl.textContent='';},3000);
-  }
-}
 function dupeLast(){
   if(!purchases.length){ toast('No previous purchase to copy'); return; }
   const l=[...purchases].sort((a,b)=>new Date(b.datetime)-new Date(a.datetime))[0];
@@ -7364,63 +7255,6 @@ function dupeLast(){
   toast('Copied last purchase');
 }
 
-async function savePurchase(){
-  let items=[];
-  if(curMd==='bulk'){
-    items=document.getElementById('bText').value.trim().split('\n').filter(l=>l.trim()).map(l=>{
-      const p=l.split(',').map(s=>s.trim());
-      const price=positiveNumber(p[p.length-1]);
-      const unit=p.length>=4&&UNITS.includes(p[p.length-2])?p[p.length-2]:'pcs';
-      const qty=p.length>=5&&isValidPositiveNumber(p[p.length-3])?p[p.length-3]:'1';
-      const category=p.length>=5?p[p.length-4]:'Vegetables';
-      const name=p.length>=5?p.slice(0,-4).join(', ').trim():p[0]||'';
-      return{id:uid(),name,category:CATS.includes(category)?category:'Vegetables',qty,unit,price:String(price)};
-    });
-  }else{
-    items=iRows.map(id=>({
-      id:uid(),
-      name:document.getElementById('n-'+id)?.value||'',
-      category:document.getElementById('c-'+id)?.value||'Vegetables',
-      qty:isValidPositiveNumber(document.getElementById('q-'+id)?.value)?document.getElementById('q-'+id)?.value:'1',
-      unit:document.getElementById('u-'+id)?.value||'pcs',
-      price:String(positiveNumber(document.getElementById('p-'+id)?.value))
-    }));
-  }
-  items=items.filter(it=>it.name&&positiveNumber(it.price)>0);
-  if(!items.length){toast('Add at least one item with name and price');return;}
-  const total=items.reduce((s,it)=>s+parseFloat(it.price||0),0);
-  const dt=document.getElementById('aDt').value||toLocalDateTimeValue(new Date());
-  const notes=document.getElementById('aNotes').value;
-
-  if(editingId){
-    const existing=purchases.find(p=>p.id===editingId);
-    const purchaseRecord=queuePendingUpsert('purchase',{...existing,datetime:dt,store:selSt,payMode:selPy,items,total,notes});
-    purchases=purchases.map(p=>p.id===editingId?purchaseRecord:p);
-    if(!persistLocalChange()) return;
-    editingId=null;
-    document.getElementById('editBanner').style.display='none';
-    toast('Purchase updated');
-  }else{
-    purchases.push(queuePendingUpsert('purchase',{id:uid(),datetime:dt,store:selSt,payMode:selPy,items,total,notes}));
-    if(!persistLocalChange()) return;
-    toast('Purchase saved');
-  }
-
-  document.getElementById('iCont').innerHTML='';
-  iRows=[];
-  addRow();
-  document.getElementById('aNotes').value='';
-  document.getElementById('bText').value='';
-  document.getElementById('aDt').value=toLocalDateTimeValue(new Date());
-  calcT();
-  const btn=document.getElementById('saveBtn');
-  btn.textContent='Saved';
-  setTimeout(()=>{btn.textContent='Save Purchase';},1400);
-  _buildPriceCache();
-  renderDash();
-  renderHist();
-  updateHdr('off');
-}
 function cancelEdit(){
   editingId=null;
   resetExpPath();
@@ -7522,28 +7356,6 @@ function renderAutocompleteItems(container, items, onSelect){
     container.appendChild(option);
   });
   container.style.display=items.length?'block':'none';
-}
-function rAC(id){
-  const inp=document.getElementById('n-'+id);
-  const cat=document.getElementById('c-'+id)?.value||'Vegetables';
-  const q=inp.value.toLowerCase();
-  const pool=SUGG[cat]||ALL_ITEMS;
-  const hits=q?pool.filter(x=>x.toLowerCase().includes(q)).slice(0,6):[];
-  const l=document.getElementById('ac-'+id);
-  if(!hits.length){l.style.display='none';return;}
-  renderAutocompleteItems(l,hits.map(x=>{
-    const lp=lastPrice(x);
-    return {
-      label:x,
-      value:x,
-      subLabel:lp?`Last: ${fmt(parseFloat(lp.price))} at ${lp.store}`:''
-    };
-  }),selected=>{
-    const nameInput=document.getElementById('n-'+id);
-    if(nameInput) nameInput.value=selected;
-    l.style.display='none';
-    autoFillPrice(id);
-  });
 }
 function iAC(){
   const q=document.getElementById('iSrch').value.toLowerCase();

@@ -34,10 +34,13 @@
         try{
           const registration=serviceWorkerRegistration || await navigator.serviceWorker.getRegistration();
           if(registration) await registration.update();
-          const worker=waitingServiceWorker || registration?.waiting || registration?.installing;
+          const worker=waitingServiceWorker || registration?.waiting;
           if(worker){
+            refreshingForUpdate=true;
             worker.postMessage({type:"SKIP_WAITING"});
-            setTimeout(()=>location.reload(),1200);
+            setTimeout(()=>{
+              if(refreshingForUpdate) location.reload();
+            },3000);
             return;
           }
           location.reload();
@@ -49,8 +52,8 @@
     }
 
     navigator.serviceWorker.addEventListener("controllerchange", () => {
-      if(refreshingForUpdate) return;
-      refreshingForUpdate=true;
+      if(!refreshingForUpdate) return;
+      refreshingForUpdate=false;
       location.reload();
     });
   }
