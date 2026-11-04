@@ -997,6 +997,40 @@ strong{font-weight:900}
   border:none;background:#fff;border-radius:999px;padding:9px 14px;
   font-size:12px;font-weight:700;color:var(--primary);cursor:pointer;box-shadow:var(--shadow)
 }
+.csv-export-card{background:linear-gradient(135deg,#f7fcf8 0%,#fff 62%)}
+.csv-export-card .insights-card-head{align-items:center;margin-bottom:14px;padding:12px 13px;border:1px solid #CFEAD7;border-radius:16px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%)}
+.csv-export-card .insights-card-title{color:#0D7434}
+.csv-export-icon-btn{display:grid;place-items:center;width:38px;height:38px;flex:0 0 38px;border:0;border-radius:12px;background:#16823B;color:#fff;box-shadow:0 8px 16px rgba(22,130,59,.2);cursor:pointer}
+.csv-export-icon-btn:active{transform:translateY(1px)}
+.csv-export-icon-btn .material-symbols-rounded{font-size:20px}
+.csv-export-subtitle{margin-top:4px;color:var(--text-secondary);font-size:12px;line-height:1.45}
+.csv-export-grid{display:grid;grid-template-columns:1fr;gap:14px}
+.csv-export-field{display:grid;gap:6px}
+.csv-export-field label,.csv-export-types legend{font-size:11px;font-weight:800;letter-spacing:.5px;color:var(--text-secondary);text-transform:uppercase}
+.csv-export-field select,.csv-export-field input{width:100%;height:40px;min-width:0;border:1px solid var(--border);border-radius:12px;padding:0 11px;background:#fff;color:var(--text-primary);font:700 12px inherit;outline:none}
+.csv-export-types{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border:0;padding:0;margin:0}
+.csv-export-types legend{grid-column:1/-1;width:100%;margin-bottom:1px}
+.csv-export-type{position:relative;display:flex;align-items:center;justify-content:center;min-height:40px;border:1px solid var(--border);border-radius:12px;padding:0 8px;background:#fff;color:var(--text-primary);font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap}
+.csv-export-type input{position:absolute;opacity:0;pointer-events:none}
+.csv-export-type:has(input:checked){background:#3B7750;border-color:#3B7750;color:#fff;box-shadow:0 5px 10px rgba(59,119,80,.14)}
+.csv-export-type:has(input:focus-visible){outline:3px solid rgba(37,111,58,.2);outline-offset:2px}
+.csv-export-actions{display:none;align-items:end;gap:8px;margin-top:12px}
+.csv-export-actions:has(.csv-export-custom.on){display:flex}
+.csv-export-actions .csv-export-custom{flex:1}
+.csv-export-custom{display:none;align-items:center;gap:7px}
+.csv-export-custom.on{display:flex}
+.csv-export-custom input{width:100%;height:40px;min-width:0;border:1px solid var(--border);border-radius:12px;padding:0 10px;background:#fff;font:700 12px inherit;color:var(--text-primary)}
+#insightsOverviewSection{background:linear-gradient(135deg,#F7FCF8 0%,#FFF 65%)}
+#insightsOverviewSection .insights-overview-head{align-items:center;margin-bottom:14px;padding:12px 13px;border:1px solid #CFEAD7;border-radius:16px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%)}
+#insightsOverviewSection .insights-card-title{color:#0D7434}
+.insights-overview-subtitle{margin-top:4px;color:var(--text-secondary);font-size:12px;line-height:1.4}
+#insightsOverviewSection .insights-month-switch{gap:7px;padding:4px;border:1px solid #D6EAD9;border-radius:12px;background:#fff;color:#176D35;box-shadow:0 5px 12px rgba(22,130,59,.08)}
+#insightsOverviewSection .insights-month-switch button{display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:#EDF8F0;color:#0D7434}
+#insightsOverviewSection .insights-month-switch>span{min-width:72px;color:#155D30}
+#insightsOverviewSection .insights-month-switch button .material-symbols-rounded{width:20px;min-width:0;color:inherit}
+#v-hist .insights-card:not(.csv-export-card):not(#insightsOverviewSection)>.insights-card-head{align-items:center;padding:10px 12px;border:1px solid #D8ECDE;border-radius:14px;background:linear-gradient(135deg,#F0FAF3 0%,#FBFDFC 100%)}
+#v-hist .insights-card:not(.csv-export-card):not(#insightsOverviewSection)>.insights-card-head .insights-card-title{color:#0D7434}
+#v-hist .insights-card:not(.csv-export-card):not(#insightsOverviewSection)>.insights-card-head .insights-card-meta{padding:5px 8px;border-radius:999px;background:#fff;color:#39724D}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .stat-card,.recent-card,.budget-ring-card,.tool-card,.settings-card,.more-banner,.card,.quick-card{
   border-radius:24px;
@@ -1732,7 +1766,7 @@ strong{font-weight:900}
 .insights-card-meta{font-size:12px;color:var(--text-secondary);font-weight:700}
 .insights-month-switch{display:inline-flex;align-items:center;gap:10px;font-size:12px;font-weight:800;color:#31404a}
 .insights-month-switch button{border:none;background:none;padding:0;line-height:1;font-size:18px;font-weight:900;color:#31404a;cursor:pointer}
-.insights-month-switch span{min-width:88px;text-align:center}
+.insights-month-switch>span{min-width:88px;text-align:center}
 .insights-overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 12px}
 .insights-stat .label{font-size:12px;color:var(--text-secondary);margin-bottom:4px}
 .insights-stat .value{font-size:16px;font-weight:900}
@@ -3380,29 +3414,94 @@ strong{font-weight:900}
   font-size:22px;
 }
 #v-hist .insights-tabbar{
-  gap:6px;
+  gap:5px;
   margin:12px 0;
   padding:5px;
-  border:1px solid var(--border);
+  border:1px solid #CFEAD7;
   border-radius:16px;
-  background:#F3F6F4;
+  background:linear-gradient(135deg,#EAF8EE 0%,#F7FCF8 100%);
 }
 #v-hist .insights-tabchip{
   flex:1;
   min-width:max-content;
   padding:9px 10px;
-  border:0;
+  border:1px solid transparent;
   border-radius:12px;
   background:transparent;
   box-shadow:none;
   font-size:12px;
   font-weight:800;
+  color:#54705D;
 }
 #v-hist .insights-tabchip.active{
-  background:#fff;
-  color:var(--text-primary);
-  box-shadow:0 8px 16px rgba(35,45,58,.08);
+  background:#16823B;
+  border-color:#16823B;
+  color:#fff;
+  box-shadow:0 7px 14px rgba(22,130,59,.2);
 }
+#v-add .add-panel{background:linear-gradient(135deg,#F7FCF8 0%,#FFF 65%)}
+#v-add .add-panel-head{align-items:center;margin-bottom:12px;padding:12px 13px;border:1px solid #CFEAD7;border-radius:16px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%)}
+#v-add .add-panel-head h2{color:#0D7434}
+#v-add .add-panel-head .add-back-btn{border-color:#CFEAD7;background:#fff;color:#176D35;box-shadow:none}
+#v-add .subtabs{gap:5px;margin:12px 0!important;padding:5px;border-color:#CFEAD7;border-radius:16px;background:linear-gradient(135deg,#EAF8EE 0%,#F7FCF8 100%)}
+#v-add .stab{border:1px solid transparent;border-radius:12px;color:#54705D}
+#v-add .stab.on{background:#3B7750;border-color:#3B7750;color:#fff;box-shadow:0 5px 10px rgba(59,119,80,.14)}
+#v-list .tx-panel{background:linear-gradient(135deg,#F7FCF8 0%,#FFF 65%)}
+#v-list .tx-filter-head{align-items:center;margin-bottom:14px;padding:12px 13px;border:1px solid #CFEAD7;border-radius:16px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%)}
+#v-list .tx-filter-head h2{color:#0D7434}
+#v-list .tx-filter-head .small-note{padding:5px 8px;border-radius:999px;background:#fff;color:#39724D}
+#v-list .tx-panel .fi{border-color:#D8E8DD;background:#fff}
+#v-list .tx-panel .fi:focus{border-color:#6BAA7B;box-shadow:0 0 0 3px rgba(59,119,80,.12)}
+#v-list .subtabs{gap:5px;margin:14px 0 0!important;padding:5px;border-color:#CFEAD7;border-radius:16px;background:linear-gradient(135deg,#EAF8EE 0%,#F7FCF8 100%)}
+#v-list .stab{border:1px solid transparent;border-radius:12px;color:#54705D}
+#v-list .stab.on{background:#3B7750;border-color:#3B7750;color:#fff;box-shadow:0 5px 10px rgba(59,119,80,.14)}
+#v-list .month-nav{padding:12px 13px;border-color:#CFEAD7;border-radius:16px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%);box-shadow:none}
+#v-list .month-nav button{display:grid;place-items:center;width:32px;height:32px;padding:0;border-radius:10px;background:#fff;color:#176D35}
+#v-list .month-nav button .material-symbols-rounded{width:20px;min-width:0;color:inherit}
+#v-list .month-nav-main strong{color:#0D7434}
+#v-list .month-nav-main span{color:#54705D}
+#v-list #sub-cal .calendar-panel-head{align-items:center;margin-bottom:14px;padding:12px 13px;border:1px solid #CFEAD7;border-radius:16px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%)}
+#v-list #sub-cal .calendar-panel-head h2{color:#0D7434}
+#v-list #sub-cal .calendar-tools .obtn{border-color:#CFEAD7;background:#fff;color:#176D35;box-shadow:none}
+#v-list #sub-cal .calendar-tools .rbtn{border-color:#E9D8D2;background:#FFF8F6;color:#A23E35}
+#v-list #sub-cal .calendar-shell{padding:12px;border-color:#D8ECDE;border-radius:20px;background:linear-gradient(135deg,#F7FCF8 0%,#FFF 65%);box-shadow:none}
+#v-list #sub-cal .calendar-head{margin-bottom:14px;padding:10px 12px;border:1px solid #CFEAD7;border-radius:16px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%);box-shadow:none}
+#v-list #sub-cal .calendar-head button{display:grid;place-items:center;width:32px;height:32px;padding:0;border-radius:10px;background:#fff;color:#176D35}
+#v-list #sub-cal .calendar-head button .material-symbols-rounded{width:20px;min-width:0;color:inherit}
+#v-list #sub-cal .calendar-head strong{color:#0D7434}
+#v-list #sub-cal .calendar-head span{color:#54705D}
+#v-ins .more-panel{padding:12px;border-color:#D8ECDE;border-radius:20px;background:linear-gradient(135deg,#F7FCF8 0%,#FFF 65%);box-shadow:0 10px 24px rgba(16,24,40,.06)}
+#v-ins .more-section-title{margin:0 0 10px;padding:10px 12px;border:1px solid #CFEAD7;border-radius:14px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%);color:#0D7434;font-size:11px;letter-spacing:.55px}
+#v-ins .more-list{gap:8px}
+#v-ins .more-item{padding:12px;border:1px solid #E0ECE4;border-radius:14px;background:#fff}
+#v-ins .more-item:first-child,#v-ins .more-item:last-child{padding:12px}
+#v-ins .more-item-main strong{color:#1D2B22}
+#v-ins .more-item-main span{line-height:1.45}
+#v-ins .more-item .obtn{border-color:#CFEAD7;background:#fff;color:#176D35;box-shadow:none}
+#v-ins .more-item .sbtn{border-color:#CFEAD7;background:#EDF8F0;color:#176D35}
+#v-ins .more-item .rbtn{border-color:#E9D8D2;background:#FFF8F6;color:#A23E35}
+#v-ins .info-surface{border-color:#D8ECDE;background:#F4FBF6}
+#v-ins .default-payer-form{margin-top:10px}
+#v-ins .default-payer-form .fi{border-color:#CFEAD7;background:#fff}
+#v-ins .built-with-line{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;color:#2B4933}
+#v-ins .built-with-line .material-symbols-rounded{color:#D94A4A}
+#wrap>.topbar{padding:10px 12px;border:1px solid #CFEAD7;border-radius:18px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%)}
+#wrap>.topbar .icon-btn{border-color:#D8ECDE;background:#fff;box-shadow:none}
+#wrap>.topbar .hello-title{color:#0D7434}
+#v-dash .dash-hero{box-shadow:0 14px 30px rgba(32,104,56,.18)}
+#v-dash .dash-month-switch{border-color:rgba(255,255,255,.24);background:rgba(255,255,255,.12)}
+#v-dash .dash-month-switch button{display:grid;place-items:center}
+#v-dash .dash-month-switch button .material-symbols-rounded{width:20px;min-width:0}
+#v-dash .home-action{border-color:#D8ECDE;background:linear-gradient(135deg,#F7FCF8 0%,#FFF 70%);box-shadow:0 8px 18px rgba(16,24,40,.05)}
+#v-dash .home-action .tool-icon{border:1px solid rgba(13,116,52,.08)}
+#v-dash .home-mini-card{border-color:#D8ECDE;background:linear-gradient(135deg,#F7FCF8 0%,#FFF 70%);box-shadow:0 8px 18px rgba(16,24,40,.05)}
+#v-dash .home-mini-card small{color:#54705D}
+#v-dash .card{border-color:#D8ECDE;background:linear-gradient(135deg,#F7FCF8 0%,#FFF 70%);box-shadow:0 10px 24px rgba(16,24,40,.06)}
+#v-dash .card .section-title{align-items:center;margin:-2px -2px 12px;padding:10px 12px;border:1px solid #CFEAD7;border-radius:14px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%)}
+#v-dash .card .section-title h2{color:#0D7434}
+#v-dash .insight-strip{border:1px solid #CFEAD7;border-radius:18px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%);box-shadow:none}
+#v-dash .insight-strip strong{color:#0D7434}
+#v-dash .insight-strip .obtn{border-color:#CFEAD7;background:#fff;color:#176D35;box-shadow:none}
 #v-hist .insights-card-head{
   gap:10px;
   margin-bottom:12px;
@@ -3418,7 +3517,7 @@ strong{font-weight:900}
   gap:6px;
   font-size:11px;
 }
-#v-hist .insights-month-switch span{
+#v-hist .insights-month-switch>span{
   min-width:76px;
 }
 #v-hist .insights-overview-grid{
@@ -3815,6 +3914,8 @@ strong{font-weight:900}
     padding:8px 9px;
     font-size:10.5px;
   }
+  .csv-export-actions{align-items:stretch;flex-direction:column}
+  .csv-export-actions .csv-export-custom.on{display:grid;grid-template-columns:1fr 1fr}
 }
 /* Simple unique Home hero redesign */
 #v-dash .dash-hero{
@@ -4602,7 +4703,7 @@ strong{font-weight:900}
   <div class="view" id="v-list">
     <div class="tx-shell">
       <div class="tx-panel">
-        <div class="section-title" style="margin-top:0">
+        <div class="section-title tx-filter-head" style="margin-top:0">
           <h2>Transactions</h2>
           <div class="small-note" id="sessCount">0 transactions</div>
         </div>
@@ -4654,7 +4755,7 @@ strong{font-weight:900}
 
       <div id="sub-cal" style="display:none">
         <div class="tx-panel">
-          <div class="section-title" style="margin-top:0">
+          <div class="section-title calendar-panel-head" style="margin-top:0">
             <h2>Calendar View</h2>
             <div class="calendar-tools">
               <button class="obtn" onclick="clearCalendarSelection()">Clear</button>
@@ -4701,7 +4802,6 @@ strong{font-weight:900}
     <div class="analysis-panel insights-hero" style="margin-bottom:0">
       <div class="section-title" style="margin-top:0">
         <h2>Insights</h2>
-        <button onclick="expCSV()">Export CSV</button>
       </div>
 
       <div class="insights-tabbar">
@@ -4714,9 +4814,45 @@ strong{font-weight:900}
       <div class="small-note" id="hCnt" style="margin-top:10px"></div>
     </div>
 
-    <div class="insights-card" id="insightsOverviewSection">
+    <section class="insights-card csv-export-card" aria-labelledby="csvExportTitle">
       <div class="insights-card-head">
-        <div class="insights-card-title">This Month Overview</div>
+        <div>
+          <div class="insights-card-title" id="csvExportTitle">Export CSV</div>
+          <p class="csv-export-subtitle">Download the transactions you need, with date and type filters.</p>
+        </div>
+        <button type="button" class="csv-export-icon-btn" onclick="expCSV()" aria-label="Export CSV" title="Export CSV"><span class="material-symbols-rounded" aria-hidden="true">download</span></button>
+      </div>
+      <div class="csv-export-grid">
+        <div class="csv-export-field">
+          <label for="csvExportRange">Period</label>
+          <select id="csvExportRange" aria-label="Export period" onchange="toggleCsvCustomRange()">
+            <option value="all">All transactions</option>
+            <option value="1m">Last 1 month</option>
+            <option value="3m">Last 3 months</option>
+            <option value="custom">Custom range</option>
+          </select>
+        </div>
+        <fieldset class="csv-export-types">
+          <legend>Include transactions</legend>
+          <label class="csv-export-type"><input type="checkbox" id="csvExportExpense" checked>Expense</label>
+          <label class="csv-export-type"><input type="checkbox" id="csvExportIncome" checked>Income</label>
+          <label class="csv-export-type"><input type="checkbox" id="csvExportTransfer" checked>Transfer</label>
+        </fieldset>
+      </div>
+      <div class="csv-export-actions">
+        <div id="csvExportCustom" class="csv-export-custom">
+          <input type="date" id="csvExportStart" aria-label="Export start date">
+          <input type="date" id="csvExportEnd" aria-label="Export end date">
+        </div>
+      </div>
+    </section>
+
+    <div class="insights-card" id="insightsOverviewSection">
+      <div class="insights-card-head insights-overview-head">
+        <div>
+          <div class="insights-card-title">This Month Overview</div>
+          <div class="insights-overview-subtitle">Your monthly money snapshot</div>
+        </div>
         <div class="insights-month-switch" aria-label="Insights month switch">
           <button onclick="shiftBudgetMonth(-1)" aria-label="Previous month"><span class="material-symbols-rounded">keyboard_arrow_left</span></button>
           <span id="insightMonthLabel">May 2026</span>
@@ -6404,20 +6540,20 @@ function getPastExpenseSuggestions(field, meta){
   const textFields=['notes','itemName','customName','recipient','hospital','medicine','warranty'];
   if(!textFields.includes(field)) return [];
   const add=(target,...values)=>values.flat().forEach(value=>splitSuggestionText(value).forEach(item=>target.push(item)));
-  purchases.forEach(purchase=>{
+  [...purchases].sort((first,second)=>new Date(second.datetime)-new Date(first.datetime)).forEach(purchase=>{
     const target=isSamePurchasePath(purchase,meta)?exact:fallback;
     const itemNames=(purchase.items||[]).map(item=>item.name);
     if(field==='itemName') add(target,itemNames,purchase.notes);
     else if(field==='notes') add(target,purchase.notes,itemNames);
     else add(target,purchase.notes,itemNames);
   });
-  expenses.forEach(expense=>{
+  [...expenses].sort((first,second)=>new Date(second.datetime)-new Date(first.datetime)).forEach(expense=>{
     const target=isSameExpensePath(expense,meta)?exact:fallback;
     if(field==='notes') add(target,expense.notes,expense.customName,expense.recipient,expense.hospital,expense.medicine,expense.warranty);
     else if(['customName','recipient','hospital','medicine','warranty'].includes(field)) add(target,expense[field],expense.notes);
     else if(field==='itemName') add(target,expense.notes,expense.customName,expense.recipient,expense.hospital,expense.medicine);
   });
-  return uniqueSuggestions([...exact,...fallback]).slice(0,10);
+  return uniqueSuggestions([...exact,...fallback]);
 }
 function getDefaultPayer(){
   return String(localStorage.getItem(DEFAULT_PAYER_KEY)||'').trim();
@@ -6719,7 +6855,7 @@ function buildFieldHtml(field, meta){
     const suggestions=uniqueSuggestions([
       ...historySuggestions,
       ...(field==='itemName'&&meta?.groceryCategory?(SUGG[meta.groceryCategory]||[]):[])
-    ]).slice(0,20);
+    ]).slice(0,80);
     if(suggestions.length){
       inputAttrs.push('autocomplete="off"');
       inputAttrs.push('data-history-suggest="1"');
@@ -7008,7 +7144,7 @@ function showExpForm(){
             </div>
             <button type="button" class="bulk-add-row" onclick="addBulkGroceryRow()">+ Add Item</button>
             <textarea id="ef_bulkItems" style="display:none">${safeText(editingDraft?.bulkItems||'')}</textarea>
-            ${buildSuggestionOptions('bulkGrocerySuggestions',uniqueSuggestions([...getPastExpenseSuggestions('itemName',meta),...(SUGG[meta.groceryCategory]||[])]).slice(0,20))}
+            ${buildSuggestionOptions('bulkGrocerySuggestions',uniqueSuggestions([...getPastExpenseSuggestions('itemName',meta),...(SUGG[meta.groceryCategory]||[])]).slice(0,80))}
             <div class="bulk-grocery-helper">Enter item name, quantity, unit and price. Total updates automatically.</div>
           </div>
         </div>`
@@ -7391,9 +7527,23 @@ function renderFieldHistorySuggestions(input){
     list.classList.remove('on');
     return;
   }
+  const queryWords=query.split(/\s+/).filter(Boolean);
   const matches=getFieldHistorySuggestions(input)
-    .filter(item=>String(item).toLowerCase().includes(query))
-    .slice(0,6);
+    .map((item,index)=>{
+      const value=String(item||'').trim();
+      const normalized=value.toLowerCase();
+      const words=normalized.split(/[^a-z0-9]+/).filter(Boolean);
+      if(!value||!queryWords.every(word=>normalized.includes(word))) return null;
+      const score=normalized.startsWith(query)?0
+        :words.some(word=>word.startsWith(query))?1
+          :queryWords.every(word=>words.some(candidate=>candidate.startsWith(word)))?2
+            :3;
+      return {value,score,index};
+    })
+    .filter(Boolean)
+    .sort((first,second)=>first.score-second.score||first.index-second.index)
+    .slice(0,8)
+    .map(match=>match.value);
   if(!matches.length){
     list.classList.remove('on');
     return;
@@ -8352,72 +8502,91 @@ async function delPurch(id){
   persistLocalChange();
   updateHdr('off');
 }
+function toggleCsvCustomRange(){
+  const isCustom=document.getElementById('csvExportRange')?.value==='custom';
+  const customRange=document.getElementById('csvExportCustom');
+  if(customRange) customRange.classList.toggle('on',isCustom);
+}
+function getCsvExportRange(){
+  const period=document.getElementById('csvExportRange')?.value||'all';
+  if(period==='all') return {period,start:null,end:null,label:'all'};
+  const today=new Date();
+  const toStartOfDay=value=>new Date(value.getFullYear(),value.getMonth(),value.getDate());
+  const toEndOfDay=value=>new Date(value.getFullYear(),value.getMonth(),value.getDate(),23,59,59,999);
+  if(period==='1m'||period==='3m'){
+    const start=toStartOfDay(today);
+    start.setMonth(start.getMonth()-(period==='1m'?1:3));
+    return {period,start,end:toEndOfDay(today),label:period==='1m'?'last-1-month':'last-3-months'};
+  }
+  const startValue=document.getElementById('csvExportStart')?.value;
+  const endValue=document.getElementById('csvExportEnd')?.value;
+  if(!startValue||!endValue){
+    toast('Choose both custom export dates');
+    return null;
+  }
+  const start=toStartOfDay(new Date(`${startValue}T00:00:00`));
+  const end=toEndOfDay(new Date(`${endValue}T00:00:00`));
+  if(Number.isNaN(start.getTime())||Number.isNaN(end.getTime())||start>end){
+    toast('Choose a valid export date range');
+    return null;
+  }
+  return {period,start,end,label:`${startValue}_to_${endValue}`};
+}
+function getCsvExportTypes(){
+  const types={
+    expense:document.getElementById('csvExportExpense')?.checked===true,
+    income:document.getElementById('csvExportIncome')?.checked===true,
+    transfer:document.getElementById('csvExportTransfer')?.checked===true
+  };
+  if(!Object.values(types).some(Boolean)){
+    toast('Choose at least one transaction type');
+    return null;
+  }
+  return types;
+}
 function expCSV(){
+  const range=getCsvExportRange();
+  if(!range) return;
+  const types=getCsvExportTypes();
+  if(!types) return;
+  const isIncluded=record=>{
+    if(!range.start||!range.end) return true;
+    const datetime=new Date(record.datetime);
+    return !Number.isNaN(datetime.getTime())&&datetime>=range.start&&datetime<=range.end;
+  };
   const esc=v=>`"${String(v??'').replace(/"/g,'""')}"`;
-  const rows=[['Type','Date','Category','Subcategory / Label','Store / From','To','Payment','Paid By','Item','Qty','Unit','Amount','Notes']];
-  purchases.forEach(p=>(p.items||[]).forEach(it=>rows.push([
-    'Expense',
-    fmtS(p.datetime),
+  const exportRows=[];
+  const addRow=(datetime,columns)=>exportRows.push({datetime,columns});
+  if(types.expense) purchases.filter(isIncluded).forEach(p=>(p.items||[]).forEach(it=>addRow(p.datetime,[
+    'Expense',fmtS(p.datetime),
     getCategoryLabel(getPurchasePath(p,it.category).category),
     getCategoryLabel(getPurchasePath(p,it.category).category,getPurchasePath(p,it.category).subcategory,getPurchasePath(p,it.category).leaf),
-    p.store,
-    '',
-    p.payMode,
-    p.paidBy||'',
-    it.name,
-    it.qty,
-    it.unit||'pcs',
-    (parseFloat(it.price||0)||0).toFixed(2),
-    p.notes||''
+    p.store,'',p.payMode,p.paidBy||'',it.name,it.qty,it.unit||'pcs',
+    (parseFloat(it.price||0)||0).toFixed(2),p.notes||''
   ])));
-  expenses.forEach(e=>rows.push([
-    'Expense',
-    fmtS(e.datetime),
-    getCategoryLabel(e.category),
-    getCategoryLabel(e.category,e.subcategory,e.leaf||e.subcategory),
-    '',
-    '',
-    e.payMode||'',
-    e.paidBy||'',
-    '',
-    '',
-    '',
-    e.amount,
-    e.notes||''
+  if(types.expense) expenses.filter(isIncluded).forEach(e=>addRow(e.datetime,[
+    'Expense',fmtS(e.datetime),getCategoryLabel(e.category),getCategoryLabel(e.category,e.subcategory,e.leaf||e.subcategory),
+    '','',e.payMode||'',e.paidBy||'','','','',e.amount,e.notes||''
   ]));
-  incomes.forEach(i=>rows.push([
-    'Income',
-    fmtS(i.datetime),
-    'Income',
-    i.category,
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    i.amount,
-    i.notes||''
+  if(types.income) incomes.filter(isIncluded).forEach(i=>addRow(i.datetime,[
+    'Income',fmtS(i.datetime),'Income',i.category,'','','','','','','',i.amount,i.notes||''
   ]));
-  transfers.forEach(t=>rows.push([
-    'Transfer',
-    fmtS(t.datetime),
-    'Transfer',
-    t.direction,
-    t.from,
-    t.to,
-    '',
-    t.personName||'',
-    '',
-    '',
-    t.amount,
-    t.notes||''
+  if(types.transfer) transfers.filter(isIncluded).forEach(t=>addRow(t.datetime,[
+    'Transfer',fmtS(t.datetime),'Transfer',t.direction,t.from,t.to,'',t.personName||'','','','',t.amount,t.notes||''
   ]));
+  exportRows.sort((first,second)=>new Date(second.datetime)-new Date(first.datetime));
+  if(!exportRows.length){
+    toast('No transactions found for this export period');
+    return;
+  }
+  const rows=[['Type','Date','Category','Subcategory / Label','Store / From','To','Payment','Paid By','Item','Qty','Unit','Amount','Notes'],...exportRows.map(row=>row.columns)];
   const blob=new Blob([rows.map(r=>r.map(esc).join(',')).join('\n')],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download='moneynest_history.csv';
+  a.download=`moneynest_history_${range.label}.csv`;
   a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  toast(`CSV exported: ${exportRows.length} row${exportRows.length===1?'':'s'}`);
 }
 
 function loadIns(name){
