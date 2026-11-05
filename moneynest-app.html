@@ -4707,6 +4707,14 @@ strong{font-weight:900}
         <div id="recentActivity"></div>
       </div>
 
+      <div class="card">
+        <div class="section-title" style="margin-top:0">
+          <h2>Top Items</h2>
+          <button onclick="goTab('hist',document.getElementById('navHist'))">Details</button>
+        </div>
+        <div id="tItems"></div>
+      </div>
+
       <div class="insight-strip">
         <div class="left">
           <div class="banner-icon insight-icon">
@@ -4726,14 +4734,6 @@ strong{font-weight:900}
         <span id="ds">—</span>
         <span id="dat">₹0</span>
         <span id="dv"></span>
-      </div>
-
-      <div class="card">
-        <div class="section-title" style="margin-top:0">
-          <h2>Top Items</h2>
-          <button onclick="goTab('hist',document.getElementById('navHist'))">Details</button>
-        </div>
-        <div id="tItems"></div>
       </div>
     </div>
   </div>
@@ -6244,7 +6244,7 @@ function renderDash(){
   }).join('');
 
   const iC=list.flatMap(p=>p.items||[]).reduce((a,it)=>{a[it.name]=(a[it.name]||0)+1;return a;},{});
-  const tI=Object.entries(iC).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const tI=Object.entries(iC).filter(([,count])=>count>=2).sort((a,b)=>b[1]-a[1]).slice(0,5);
   document.getElementById('tItems').innerHTML=tI.length?tI.map(([n,c])=>{
     const cat=purchases.flatMap(p=>p.items||[]).find(it=>it.name===n)?.category||'Other';
     const lp=lastPrice(n);
@@ -6252,16 +6252,24 @@ function renderDash(){
       <div style="display:flex;align-items:center;gap:8px">${tag(cat,cat.slice(0,3))}<span style="font-size:13px">${n}</span>${lp?`<span style="font-size:10px;color:var(--text-secondary)">${fmt(parseFloat(lp.price))}</span>`:''}</div>
       <span style="font-size:12px;color:var(--text-secondary);font-weight:700">×${c}</span>
     </div>`;
-  }).join(''):'<div class="empty" style="padding:.5rem">No data yet</div>';
+  }).join(''):'<div class="empty" style="padding:.5rem">No frequently purchased items yet</div>';
   const recentEl=document.getElementById('recentActivity');
   if(recentEl){
-    recentEl.innerHTML=combinedEntries.slice(0,3).map(entry=>{
+    recentEl.innerHTML=combinedEntries.slice(0,7).map(entry=>{
       if(entry.type==='purchase'){
         const p=entry.record;
+        const item=(p.items||[]).find(candidate=>String(candidate?.name||'').trim())||p.items?.[0]||{};
+        const purchasePath=getPurchasePath(p,item.category);
+        const purchaseIcon=getExpenseIcon(purchasePath.category,purchasePath.subcategory,purchasePath.leaf);
+        const itemName=String(item.name||p.notes||'').trim()||'Purchase';
+        const itemLabel=getPurchaseItemCategoryLabel(p,item)||purchasePath.leaf||purchasePath.subcategory||purchasePath.category;
         return `<div class="row" style="padding:10px 0;border-bottom:1px solid var(--border)">
-          <div>
-            <div style="font-size:13px;font-weight:800">${tag('store',p.store)} <span style="margin-left:6px">${safeText(p.items?.[0]?.name||p.store)}</span></div>
-            <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">${fmtS(p.datetime)} · ${safeText(p.payMode||'')}</div>
+          <div style="display:flex;align-items:center;gap:8px;min-width:0">
+            <span style="display:inline-flex;flex:0 0 auto">${coloredIconBadge(purchaseIcon,{label:itemLabel,size:'sm'})}</span>
+            <div style="min-width:0">
+              <div style="font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(itemName)}</div>
+              <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">${fmtS(p.datetime)} · ${safeText(p.payMode||'')}</div>
+            </div>
           </div>
           <div style="font-size:14px;font-weight:900;color:var(--expense)">${fmt(p.total)}</div>
         </div>`;
@@ -6269,9 +6277,12 @@ function renderDash(){
       if(entry.type==='income'){
         const i=entry.record;
         return `<div class="row" style="padding:10px 0;border-bottom:1px solid var(--border)">
-          <div>
-            <div style="font-size:13px;font-weight:800"><span>${coloredIconBadge(INCOME_ICONS[i.category]||'account_balance_wallet',{label:i.category,size:'sm'})}</span> <span style="margin-left:6px">${safeText(i.category)}</span></div>
-            <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">${fmtS(i.datetime)}${i.notes?` · ${safeText(i.notes)}`:''}</div>
+          <div style="display:flex;align-items:center;gap:8px;min-width:0">
+            <span style="display:inline-flex;flex:0 0 auto">${coloredIconBadge(INCOME_ICONS[i.category]||'account_balance_wallet',{label:i.category,size:'sm'})}</span>
+            <div style="min-width:0">
+              <div style="font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(i.category)}</div>
+              <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">${fmtS(i.datetime)}</div>
+            </div>
           </div>
           <div style="font-size:14px;font-weight:900;color:var(--income)">+${fmt(i.amount)}</div>
         </div>`;
@@ -6279,9 +6290,12 @@ function renderDash(){
       if(entry.type==='transfer'){
         const t=entry.record;
         return `<div class="row" style="padding:10px 0;border-bottom:1px solid var(--border)">
-          <div>
-            <div style="font-size:13px;font-weight:800"><span>${coloredIconBadge('swap_horiz',{label:'Transfer',size:'sm'})}</span> <span style="margin-left:6px">${safeText(t.direction)} ${safeText(t.personName||'Transfer')}</span></div>
-            <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">${safeText(t.from)} → ${safeText(t.to)} · ${fmtS(t.datetime)}</div>
+          <div style="display:flex;align-items:center;gap:8px;min-width:0">
+            <span style="display:inline-flex;flex:0 0 auto">${coloredIconBadge('swap_horiz',{label:'Transfer',size:'sm'})}</span>
+            <div style="min-width:0">
+              <div style="font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(t.direction)} ${safeText(t.personName||'Transfer')}</div>
+              <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">${fmtS(t.datetime)} · ${safeText(t.from)} → ${safeText(t.to)}</div>
+            </div>
           </div>
           <div style="font-size:14px;font-weight:900;color:var(--text-secondary)">${fmt(t.amount)}</div>
         </div>`;
@@ -6289,9 +6303,12 @@ function renderDash(){
       const e=entry.record;
       const labels=getExpenseDisplayPath(e);
       return `<div class="row" style="padding:10px 0;border-bottom:1px solid var(--border)">
-        <div>
-          <div style="font-size:13px;font-weight:800"><span>${coloredIconBadge(getExpenseIcon(e.category,e.subcategory,e.leaf),{label:labels.leaf||labels.subcategory||labels.category,size:'sm'})}</span> <span style="margin-left:6px">${safeText(labels.leaf||labels.subcategory||labels.category)}</span></div>
-          <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">${safeText(labels.category)} · ${fmtS(e.datetime)}</div>
+        <div style="display:flex;align-items:center;gap:8px;min-width:0">
+          <span style="display:inline-flex;flex:0 0 auto">${coloredIconBadge(getExpenseIcon(e.category,e.subcategory,e.leaf),{label:labels.leaf||labels.subcategory||labels.category,size:'sm'})}</span>
+          <div style="min-width:0">
+            <div style="font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeText(labels.leaf||labels.subcategory||labels.category)}</div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">${fmtS(e.datetime)}${e.payMode?` · ${safeText(e.payMode)}`:''}</div>
+          </div>
         </div>
         <div style="font-size:14px;font-weight:900;color:var(--expense)">${fmt(e.amount)}</div>
       </div>`;
