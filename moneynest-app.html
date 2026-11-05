@@ -784,10 +784,7 @@ strong{font-weight:900}
   .welcome-action-title{font-size:17px}
 }
 .hidden{display:none !important}
-.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px}
-.topbar-left{display:flex;align-items:flex-start;gap:14px;min-width:0;flex:1}
-.topbar-copy{min-width:0;flex:1}
-.topbar-actions,.actions{display:flex;gap:10px}
+.actions{display:flex;gap:10px}
 .icon-btn{
   width:44px;height:44px;border-radius:50%;
   border:1px solid var(--border);
@@ -2189,16 +2186,6 @@ strong{font-weight:900}
   #wrap{
     padding:14px 12px calc(128px + env(safe-area-inset-bottom));
   }
-  .topbar{
-    gap:10px;
-    margin-bottom:14px;
-  }
-  .topbar-left{
-    gap:10px;
-  }
-  .topbar-actions{
-    gap:8px;
-  }
   .icon-btn{
     width:40px;
     height:40px;
@@ -2472,9 +2459,6 @@ strong{font-weight:900}
   .hero-grid,.grid-2,.quick-grid,.tool-grid,.mgrid{grid-template-columns:1fr}
   .balance-box{flex-direction:column;align-items:flex-start;gap:6px}
   .dash-hero-bottom,.home-mini-grid,.trend-metrics,.insight-strip{flex-direction:column}
-  .topbar{align-items:flex-start}
-  .topbar-left{gap:10px}
-  .topbar-actions{gap:6px}
   .hello-name-edit{width:min(326px,58vw)}
   .hello-title{font-size:18px}
   .hello-subline{font-size:11px}
@@ -3512,9 +3496,13 @@ strong{font-weight:900}
 #v-ins .built-with-line .material-symbols-rounded{color:#D94A4A}
 #v-ins .visira-brand{color:#0D8B43}
 #v-ins .more-footer{padding:13px 16px;border:1px solid #CFEAD7;border-radius:18px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%)}
-#wrap>.topbar{display:grid;gap:9px;padding:10px 4px 10px 12px;border:1px solid #CFEAD7;border-radius:18px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%)}
-#wrap>.topbar .brand-row{display:flex;align-items:center;width:100%;justify-content:space-between;gap:10px;min-width:0}
-#wrap>.topbar .topbar-main{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;min-width:0}
+#wrap>.topbar{display:grid;width:100%;min-width:0;grid-template-columns:minmax(0,1fr);justify-items:stretch;gap:10px;margin-bottom:18px;padding:0;border:0;background:none}
+#wrap>.topbar .brand-row,#wrap>.topbar .topbar-main{width:100%;box-sizing:border-box;border:1px solid #CFEAD7;border-radius:18px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%);box-shadow:0 8px 20px rgba(28,93,49,.06)}
+#wrap>.topbar .brand-row{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;padding:10px 12px}
+#wrap>.topbar .topbar-main{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;padding:10px 12px}
+#wrap>.topbar:not(.home-header) .topbar-main{display:none}
+#wrap>.topbar .topbar-left{display:flex;align-items:center;gap:14px;min-width:0;flex:1}
+#wrap>.topbar .topbar-copy{min-width:0;flex:1}
 #wrap>.topbar .brand-lockup{display:flex;align-items:center;gap:8px;padding:0 4px;color:#10213E;line-height:1}
 #wrap>.topbar .brand-copy{display:grid;gap:3px}
 #wrap>.topbar .brand-lockup strong{font-size:22px;font-weight:900;letter-spacing:-.7px}
@@ -3522,11 +3510,19 @@ strong{font-weight:900}
 #wrap>.topbar .brand-copy small{color:#54705D;font-size:10px;font-weight:700;letter-spacing:.1px}
 #wrap>.topbar .brand-copy small b{color:#0E9F56}
 #wrap>.topbar .brand-rupee{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#21C869 0%,#0C8E45 100%);color:#fff;font-size:28px;font-weight:900}
-#wrap>.topbar .topbar-actions{align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+#wrap>.topbar .topbar-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
 #wrap>.topbar .topbar-main .topbar-actions{margin-left:auto;flex-shrink:0}
 #wrap>.topbar .icon-btn{border-color:#D8ECDE;background:#fff;box-shadow:none}
 #wrap>.topbar .hello-title{color:#0D7434;font-size:20px}
 #wrap>.topbar .hello-subline{display:none}
+@media (max-width:600px){
+  #wrap>.topbar .topbar-left{gap:10px}
+  #wrap>.topbar .topbar-actions{gap:6px}
+}
+@media (max-width:430px){
+  #wrap>.topbar{margin-bottom:14px}
+  #wrap>.topbar .topbar-actions{gap:8px}
+}
 #v-dash .dash-hero{box-shadow:0 14px 30px rgba(32,104,56,.18)}
 #v-dash .dash-month-switch{border-color:rgba(255,255,255,.24);background:rgba(255,255,255,.12)}
 #v-dash .dash-month-switch button{display:grid;place-items:center}
@@ -3969,12 +3965,29 @@ strong{font-weight:900}
   #v-ins .more-item>.toggle,#v-ins .more-item>.small-note{grid-column:2;justify-self:end}
   #v-ins .default-payer-setting{grid-template-columns:42px minmax(0,1fr)}
   #v-ins .default-payer-form{padding-left:42px}
+  #v-ins .default-payer-form .fi{min-width:0;flex:1 1 auto}
+  #v-ins .default-payer-form .obtn{grid-column:auto;width:auto;min-width:82px;margin:0;flex:0 0 auto}
   #wrap>.topbar .brand-lockup strong{font-size:20px}
   #wrap>.topbar .brand-copy small{font-size:9px}
   #wrap>.topbar .brand-rupee{width:30px;height:30px;border-radius:10px;font-size:24px}
   #wrap>.topbar .topbar-actions{gap:5px}
   #wrap>.topbar #installBtn{padding:8px 10px!important;font-size:11px!important}
   #wrap>.topbar .hello-title{font-size:18px}
+}
+@media (max-width:600px){
+  #v-hist .insights-tabbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));overflow:visible;gap:4px;padding:4px}
+  #v-hist .insights-tabchip{min-width:0;padding:8px 3px;gap:3px;font-size:10px;white-space:nowrap}
+  #v-hist .insights-tabchip .material-symbols-rounded{width:15px;min-width:15px;font-size:15px}
+  #v-dash .home-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible;gap:8px}
+  #v-dash .home-action{min-width:0;padding:11px 8px;gap:7px;border-radius:16px}
+  #v-dash .home-action .tool-icon{width:32px;height:32px;flex:0 0 32px;border-radius:11px}
+  #v-dash .home-action .tool-icon .material-symbols-rounded{font-size:19px}
+  #v-dash .home-action h3{font-size:11px!important;line-height:1.2}
+  #v-dash .home-mini-grid{display:grid;grid-template-columns:1fr;gap:10px;flex-direction:unset}
+  #v-dash .home-mini-card{min-width:0;padding:12px 10px 10px 50px}
+  #v-dash .home-mini-icon{left:10px;top:12px;width:30px;height:30px}
+  #v-dash .home-mini-card small{min-height:30px;font-size:9px!important;line-height:1.2}
+  #v-dash .home-mini-card .note{display:block!important;-webkit-line-clamp:unset;line-height:1.35}
 }
 /* Simple unique Home hero redesign */
 #v-dash .dash-hero{
@@ -4521,7 +4534,7 @@ strong{font-weight:900}
 </div>
 
 <div id="wrap" style="display:none">
-  <div class="topbar">
+  <div class="topbar home-header">
     <div class="brand-row">
       <div class="brand-lockup" aria-label="MoneyNest">
         <span class="brand-rupee" aria-hidden="true">₹</span>
@@ -4678,12 +4691,6 @@ strong{font-weight:900}
           <small>Today Spent</small>
           <div class="big warn" id="todaySpent">₹0</div>
           <div class="note" id="todaySpentMeta">No transactions today yet.</div>
-        </div>
-        <div class="home-mini-card">
-          <span class="home-mini-icon"><span class="material-symbols-rounded" aria-hidden="true">savings</span></span>
-          <small>Budget Left</small>
-          <div class="big accent" id="ringLimit">₹0</div>
-          <div class="note" id="budgetWarn">Set a monthly budget to get overspending alerts and a cleaner spending target.</div>
         </div>
       </div>
 
@@ -6154,7 +6161,7 @@ function renderDash(){
   const over=heroBudget>0&&total>heroBudget;
   const ringColor=over?'var(--expense)':'var(--income)';
 
-  document.getElementById('budgetMonthTitle').textContent=budgetCursor.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+  document.getElementById('budgetMonthTitle').textContent=budgetCursor.toLocaleDateString('en-IN',{month:'short',year:'numeric'});
   document.getElementById('budgetMonthCount').textContent=`${list.length+expList.length} expense · ${incomeList.length} income · ${transferList.length} transfer`;
   document.getElementById('dm').textContent=fmt(monthNet);
   const dmMirror=document.getElementById('dmMirror');
@@ -6187,12 +6194,6 @@ function renderDash(){
     arcBarEl.setAttribute('stroke-dasharray',`${pctBudget.toFixed(1)} 100`);
   }
   document.getElementById('ringSpent').textContent=fmt(total);
-  document.getElementById('ringLimit').textContent=heroBudget?`${remaining<0?'-':''}${fmt(Math.abs(remaining))}`:'₹0';
-  document.getElementById('budgetWarn').className='budget-warning'+(over?' over':'');
-  document.getElementById('budgetWarn').textContent=
-    !heroBudget?'Set a monthly budget to get overspending alerts and a cleaner spending target.'
-    :over?`Limit crossed. You are over by ${fmt(total-heroBudget)} in ${budgetCursor.toLocaleDateString('en-IN',{month:'long'})}.`
-    :`${fmt(heroBudget-total)} left in budget. Keep an eye on snacks, beverages, and impulse adds.`;
   const todaySpentEl=document.getElementById('todaySpent');
   if(todaySpentEl) todaySpentEl.textContent=fmt(todaySpentTotal);
   const todaySpentMetaEl=document.getElementById('todaySpentMeta');
@@ -8238,7 +8239,7 @@ function renderHist(){
   const insIncomeEl=document.getElementById('insIncome');
   const insExpenseEl=document.getElementById('insExpense');
   const insNetEl=document.getElementById('insNet');
-  const insightMonthText=insightMonth.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+  const insightMonthText=insightMonth.toLocaleDateString('en-IN',{month:'short',year:'numeric'});
   if(insightMonthLabelEl) insightMonthLabelEl.textContent=insightMonthText;
   if(insTotalSpentEl) insTotalSpentEl.textContent=fmt(monthExpenseTotal);
   if(insIncomeEl) insIncomeEl.textContent=fmt(monthIncomeTotal);

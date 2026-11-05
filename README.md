@@ -125,8 +125,6 @@ AI_MoneyNest/
 |-- serve-moneynest.ps1     # Local dev server for Windows PowerShell
 |-- screenshot-wide.svg     # PWA wide screenshot preview
 |-- screenshot-narrow.svg   # PWA mobile screenshot preview
-|-- icon.svg                # App icon
-|-- icon-maskable.svg       # Maskable SVG icon
 |-- icon-192.png            # 192px app icon
 |-- icon-512.png            # 512px app icon
 |-- icon-maskable.png       # Maskable PNG icon

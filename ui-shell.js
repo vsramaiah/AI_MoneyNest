@@ -1,10 +1,12 @@
 (function () {
   function goTab(id, btn, deps) {
     const nav = document.querySelector(".nav");
+    const topbar = document.querySelector("#wrap > .topbar");
     document.querySelectorAll(".view").forEach((view) => view.classList.remove("on"));
     document.querySelectorAll(".nav button").forEach((button) => button.classList.remove("on"));
     document.getElementById(`v-${id}`).classList.add("on");
     if (btn && btn.id) btn.classList.add("on");
+    if (topbar) topbar.classList.toggle("home-header", id === "dash");
     if (nav) nav.style.display = "flex";
     if (id === "dash") deps.renderDash();
     if (id === "hist") {

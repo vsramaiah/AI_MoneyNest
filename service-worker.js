@@ -1,4 +1,4 @@
-const VERSION = "moneynest-v2.0-offline-r113";
+const VERSION = "moneynest-v2.0-offline-r120";
 const STATIC_CACHE = `${VERSION}-static`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const OFFLINE_FALLBACK_URL = "./offline.html";
