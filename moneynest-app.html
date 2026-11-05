@@ -1010,8 +1010,9 @@ strong{font-weight:900}
 .csv-export-field select,.csv-export-field input{width:100%;height:40px;min-width:0;border:1px solid var(--border);border-radius:12px;padding:0 11px;background:#fff;color:var(--text-primary);font:700 12px inherit;outline:none}
 .csv-export-types{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border:0;padding:0;margin:0}
 .csv-export-types legend{grid-column:1/-1;width:100%;margin-bottom:1px}
-.csv-export-type{position:relative;display:flex;align-items:center;justify-content:center;min-height:40px;border:1px solid var(--border);border-radius:12px;padding:0 8px;background:#fff;color:var(--text-primary);font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap}
+.csv-export-type{position:relative;display:flex;align-items:center;justify-content:center;gap:7px;min-height:40px;border:1px solid var(--border);border-radius:12px;padding:0 8px;background:#fff;color:var(--text-primary);font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap}
 .csv-export-type input{position:absolute;opacity:0;pointer-events:none}
+.csv-export-type .material-symbols-rounded{width:18px;min-width:18px;font-size:18px;line-height:1}
 .csv-export-type:has(input:checked){background:#3B7750;border-color:#3B7750;color:#fff;box-shadow:0 5px 10px rgba(59,119,80,.14)}
 .csv-export-type:has(input:focus-visible){outline:3px solid rgba(37,111,58,.2);outline-offset:2px}
 .csv-export-actions{display:none;align-items:end;gap:8px;margin-top:12px}
@@ -3422,6 +3423,10 @@ strong{font-weight:900}
   background:linear-gradient(135deg,#EAF8EE 0%,#F7FCF8 100%);
 }
 #v-hist .insights-tabchip{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
   flex:1;
   min-width:max-content;
   padding:9px 10px;
@@ -3433,6 +3438,7 @@ strong{font-weight:900}
   font-weight:800;
   color:#54705D;
 }
+#v-hist .insights-tabchip .material-symbols-rounded{font-size:17px}
 #v-hist .insights-tabchip.active{
   background:#16823B;
   border-color:#16823B;
@@ -3442,19 +3448,29 @@ strong{font-weight:900}
 #v-add .add-panel{background:linear-gradient(135deg,#F7FCF8 0%,#FFF 65%)}
 #v-add .add-panel-head{align-items:center;margin-bottom:12px;padding:12px 13px;border:1px solid #CFEAD7;border-radius:16px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%)}
 #v-add .add-panel-head h2{color:#0D7434}
+#v-add .add-panel-head h2{display:flex;align-items:center;gap:8px}
+#v-add .add-title-icon{display:grid;place-items:center;width:30px;height:30px;border-radius:10px;background:#16823B;color:#fff}
+#v-add .add-title-icon .material-symbols-rounded{font-size:18px}
 #v-add .add-panel-head .add-back-btn{border-color:#CFEAD7;background:#fff;color:#176D35;box-shadow:none}
 #v-add .subtabs{gap:5px;margin:12px 0!important;padding:5px;border-color:#CFEAD7;border-radius:16px;background:linear-gradient(135deg,#EAF8EE 0%,#F7FCF8 100%)}
 #v-add .stab{border:1px solid transparent;border-radius:12px;color:#54705D}
 #v-add .stab.on{background:#3B7750;border-color:#3B7750;color:#fff;box-shadow:0 5px 10px rgba(59,119,80,.14)}
+#v-add .stab{display:flex;align-items:center;justify-content:center;gap:6px}
+#v-add .stab .material-symbols-rounded{width:18px;min-width:18px;font-size:18px}
 #v-list .tx-panel{background:linear-gradient(135deg,#F7FCF8 0%,#FFF 65%)}
 #v-list .tx-filter-head{align-items:center;margin-bottom:14px;padding:12px 13px;border:1px solid #CFEAD7;border-radius:16px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%)}
 #v-list .tx-filter-head h2{color:#0D7434}
+#v-list .tx-filter-head h2{display:flex;align-items:center;gap:8px}
+#v-list .tx-title-icon{display:grid;place-items:center;width:30px;height:30px;border-radius:10px;background:#16823B;color:#fff}
+#v-list .tx-title-icon .material-symbols-rounded{font-size:18px}
 #v-list .tx-filter-head .small-note{padding:5px 8px;border-radius:999px;background:#fff;color:#39724D}
 #v-list .tx-panel .fi{border-color:#D8E8DD;background:#fff}
 #v-list .tx-panel .fi:focus{border-color:#6BAA7B;box-shadow:0 0 0 3px rgba(59,119,80,.12)}
 #v-list .subtabs{gap:5px;margin:14px 0 0!important;padding:5px;border-color:#CFEAD7;border-radius:16px;background:linear-gradient(135deg,#EAF8EE 0%,#F7FCF8 100%)}
 #v-list .stab{border:1px solid transparent;border-radius:12px;color:#54705D}
 #v-list .stab.on{background:#3B7750;border-color:#3B7750;color:#fff;box-shadow:0 5px 10px rgba(59,119,80,.14)}
+#v-list .stab{display:flex;align-items:center;justify-content:center;gap:6px}
+#v-list .stab .material-symbols-rounded{width:18px;min-width:18px;font-size:18px}
 #v-list .month-nav{padding:12px 13px;border-color:#CFEAD7;border-radius:16px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%);box-shadow:none}
 #v-list .month-nav button{display:grid;place-items:center;width:32px;height:32px;padding:0;border-radius:10px;background:#fff;color:#176D35}
 #v-list .month-nav button .material-symbols-rounded{width:20px;min-width:0;color:inherit}
@@ -3471,23 +3487,46 @@ strong{font-weight:900}
 #v-list #sub-cal .calendar-head strong{color:#0D7434}
 #v-list #sub-cal .calendar-head span{color:#54705D}
 #v-ins .more-panel{padding:12px;border-color:#D8ECDE;border-radius:20px;background:linear-gradient(135deg,#F7FCF8 0%,#FFF 65%);box-shadow:0 10px 24px rgba(16,24,40,.06)}
-#v-ins .more-section-title{margin:0 0 10px;padding:10px 12px;border:1px solid #CFEAD7;border-radius:14px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%);color:#0D7434;font-size:11px;letter-spacing:.55px}
+#v-ins .more-page-head{display:flex;align-items:center;gap:14px;padding:4px 10px 8px}
+#v-ins .more-page-head h2{font-size:28px;line-height:1.1;color:#10213E;font-weight:900}
+#v-ins .more-page-head p{margin-top:5px;color:#60708D;font-size:14px;line-height:1.4}
+#v-ins .more-page-icon{display:grid;place-items:center;width:68px;height:68px;flex:0 0 68px;border-radius:22px;background:#E8F8EE;color:#11924D;font-size:38px}
+#v-ins .more-section-title{display:flex;align-items:center;gap:10px;margin:0 0 10px;padding:10px 12px;border:1px solid #CFEAD7;border-radius:14px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%);color:#0D7434;font-size:15px;letter-spacing:0;text-transform:none}
+#v-ins .more-section-title .material-symbols-rounded{display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:#16823B;color:#fff;font-size:18px}
 #v-ins .more-list{gap:8px}
-#v-ins .more-item{padding:12px;border:1px solid #E0ECE4;border-radius:14px;background:#fff}
+#v-ins .more-item{display:grid;grid-template-columns:50px minmax(0,1fr) auto;align-items:center;padding:12px;border:1px solid #E0ECE4;border-radius:14px;background:#fff}
 #v-ins .more-item:first-child,#v-ins .more-item:last-child{padding:12px}
 #v-ins .more-item-main strong{color:#1D2B22}
 #v-ins .more-item-main span{line-height:1.45}
-#v-ins .more-item .obtn{border-color:#CFEAD7;background:#fff;color:#176D35;box-shadow:none}
-#v-ins .more-item .sbtn{border-color:#CFEAD7;background:#EDF8F0;color:#176D35}
+#v-ins .more-row-icon{display:grid;place-items:center;width:44px;height:44px;border-radius:16px;background:linear-gradient(135deg,#EAF8EE 0%,#F3FCF6 100%);color:#11924D;font-size:25px}
+#v-ins .more-item .obtn,#v-ins .more-item .sbtn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:112px;border-color:#8DD4AB;background:#F9FFFB;color:#176D35;box-shadow:none}
+#v-ins .more-item .obtn .material-symbols-rounded,#v-ins .more-item .sbtn .material-symbols-rounded{font-size:19px}
 #v-ins .more-item .rbtn{border-color:#E9D8D2;background:#FFF8F6;color:#A23E35}
-#v-ins .info-surface{border-color:#D8ECDE;background:#F4FBF6}
+#v-ins .info-surface{margin-top:2px;border-color:#BFE7CB;background:#F0FCF4;color:#29523A}
 #v-ins .default-payer-form{margin-top:10px}
-#v-ins .default-payer-form .fi{border-color:#CFEAD7;background:#fff}
+#v-ins .default-payer-setting{grid-template-columns:50px minmax(0,1fr)}
+#v-ins .default-payer-form{grid-column:1/-1;margin:10px 0 0;padding-left:50px;align-items:center}
+#v-ins .default-payer-form .fi{height:46px;border-color:#CFEAD7;background:#fff}
+#v-ins .default-payer-form .obtn{height:46px;min-width:92px;padding:0 16px;border-color:#8DD4AB;background:#F9FFFB;color:#176D35;box-shadow:none}
 #v-ins .built-with-line{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;color:#2B4933}
 #v-ins .built-with-line .material-symbols-rounded{color:#D94A4A}
-#wrap>.topbar{padding:10px 12px;border:1px solid #CFEAD7;border-radius:18px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%)}
+#v-ins .visira-brand{color:#0D8B43}
+#v-ins .more-footer{padding:13px 16px;border:1px solid #CFEAD7;border-radius:18px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%)}
+#wrap>.topbar{display:grid;gap:9px;padding:10px 4px 10px 12px;border:1px solid #CFEAD7;border-radius:18px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%)}
+#wrap>.topbar .brand-row{display:flex;align-items:center;width:100%;justify-content:space-between;gap:10px;min-width:0}
+#wrap>.topbar .topbar-main{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;min-width:0}
+#wrap>.topbar .brand-lockup{display:flex;align-items:center;gap:8px;padding:0 4px;color:#10213E;line-height:1}
+#wrap>.topbar .brand-copy{display:grid;gap:3px}
+#wrap>.topbar .brand-lockup strong{font-size:22px;font-weight:900;letter-spacing:-.7px}
+#wrap>.topbar .brand-lockup strong span{color:#0E9F56}
+#wrap>.topbar .brand-copy small{color:#54705D;font-size:10px;font-weight:700;letter-spacing:.1px}
+#wrap>.topbar .brand-copy small b{color:#0E9F56}
+#wrap>.topbar .brand-rupee{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#21C869 0%,#0C8E45 100%);color:#fff;font-size:28px;font-weight:900}
+#wrap>.topbar .topbar-actions{align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+#wrap>.topbar .topbar-main .topbar-actions{margin-left:auto;flex-shrink:0}
 #wrap>.topbar .icon-btn{border-color:#D8ECDE;background:#fff;box-shadow:none}
-#wrap>.topbar .hello-title{color:#0D7434}
+#wrap>.topbar .hello-title{color:#0D7434;font-size:20px}
+#wrap>.topbar .hello-subline{display:none}
 #v-dash .dash-hero{box-shadow:0 14px 30px rgba(32,104,56,.18)}
 #v-dash .dash-month-switch{border-color:rgba(255,255,255,.24);background:rgba(255,255,255,.12)}
 #v-dash .dash-month-switch button{display:grid;place-items:center}
@@ -3496,9 +3535,17 @@ strong{font-weight:900}
 #v-dash .home-action .tool-icon{border:1px solid rgba(13,116,52,.08)}
 #v-dash .home-mini-card{border-color:#D8ECDE;background:linear-gradient(135deg,#F7FCF8 0%,#FFF 70%);box-shadow:0 8px 18px rgba(16,24,40,.05)}
 #v-dash .home-mini-card small{color:#54705D}
+#v-dash .home-mini-card{position:relative;padding-left:58px}
+#v-dash .home-mini-icon{position:absolute;left:14px;top:14px;display:grid;place-items:center;width:32px;height:32px;border-radius:11px;background:#EAF8EE;color:#16823B}
+#v-dash .home-mini-icon.expense{background:#FFF0EE;color:#D74A40}
+#v-dash .home-mini-icon .material-symbols-rounded{font-size:19px}
+#v-dash .home-mini-card small{min-height:32px;display:flex;align-items:center}
 #v-dash .card{border-color:#D8ECDE;background:linear-gradient(135deg,#F7FCF8 0%,#FFF 70%);box-shadow:0 10px 24px rgba(16,24,40,.06)}
 #v-dash .card .section-title{align-items:center;margin:-2px -2px 12px;padding:10px 12px;border:1px solid #CFEAD7;border-radius:14px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%)}
 #v-dash .card .section-title h2{color:#0D7434}
+#v-dash .card .section-title h2{display:flex;align-items:center;gap:8px}
+#v-dash .home-section-icon{display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:#16823B;color:#fff}
+#v-dash .home-section-icon .material-symbols-rounded{font-size:17px}
 #v-dash .insight-strip{border:1px solid #CFEAD7;border-radius:18px;background:linear-gradient(135deg,#EAF8EE 0%,#F8FCF9 100%);box-shadow:none}
 #v-dash .insight-strip strong{color:#0D7434}
 #v-dash .insight-strip .obtn{border-color:#CFEAD7;background:#fff;color:#176D35;box-shadow:none}
@@ -3916,6 +3963,18 @@ strong{font-weight:900}
   }
   .csv-export-actions{align-items:stretch;flex-direction:column}
   .csv-export-actions .csv-export-custom.on{display:grid;grid-template-columns:1fr 1fr}
+  #v-ins .more-item{grid-template-columns:42px minmax(0,1fr);gap:10px}
+  #v-ins .more-row-icon{width:38px;height:38px;border-radius:14px;font-size:22px}
+  #v-ins .more-item .obtn,#v-ins .more-item .sbtn{grid-column:2;width:100%;margin-top:2px}
+  #v-ins .more-item>.toggle,#v-ins .more-item>.small-note{grid-column:2;justify-self:end}
+  #v-ins .default-payer-setting{grid-template-columns:42px minmax(0,1fr)}
+  #v-ins .default-payer-form{padding-left:42px}
+  #wrap>.topbar .brand-lockup strong{font-size:20px}
+  #wrap>.topbar .brand-copy small{font-size:9px}
+  #wrap>.topbar .brand-rupee{width:30px;height:30px;border-radius:10px;font-size:24px}
+  #wrap>.topbar .topbar-actions{gap:5px}
+  #wrap>.topbar #installBtn{padding:8px 10px!important;font-size:11px!important}
+  #wrap>.topbar .hello-title{font-size:18px}
 }
 /* Simple unique Home hero redesign */
 #v-dash .dash-hero{
@@ -4463,6 +4522,13 @@ strong{font-weight:900}
 
 <div id="wrap" style="display:none">
   <div class="topbar">
+    <div class="brand-row">
+      <div class="brand-lockup" aria-label="MoneyNest">
+        <span class="brand-rupee" aria-hidden="true">₹</span>
+        <span class="brand-copy"><strong>Money<span>Nest</span></strong><small>Save Today <b>·</b> Secure Tomorrow</small></span>
+      </div>
+    </div>
+    <div class="topbar-main">
     <div class="topbar-left">
       <button class="icon-btn" onclick="openSett()" aria-label="Open settings">
         <span class="material-symbols-rounded">clear_all</span>
@@ -4492,6 +4558,7 @@ strong{font-weight:900}
         <span class="material-symbols-rounded">calendar_month</span>
         <span class="notify-dot"></span>
       </button>
+    </div>
     </div>
   </div>
 
@@ -4607,11 +4674,13 @@ strong{font-weight:900}
 
       <div class="home-mini-grid">
         <div class="home-mini-card">
+          <span class="home-mini-icon expense"><span class="material-symbols-rounded" aria-hidden="true">trending_down</span></span>
           <small>Today Spent</small>
           <div class="big warn" id="todaySpent">₹0</div>
           <div class="note" id="todaySpentMeta">No transactions today yet.</div>
         </div>
         <div class="home-mini-card">
+          <span class="home-mini-icon"><span class="material-symbols-rounded" aria-hidden="true">savings</span></span>
           <small>Budget Left</small>
           <div class="big accent" id="ringLimit">₹0</div>
           <div class="note" id="budgetWarn">Set a monthly budget to get overspending alerts and a cleaner spending target.</div>
@@ -4622,7 +4691,7 @@ strong{font-weight:900}
 
       <div class="card">
         <div class="section-title" style="margin-top:0">
-          <h2>Recent Transactions</h2>
+          <h2><span class="home-section-icon"><span class="material-symbols-rounded" aria-hidden="true">receipt_long</span></span>Recent Transactions</h2>
           <button class="btn-link" onclick="openListSessions()">
     View All
     <span class="material-symbols-rounded">arrow_forward</span>
@@ -4675,15 +4744,15 @@ strong{font-weight:900}
       <div class="add-panel">
         <div class="add-panel-head">
           <div>
-            <h2>Add Entry</h2>
+            <h2><span class="add-title-icon"><span class="material-symbols-rounded" aria-hidden="true">add</span></span>Add Entry</h2>
           </div>
           <button class="obtn add-back-btn" onclick="goExpBack()" id="expResetBtn" style="display:none">Back</button>
         </div>
 
         <div class="subtabs" style="margin:14px 0">
-          <div class="stab on" id="addTab-expense" onclick="setAddMode('expense')">Expense</div>
-          <div class="stab" id="addTab-income" onclick="setAddMode('income')">Income</div>
-          <div class="stab" id="addTab-transfer" onclick="setAddMode('transfer')">Transfer</div>
+          <div class="stab on" id="addTab-expense" onclick="setAddMode('expense')"><span class="material-symbols-rounded" aria-hidden="true">payments</span>Expense</div>
+          <div class="stab" id="addTab-income" onclick="setAddMode('income')"><span class="material-symbols-rounded" aria-hidden="true">account_balance_wallet</span>Income</div>
+          <div class="stab" id="addTab-transfer" onclick="setAddMode('transfer')"><span class="material-symbols-rounded" aria-hidden="true">swap_horiz</span>Transfer</div>
         </div>
 
         <div id="expBreadcrumb" class="add-breadcrumb"></div>
@@ -4704,7 +4773,7 @@ strong{font-weight:900}
     <div class="tx-shell">
       <div class="tx-panel">
         <div class="section-title tx-filter-head" style="margin-top:0">
-          <h2>Transactions</h2>
+          <h2><span class="tx-title-icon"><span class="material-symbols-rounded" aria-hidden="true">receipt_long</span></span>Transactions</h2>
           <div class="small-note" id="sessCount">0 transactions</div>
         </div>
         <div class="f" style="margin-bottom:10px">
@@ -4715,8 +4784,8 @@ strong{font-weight:900}
             <option value="">All payers</option>
           </select>
         </div>
-        <div class="row" style="gap:10px;align-items:stretch;margin-bottom:10px">
-          <div class="f" style="flex:1;margin:0">
+        <div class="row" style="margin-bottom:10px">
+          <div class="f" style="width:100%;margin:0">
             <select id="txFilter" class="fi" onchange="renderSessions()">
               <option value="all">All entries</option>
               <option value="expense">Expense</option>
@@ -4724,7 +4793,6 @@ strong{font-weight:900}
               <option value="transfer">Transfer</option>
             </select>
           </div>
-          <button class="obtn" style="padding:12px 14px;white-space:nowrap" onclick="openCalendarView()">Calendar</button>
         </div>
         <div class="tx-summary-row">
           <div class="mc"><div class="l">Income</div><div class="v" id="txIncome">₹0</div></div>
@@ -4732,8 +4800,8 @@ strong{font-weight:900}
           <div class="mc"><div class="l">Net</div><div class="v" id="txNet">₹0</div></div>
         </div>
         <div class="subtabs" style="margin:14px 0 0">
-          <div class="stab on" id="st-sess" onclick="showSubTab('sess')">Past Sessions</div>
-          <div class="stab" id="st-cal" onclick="showSubTab('cal')">Calendar View</div>
+          <div class="stab on" id="st-sess" onclick="showSubTab('sess')"><span class="material-symbols-rounded" aria-hidden="true">history</span>Past Sessions</div>
+          <div class="stab" id="st-cal" onclick="showSubTab('cal')"><span class="material-symbols-rounded" aria-hidden="true">calendar_month</span>Calendar View</div>
         </div>
       </div>
 
@@ -4805,10 +4873,10 @@ strong{font-weight:900}
       </div>
 
       <div class="insights-tabbar">
-        <button class="insights-tabchip active" data-insights-tab="overview" onclick="setInsightsTab('overview')">Overview</button>
-        <button class="insights-tabchip" data-insights-tab="expense" onclick="setInsightsTab('expense')">Expense</button>
-        <button class="insights-tabchip" data-insights-tab="income" onclick="setInsightsTab('income')">Income</button>
-        <button class="insights-tabchip" data-insights-tab="transfer" onclick="setInsightsTab('transfer')">Transfer</button>
+        <button class="insights-tabchip active" data-insights-tab="overview" onclick="setInsightsTab('overview')"><span class="material-symbols-rounded" aria-hidden="true">dashboard</span>Overview</button>
+        <button class="insights-tabchip" data-insights-tab="expense" onclick="setInsightsTab('expense')"><span class="material-symbols-rounded" aria-hidden="true">payments</span>Expense</button>
+        <button class="insights-tabchip" data-insights-tab="income" onclick="setInsightsTab('income')"><span class="material-symbols-rounded" aria-hidden="true">account_balance_wallet</span>Income</button>
+        <button class="insights-tabchip" data-insights-tab="transfer" onclick="setInsightsTab('transfer')"><span class="material-symbols-rounded" aria-hidden="true">swap_horiz</span>Transfer</button>
       </div>
       <div class="f" style="margin-bottom:10px"><input type="search" id="hSrch" class="fi" placeholder="Search items, store, notes…" oninput="renderHist()"/></div>
       <div class="small-note" id="hCnt" style="margin-top:10px"></div>
@@ -4834,9 +4902,9 @@ strong{font-weight:900}
         </div>
         <fieldset class="csv-export-types">
           <legend>Include transactions</legend>
-          <label class="csv-export-type"><input type="checkbox" id="csvExportExpense" checked>Expense</label>
-          <label class="csv-export-type"><input type="checkbox" id="csvExportIncome" checked>Income</label>
-          <label class="csv-export-type"><input type="checkbox" id="csvExportTransfer" checked>Transfer</label>
+          <label class="csv-export-type"><input type="checkbox" id="csvExportExpense"><span class="material-symbols-rounded" aria-hidden="true">payments</span>Expense</label>
+          <label class="csv-export-type"><input type="checkbox" id="csvExportIncome"><span class="material-symbols-rounded" aria-hidden="true">account_balance_wallet</span>Income</label>
+          <label class="csv-export-type"><input type="checkbox" id="csvExportTransfer"><span class="material-symbols-rounded" aria-hidden="true">swap_horiz</span>Transfer</label>
         </fieldset>
       </div>
       <div class="csv-export-actions">
@@ -4953,51 +5021,56 @@ strong{font-weight:900}
 
   <div class="view" id="v-ins">
     <div class="more-shell">
-      <div class="more-panel">
-        <div class="more-section-title">Backup & Restore</div>
+      <div class="more-panel more-panel-backup">
+        <div class="more-section-title"><span class="material-symbols-rounded" aria-hidden="true">cloud_download</span>Backup & Restore</div>
         <div class="more-list">
           <div class="more-item">
+            <span class="more-row-icon material-symbols-rounded" aria-hidden="true">database</span>
             <div class="more-item-main">
               <strong>Backup</strong>
               <span>Download your full local MoneyNest data as a JSON backup file.</span>
             </div>
-            <button class="obtn" onclick="exportBackupJson()">Backup Now</button>
+            <button class="obtn" onclick="exportBackupJson()"><span class="material-symbols-rounded" aria-hidden="true">download</span>Backup Now</button>
           </div>
           <div class="more-item">
+            <span class="more-row-icon material-symbols-rounded" aria-hidden="true">restore</span>
             <div class="more-item-main">
               <strong>Restore Backup</strong>
               <span>Import a previously exported backup and restore transactions, budgets, and labels.</span>
             </div>
-            <button class="sbtn" onclick="triggerRestoreBackup()">Restore</button>
+            <button class="sbtn" onclick="triggerRestoreBackup()"><span class="material-symbols-rounded" aria-hidden="true">cloud_upload</span>Restore</button>
           </div>
           <div class="info-surface" id="backupInfo">No backup exported yet.</div>
         </div>
       </div>
 
       <div class="more-panel">
-        <div class="more-section-title">Categories Management</div>
+        <div class="more-section-title"><span class="material-symbols-rounded" aria-hidden="true">category</span>Categories Management</div>
         <div class="more-list">
           <div class="more-item">
+            <span class="more-row-icon material-symbols-rounded" aria-hidden="true">folder_open</span>
             <div class="more-item-main">
               <strong>Manage Categories</strong>
               <span>Renamed categories and sub-categories update across all saved entries automatically.</span>
             </div>
-            <button class="obtn" onclick="openCategoriesManager()">Open</button>
+            <button class="obtn" onclick="openCategoriesManager()">Open<span class="material-symbols-rounded" aria-hidden="true">chevron_right</span></button>
           </div>
           <div class="more-item">
+            <span class="more-row-icon material-symbols-rounded" aria-hidden="true">pie_chart</span>
             <div class="more-item-main">
               <strong>Category Budgets</strong>
               <span>Set monthly category caps so Home and Insights can warn you before you overspend.</span>
             </div>
-            <button class="sbtn" onclick="openCatBudget()">Budgets</button>
+            <button class="sbtn" onclick="openCatBudget()">Budgets<span class="material-symbols-rounded" aria-hidden="true">chevron_right</span></button>
           </div>
         </div>
       </div>
 
       <div class="more-panel">
-        <div class="more-section-title">Security</div>
+        <div class="more-section-title"><span class="material-symbols-rounded" aria-hidden="true">shield_lock</span>Security</div>
         <div class="more-list">
           <div class="more-item">
+            <span class="more-row-icon material-symbols-rounded" aria-hidden="true">lock</span>
             <div class="more-item-main">
               <strong>App Lock</strong>
               <span id="appLockText">Reminder only. This does not add a PIN, biometric lock, or encryption.</span>
@@ -5011,9 +5084,10 @@ strong{font-weight:900}
       </div>
 
       <div class="more-panel">
-        <div class="more-section-title">Expense Preferences</div>
+        <div class="more-section-title"><span class="material-symbols-rounded" aria-hidden="true">star</span>Expense Preferences</div>
         <div class="more-list">
           <div class="more-item default-payer-setting">
+            <span class="more-row-icon material-symbols-rounded" aria-hidden="true">person</span>
             <div class="more-item-main">
               <strong>Default Payer</strong>
               <span>Prefill Paid By on new expense entries. You can always change it.</span>
@@ -5027,27 +5101,27 @@ strong{font-weight:900}
       </div>
 
       <div class="more-panel">
-        <div class="more-section-title">About</div>
+        <div class="more-section-title"><span class="material-symbols-rounded" aria-hidden="true">info</span>About</div>
         <div class="more-list">
+          <div class="more-item about-moneynest">
+            <span class="more-row-icon material-symbols-rounded" aria-hidden="true">currency_rupee</span>
+            <div class="more-item-main">
+              <strong>MoneyNest</strong>
+              <span>A private offline money tracker for everyday expenses, income, budgets, and transaction insights.</span>
+            </div>
+          </div>
           <div class="more-item">
+            <span class="more-row-icon material-symbols-rounded" aria-hidden="true">phone_iphone</span>
             <div class="more-item-main">
               <strong>App Version</strong>
               <span>Current installed build for this device.</span>
             </div>
-            <div class="small-note" style="font-size:13px">v<span id="appVersionText">2.1.1</span></div>
+            <div class="small-note" style="font-size:13px">v.<span id="appVersionText">2.0</span></div>
           </div>
         </div>
       </div>
 
-      <div class="more-panel">
-        <div class="more-list">
-          <div class="more-item">
-            <div class="more-item-main">
-              <strong class="built-with-line">Built with <span class="material-symbols-rounded fill" aria-hidden="true">favorite</span> by VISIRA</strong>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div class="more-footer"><strong class="built-with-line">Built with <span class="material-symbols-rounded fill" aria-hidden="true">favorite</span> by <span class="visira-brand">VISIRA</span></strong></div>
     </div>
   </div>
 
@@ -5141,7 +5215,7 @@ strong{font-weight:900}
 <script src="app-state.js"></script>
 <script src="backup-restore.js"></script>
 <script>
-const APP_VERSION='2.1.1';
+const APP_VERSION='2.0';
 const STORES=['Dmart','RelianceMart','Local Shop','Other'];
 const CATS=['Baby','Bakery','Beverages','Dairy','Dry Fruits','Frozen','Fruits','General Groceries','Household','Meat & Fish','Oils','Pulses','Ready Mixes','Rice & Flour','Snacks','Spices','Body Care','Vegetables'];
 const PAYS=['Cash','UPI','Debit Card','Credit Card','Rupay Credit Card'];
